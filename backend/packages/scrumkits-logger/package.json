@@ -1,0 +1,13 @@
+{
+  "name": "scrumkits-logger",
+  "version": "1.0.0",
+  "description": "logging data",
+  "author": "hammad <hammadahamed.dev@gmail.com>",
+  "license": "ISC",
+  "main": "app-logger.js",
+  "dependencies": {
+    "scrumkits-env": "1.0.0",
+    "scrumkits-middleware": "^1.0.0",
+    "winston": "3.6.0"
+  }
+}

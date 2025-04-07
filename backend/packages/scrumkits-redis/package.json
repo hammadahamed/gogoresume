@@ -1,0 +1,11 @@
+{
+  "name": "scrumkits-redis",
+  "version": "1.0.0",
+  "description": "Redis initializer",
+  "main": "index.js",
+  "dependencies": {
+    "scrumkits-env": "1.0.0"
+  },
+  "author": "hammad <hammadahamed.dev@gmail.com>",
+  "license": "MIT"
+}

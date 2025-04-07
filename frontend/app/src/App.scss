@@ -1,0 +1,150 @@
+@use "tailwindcss" as tw;
+
+// Variables
+$primary-color: #3182ce;
+$primary-hover: #2b6cb0;
+$secondary-color: #718096;
+$light-bg: #f7fafc;
+$dark-text: #2d3748;
+$light-text: #a0aec0;
+$accent-color: #4fd1c5;
+
+#root {
+    margin: 0 auto;
+    padding: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
+}
+
+.logo {
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
+
+    &:hover {
+        filter: drop-shadow(0 0 2em #646cffaa);
+    }
+
+    &.react:hover {
+        filter: drop-shadow(0 0 2em #61dafbaa);
+    }
+}
+
+@keyframes logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    a:nth-of-type(2) .logo {
+        animation: logo-spin infinite 20s linear;
+    }
+}
+
+.card {
+    padding: 2em;
+}
+
+.read-the-docs {
+    color: #888;
+}
+
+body {
+    font-family:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        "Open Sans",
+        "Helvetica Neue",
+        sans-serif;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.app {
+    &-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    &-header {
+        background-color: white;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: $primary-color;
+            font-weight: 700;
+        }
+
+        p {
+            color: $secondary-color;
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+    }
+
+    &-content {
+        flex: 1;
+        padding: 2rem 1rem;
+    }
+}
+
+/* ---------------------------- CUSTOM SCROLL-BAR --------------------------- */
+
+*::-webkit-scrollbar {
+    /* @apply w-1.5 h-1; */
+    width: 2px;
+}
+
+*::-webkit-scrollbar-track {
+    /* @apply rounded-full bg-gray-100; */
+    border-radius: 10px;
+    background-color: transparent;
+    padding: 0px;
+}
+
+*::-webkit-scrollbar-thumb {
+    /* @apply w-1.5 h-1 bg-gray-400 bg-opacity-60 rounded-full; */
+    width: 2px;
+    border-radius: 2px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    background-color: transparent;
+}
+
+*::-webkit-scrollbar-track-piece {
+    background: transparent;
+    width: 4px;
+}
+
+html {
+    scrollbar-color: #0e4bc4;
+    scrollbar-width: 2px;
+}
+::selection {
+    background: #4867e6; /* Blue background */
+    color: white; /* White text */
+}

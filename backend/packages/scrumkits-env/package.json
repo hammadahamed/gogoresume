@@ -1,0 +1,14 @@
+{
+  "name": "scrumkits-env",
+  "version": "1.0.0",
+  "description": "Environment",
+  "author": "hammad <hammadahamed.dev@gmail.com>",
+  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "nconf": "^0.11.2"
+  }
+}
