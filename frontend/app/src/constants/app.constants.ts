@@ -1,16 +1,3 @@
-export const emptyPersonalInfo = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  location: "",
-  address: "",
-  linkedin: "",
-  portfolio: "",
-  professionalLinks: [],
-  summary: "",
-};
-
 export const emptyExperience = {
   company: "",
   position: "",

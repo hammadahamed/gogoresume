@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
-
 // Define props
 const props = defineProps<{
   activeTab: string;

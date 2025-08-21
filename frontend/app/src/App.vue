@@ -1,7 +1,11 @@
 <template>
   <div>
+    <Onboarding
+      :showModal="appStore.showOnboarding"
+      @update:showModal="appStore.showOnboarding = $event"
+    />
     <div v-if="isLoading" class="loading-overlay">
-      <div class="spinner"></div>
+      <Spinner />
     </div>
     <router-view v-else></router-view>
   </div>
@@ -10,12 +14,20 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useUserInfoManager } from "./composables/useUserInfoManager";
+import useAuthComposable from "./composables/useAuth";
+import Onboarding from "./common/functional-components/Onboarding.vue";
+import { useAppStore } from "./stores/useAppStore";
+import Spinner from "@/common/components/Spinner.vue";
 
 const isLoading = ref(true);
+
+const appStore = useAppStore();
+const { bootstrap } = useAuthComposable();
 const { getUserProfile } = useUserInfoManager();
 
 onMounted(async () => {
   try {
+    await bootstrap();
     await getUserProfile();
   } finally {
     isLoading.value = false;
@@ -35,23 +47,5 @@ onMounted(async () => {
   justify-content: center;
   align-items: center;
   z-index: 9999;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid black;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 </style>

@@ -105,9 +105,9 @@
         <button
           type="button"
           @click="emit('onDelete')"
-          class="text-sm bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100"
+          class="text-sm font-medium bg-red-50 border border-red-500 text-red-600 px-3 py-1.5 hover:bg-red-100 transition-all duration-200 transform hover:translate-y-[-1px]"
         >
-          Delete Project
+          Delete
         </button>
       </div>
     </div>
@@ -116,9 +116,9 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from "vue";
-import Input from "../../../components/shared/Input.vue";
-import AddButton from "../../../components/shared/AddButton.vue";
+import { ref } from "vue";
+import Input from "@/common/components/Input.vue";
+import AddButton from "@/common/components/AddButton.vue";
 
 // Define props
 const props = defineProps<{

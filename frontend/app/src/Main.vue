@@ -1,43 +1,43 @@
 <template>
-  <div class="flex flex-col min-h-screen bg-white w-screen overflow-hidden">
-    <!-- Navbar -->
-    <NavBar :activeTab="activeTab" :setActiveTab="setActiveTab" />
+  <div class="flex h-screen w-screen bg-white overflow-hidden">
+    <!-- Sidebar with store integration -->
+    <Sidebar v-if="!isExtensionMode" />
 
-    <!-- Main content -->
-    <main class="flex-1 max-w-xl">
-      hi
-      <component :is="getActiveComponent()" />
+    <!-- Main content with router-view -->
+    <main class="w-full overflow-auto">
+      <router-view />
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, onMounted, provide, watch } from "vue";
+import { useRoute } from "vue-router";
 
-import NavBar from "./components/NavBar.vue";
-// import ResumeHelper from "./modules/resume-helper/ResumeHelper.vue";
-// import ResumeBuilder from "./modules/resume-builder/ResumeBuilder.vue";
-import UserInfo from "./modules/user-info/UserInfo.vue";
+import Sidebar from "@/common/components/Sidebar.vue";
+import type { SidebarUser } from "./types/sidebar";
+import { useAppStore } from "./stores/useAppStore";
 
-// State for active tab
-const activeTab = ref("user-info");
+const route = useRoute();
+const appStore = useAppStore();
 
-// Function to set active tab
-function setActiveTab(tab: string) {
-  activeTab.value = tab;
-}
-function getActiveComponent() {
-  switch (activeTab.value) {
-    case "user-info":
-      return UserInfo;
-    case "resume-builder":
-      return ResumeBuilder;
-    case "resume-helper":
-      return ResumeHelper;
-    default:
-      return UserInfo;
+const isExtensionMode = computed(() => {
+  return route.query.extension === "true";
+});
+
+provide("isExtensionMode", isExtensionMode);
+
+// Watch for route changes and update store
+watch(
+  () => route.path,
+  (newPath) => {
+    appStore.initializeFromRoute(newPath);
   }
-}
+);
+
+onMounted(() => {
+  appStore.initializeFromRoute(route.path);
+});
 </script>
 
 <style scoped>

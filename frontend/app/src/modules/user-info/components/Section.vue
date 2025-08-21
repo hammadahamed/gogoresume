@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
-
 // Define props
 const props = defineProps<{
   title: string;
@@ -9,9 +7,9 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div :class="`bg-white rounded-lg p-6 ${props.className || ''}`">
-    <h2 class="text-xl font-semibold text-gray-800 mb-2 text-left">
-      {{ "/" + props.title }}
+  <div :class="`bg-white rounded-lg py-4 ${props.className || ''}`">
+    <h2 class="text-md font-bold text-gray-700 mb-2 text-left underline">
+      {{ "" + props.title }}
     </h2>
     <div>
       <slot></slot>

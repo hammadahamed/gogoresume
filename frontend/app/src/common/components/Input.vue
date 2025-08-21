@@ -80,7 +80,7 @@ export default {
       text-gray-700
       bg-black-50
       border border-gray-300
-      rounded-md
+
       focus:outline-none
       focus:border-gray-900
       focus:ring-1

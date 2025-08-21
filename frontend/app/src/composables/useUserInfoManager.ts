@@ -1,9 +1,11 @@
-import { useUserStore } from "../stores/user";
-import UserAPI from "../api-factory/user";
+import { useUserStore } from "../stores/useUserStore";
+import ResumeAPI from "../api-factory/resume";
 import { toast } from "vue3-toastify";
-import { ref } from "vue";
-import type { UserInfo } from "../stores/user";
+import { computed, ref } from "vue";
+
 import { saveUserInfo, loadUserInfo } from "../utils/windowEvents";
+import type { UserInfo } from "../types/resume.types";
+import useAuthComposable from "./useAuth";
 
 const emptyUserInfo: UserInfo = {
   personalInfo: {
@@ -14,7 +16,8 @@ const emptyUserInfo: UserInfo = {
     location: "",
     professionalLinks: [],
   },
-  experiences: [],
+  professionalSummary: "",
+  workExperiences: [],
   education: [],
   skills: [],
   projects: [],
@@ -26,9 +29,10 @@ let loadPromise: Promise<any> | null = null;
 
 export function useUserInfoManager() {
   const userStore = useUserStore();
+  const { accessToken } = useAuthComposable();
 
   const getUserProfile = async () => {
-    if (loadPromise) return loadPromise;
+    if (loadPromise || !accessToken.value) return loadPromise;
 
     loadPromise = (async () => {
       try {
@@ -42,7 +46,7 @@ export function useUserInfoManager() {
         }
 
         // No stored data, fetch from API
-        const response = await UserAPI.getUserProfile();
+        const response = await ResumeAPI.getUserProfile();
         if (response.data) {
           userStore.setUserInfo(response.data);
           userInfo.value = response.data;
@@ -65,13 +69,13 @@ export function useUserInfoManager() {
 
   const saveUserProfile = async (info: UserInfo) => {
     try {
-      const response = await UserAPI.saveUserProfile(info);
+      const response = await ResumeAPI.saveUserProfile(info);
       console.log("🚀 ~ saveUserProfile ~ response:", response);
       if (response) {
         userStore.setUserInfo(info);
         userInfo.value = info;
         saveUserInfo(info);
-        toast.success("Information saved successfully!");
+        toast.success("Profile saved successfully!");
       }
     } catch (error) {
       console.error("Failed to save user profile:", error);
@@ -80,9 +84,22 @@ export function useUserInfoManager() {
     }
   };
 
+  const hasUserData = computed(() => {
+    const personalInfo = userInfo.value?.personalInfo;
+    return !!(
+      personalInfo?.firstName ||
+      personalInfo?.lastName ||
+      personalInfo?.email ||
+      userInfo.value?.workExperiences?.length ||
+      userInfo.value?.education?.length ||
+      userInfo.value?.skills?.length
+    );
+  });
+
   return {
     getUserProfile,
     saveUserProfile,
     userInfo,
+    hasUserData,
   };
 }

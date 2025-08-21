@@ -1,7 +1,7 @@
-import { useUserStore } from "../stores/user";
-import type { UserInfo } from "../stores/user";
+import { useUserStore } from "../stores/useUserStore";
+import type { UserInfo } from "../types/resume.types";
 
-interface FieldInfo {
+export interface FieldInfo {
   type: string;
   name: string;
   id: string;
@@ -11,7 +11,7 @@ interface FieldInfo {
 
 interface SuggestionsResult {
   personalInfo: string[];
-  experiences: string[];
+  workExperiences: string[];
   education: string[];
   skills: string[];
   projects: string[];
@@ -23,7 +23,7 @@ function getStructuredValuesFromUserInfo(
 ): SuggestionsResult {
   const result: SuggestionsResult = {
     personalInfo: [],
-    experiences: [],
+    workExperiences: [],
     education: [],
     skills: [],
     projects: [],
@@ -67,8 +67,8 @@ function getStructuredValuesFromUserInfo(
   }
 
   // Experiences
-  userInfo.experiences.forEach((exp) => {
-    console.log("🚀 ~ userInfo.experiences.forEach ~ exp:", exp);
+  userInfo.workExperiences.forEach((exp) => {
+    console.log("🚀 ~ userInfo.workExperiences.forEach ~ exp:", exp);
     const {
       company,
       position,
@@ -79,7 +79,7 @@ function getStructuredValuesFromUserInfo(
       achievements,
     } = exp;
 
-    result.experiences.push(
+    result.workExperiences.push(
       ...[company, position, location, description, startDate, endDate].filter(
         Boolean
       ),

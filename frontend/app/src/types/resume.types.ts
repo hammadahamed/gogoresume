@@ -1,5 +1,3 @@
-import { defineStore } from "pinia";
-
 export interface PersonalInfo {
   firstName: string;
   lastName: string;
@@ -10,7 +8,7 @@ export interface PersonalInfo {
   linkedin?: string;
   portfolio?: string;
   professionalLinks: { label: string; url: string }[];
-  summary?: string;
+  professionalSummary?: string;
 }
 
 export interface Experience {
@@ -36,28 +34,9 @@ export interface Education {
 
 export interface UserInfo {
   personalInfo: PersonalInfo;
-  experiences: Experience[];
+  professionalSummary: string;
+  workExperiences: Experience[];
   education: Education[];
   skills: string[];
   projects: any[]; // We can type this more specifically if needed
 }
-
-interface UserState {
-  userInfo: UserInfo | null;
-}
-
-export const useUserStore = defineStore("user", {
-  state: (): UserState => ({
-    userInfo: null,
-  }),
-
-  actions: {
-    setUserInfo(info: UserInfo) {
-      this.userInfo = info;
-    },
-
-    clearUserInfo() {
-      this.userInfo = null;
-    },
-  },
-});

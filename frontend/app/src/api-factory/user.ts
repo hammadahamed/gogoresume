@@ -2,7 +2,7 @@ import axios from "./axios";
 
 const appTokenKey = "app-token";
 
-const anonymousAuthorize = async (data) => {
+const anonymousAuthorize = async (data: any) => {
   const token = localStorage.getItem(appTokenKey);
   if (!token || token == "undefined") {
     const response = await axios.post("/auth/anonymous", data);
@@ -15,19 +15,7 @@ const getBootstrapData = async () => {
   return response.data;
 };
 
-const saveUserProfile = async (userInfo) => {
-  const response = await axios.post("/user-profile", userInfo);
-  return response.data;
-};
-
-const getUserProfile = async () => {
-  const response = await axios.get("/user-profile");
-  return response.data;
-};
-
 export default {
   anonymousAuthorize,
   getBootstrapData,
-  saveUserProfile,
-  getUserProfile,
 };

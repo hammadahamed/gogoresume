@@ -11,7 +11,7 @@
       <button
         type="button"
         @click="handleAddSkill"
-        class="-mt-2.5 h-min px-4 py-2 bg-gray-900 text-white rounded-full hover:bg-gray-800 text-sm font-semibold"
+        class="-mt-2.5 h-min px-4 py-3 bg-gray-900 text-white hover:bg-gray-400 text-sm font-semibold transition-all duration-200"
       >
         Add
       </button>
@@ -38,7 +38,7 @@
 
 <script>
 import { ref } from "vue";
-import Input from "../../../components/shared/Input.vue";
+import Input from "@/common/components/Input.vue";
 
 export default {
   name: "SkillsForm",

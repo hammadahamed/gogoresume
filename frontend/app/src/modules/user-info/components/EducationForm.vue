@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from "vue";
-import Input from "../../../components/shared/Input.vue";
-import AddButton from "../../../components/shared/AddButton.vue";
+import { ref } from "vue";
+import Input from "@/common/components/Input.vue";
+import AddButton from "@/common/components/AddButton.vue";
 
 // Define props
 const props = defineProps<{
@@ -48,7 +48,7 @@ function handleRemoveHonor(index: number) {
 <template>
   <div class="mb-6 mt-10">
     <div
-      class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow relative"
+      class="bg-white border border-gray-400 p-6 shadow-sm hover:shadow-md transition-shadow relative"
     >
       <div
         class="absolute -top-3 -left-3 w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-medium"
@@ -107,7 +107,7 @@ function handleRemoveHonor(index: number) {
           <AddButton @click="handleAddHonor" />
         </div>
 
-        <div class="flex gap-4 mb-4">
+        <div class="flex gap-4 mb">
           <div class="flex-grow">
             <Input
               label=""
@@ -144,17 +144,16 @@ function handleRemoveHonor(index: number) {
         </div>
       </div>
 
-      <div class="mt-6 flex justify-end border-t pt-4">
+      <div class="mt-6 flex justify-end pt-4">
         <button
           type="button"
           @click="emit('onDelete')"
-          class="text-sm bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100"
+          class="text-sm font-medium bg-red-50 border border-red-500 text-red-600 px-3 py-1.5 hover:bg-red-100 transition-all duration-200 transform hover:translate-y-[-1px]"
         >
-          Delete Education
+          Delete
         </button>
       </div>
     </div>
-    <div class="border-b border-gray-200 mt-8"></div>
   </div>
 </template>
 

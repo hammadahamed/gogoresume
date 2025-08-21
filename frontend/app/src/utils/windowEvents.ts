@@ -1,6 +1,6 @@
 import { getSuggestions } from "./suggestions";
 import type { FieldInfo } from "./suggestions";
-import type { UserInfo } from "../stores/user";
+import type { UserInfo } from "@/types/resume.types";
 
 // Message types
 const MESSAGE_TYPE_FIELD_CLICK = "FIELD_CLICK";

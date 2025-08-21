@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { defineProps, ref } from "vue";
+import { ref, computed } from "vue";
 import { toast } from "vue3-toastify";
 import Section from "./Section.vue";
-import Input from "../../../components/shared/Input.vue";
-import AddButton from "../../../components/shared/AddButton.vue";
+import Input from "@/common/components/Input.vue";
+import AddButton from "@/common/components/AddButton.vue";
 
 // Define props
 const props = defineProps<{
-  personalInfo: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    location: string;
-    address?: string;
-    linkedin?: string;
-    portfolio?: string;
-    professionalLinks: { label: string; url: string }[];
-    summary?: string;
-  };
+  personalInfo: any;
+  professionalSummary: string;
   onChange: (updatedInfo: any) => void;
 }>();
 
 // Local state for new link
 const newLink = ref({ label: "", url: "" });
+
+// Computed property for professionalSummary to fix reactivity
+const summaryModel = computed({
+  get: () => props.professionalSummary,
+  set: (value) =>
+    props.onChange({
+      personalInfo: props.personalInfo,
+      professionalSummary: value,
+    }),
+});
 
 // Methods to handle changes
 function handleAddLink() {
@@ -33,7 +33,8 @@ function handleAddLink() {
   }
 
   props.onChange({
-    ...props.personalInfo,
+    personalInfo: props.personalInfo,
+    professionalSummary: props.professionalSummary,
     professionalLinks: [
       ...props.personalInfo.professionalLinks,
       { ...newLink.value },
@@ -44,7 +45,8 @@ function handleAddLink() {
 
 function handleRemoveLink(index: number) {
   props.onChange({
-    ...props.personalInfo,
+    personalInfo: props.personalInfo,
+    professionalSummary: props.professionalSummary,
     professionalLinks: props.personalInfo.professionalLinks.filter(
       (_, i) => i !== index
     ),
@@ -190,8 +192,8 @@ function handleKeyPress(event: KeyboardEvent) {
     <Section title="Professional Summary">
       <Input
         label="Summary"
-        name="summary"
-        v-model="props.personalInfo.summary"
+        name="professionalSummary"
+        v-model="summaryModel"
         multiline
         rows="4"
         placeholder="Write a brief overview of your professional background and career objectives..."

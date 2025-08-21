@@ -8,6 +8,7 @@ import Vue3Toastify, { type ToastContainerOptions } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import "./App.scss";
 import { setupMessageHandler } from "./utils/messageHandler";
+import { GoogleAuth } from "./helper/google-auth.helper";
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -19,6 +20,8 @@ app.use(Vue3Toastify, {
   position: "top-right",
   theme: "dark",
 } as ToastContainerOptions);
+
+GoogleAuth.initializeGoogleApp(app);
 
 app.mount("#app");
 

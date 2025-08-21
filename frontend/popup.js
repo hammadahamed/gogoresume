@@ -1,23 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const enableToggle = document.getElementById("enableToggle");
+  const sidebarToggle = document.getElementById("ggr-sidebarToggle");
+  const suggestionsToggle = document.getElementById("ggr-suggestionsToggle");
 
-  // Load initial state
-  chrome.storage.sync.get(["gogoResumeEnabled"], (result) => {
-    enableToggle.checked = result.gogoResumeEnabled !== false;
-  });
+  // Load initial states
+  chrome.storage.sync.get(
+    ["sidebarEnabled", "suggestionsEnabled"],
+    (result) => {
+      sidebarToggle.checked = result.sidebarEnabled !== false;
+      suggestionsToggle.checked = result.suggestionsEnabled !== false;
+    }
+  );
 
-  // Handle toggle changes
-  enableToggle.addEventListener("change", () => {
-    const isEnabled = enableToggle.checked;
-
-    // Save state
-    chrome.storage.sync.set({ gogoResumeEnabled: isEnabled });
+  // Handle sidebar toggle
+  sidebarToggle.addEventListener("change", () => {
+    const isEnabled = sidebarToggle.checked;
+    chrome.storage.sync.set({ sidebarEnabled: isEnabled });
 
     // Update content script
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]?.id) {
         chrome.tabs.sendMessage(tabs[0].id, {
-          action: "updateEnabled",
+          action: "updateSidebarEnabled",
+          enabled: isEnabled,
+        });
+      }
+    });
+  });
+
+  // Handle suggestions toggle
+  suggestionsToggle.addEventListener("change", () => {
+    const isEnabled = suggestionsToggle.checked;
+    chrome.storage.sync.set({ suggestionsEnabled: isEnabled });
+
+    // Update content script
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: "updateSuggestionsEnabled",
           enabled: isEnabled,
         });
       }
