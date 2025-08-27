@@ -1,0 +1,158 @@
+.pricing-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 64px;
+    background-color: #ffffff;
+
+    &__header {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 64px;
+        height: 300px;
+
+        h1 {
+            font-size: 60px;
+            font-weight: 700;
+            color: #111827;
+            max-width: 1000px;
+            text-align: center;
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #6b7280;
+            max-width: 800px;
+            text-align: center;
+        }
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        justify-content: center;
+        align-self: start;
+        justify-items: center;
+        gap: 64px;
+        margin-bottom: 84px;
+        align-items: center;
+        position: relative;
+    }
+
+    &__comparison {
+        margin-bottom: 64px;
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+
+            .comparison-row {
+                $font-size: 20px;
+                $font-size-small: 16px;
+
+                display: grid;
+                grid-template-columns: 1.5fr repeat(4, 1fr);
+                border-bottom: 1px solid #e5e7eb;
+
+                &:first-child {
+                    border-top: 1px solid #e5e7eb;
+                }
+
+                &.header-row {
+                    font-weight: 600;
+                    color: #111827;
+                }
+
+                .feature-column,
+                .plan-column {
+                    padding: 16px;
+                    display: flex;
+                    align-items: center;
+                }
+
+                .feature-column {
+                    display: flex;
+                    align-items: center;
+                    font-size: $font-size;
+
+                    .feature-name {
+                        margin-right: 8px;
+                        font-size: $font-size-small;
+                    }
+
+                    .feature-info {
+                        font-size: 12px;
+                        color: #6b7280;
+                        cursor: help;
+                    }
+                }
+
+                .plan-column {
+                    justify-content: center;
+                    font-size: $font-size;
+                    text-align: center;
+
+                    div {
+                        font-size: $font-size-small;
+                    }
+
+                    .check {
+                        color: #111827;
+                        font-weight: bold;
+                    }
+
+                    .dash {
+                        color: #d1d5db;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 992px) {
+    .pricing-page {
+        &__grid {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+            .pricing-card.is-popular {
+                transform: scale(1.03);
+                margin: 16px 0;
+            }
+        }
+
+        &__comparison {
+            overflow-x: auto;
+
+            .comparison-table {
+                min-width: 768px;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .pricing-page {
+        padding: 32px;
+
+        &__header {
+            margin-bottom: 32px;
+
+            h1 {
+                font-size: 50px;
+            }
+        }
+
+        &__grid {
+            grid-template-columns: 1fr;
+            gap: 64px;
+
+            .pricing-card.is-popular {
+                transform: scale(1);
+                order: -1;
+            }
+        }
+    }
+}

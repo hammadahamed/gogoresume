@@ -1,0 +1,35 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+App Context:
+
+this is a resumber builder/tweaker app.
+the idea is that we give the resume templates, and get the core data like experience details and personal details, links etc from them.
+We populaet this in the template.
+
+Later when the user find a new job opening and wannah tweak only the content of the resume to be a bit more aligning with the JD, he can use this app to improvise certain parts using AI.
+We just the content and replace the text in the respective section.
+
+we also give him a chrome extensions which opens in any site so he can pick one of his saved 
+resume and tweak it on the go and submit it in the application portal.
+
+
+pricing plan scratch:
+
+week
+- 7 usd
+- 20 tweaks/day
+
+month
+- 24 usd
+- 50 tweaks/day
+- pro rata 
+
+3 months
+- 59 usd
+- 100 tweaks/day
+- pro data
+
+------------------------------------------------------------------------------------------------------------------------

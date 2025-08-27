@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "GoGoResume",
+  "version": "1.0",
+  "description": "AI-powered resume suggestions",
+  "permissions": ["activeTab", "storage", "sidePanel", "tabs"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["content.css"],
+      "js": ["content.js"]
+    }
+  ],
+  "host_permissions": ["http://localhost:5173/*"]
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>GoGoResume</title>
+    <style>
+        body {
+            width: 250px;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .toggle-label-container {
+            width: 80%;
+        }
+
+        .toggle-container:last-child {
+            border-bottom: none;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #6466f1;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(16px);
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            margin-right: 12px;
+        }
+
+        .feature-description {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">GoGoResume Settings</div>
+
+    <div class="toggle-container">
+        <div class="toggle-label-container">
+            <span class="toggle-label">Resume Tweaker</span>
+            <p class="feature-description">Enable side panel for resume tweaking</p>
+        </div>
+        <label class="switch">
+            <input type="checkbox" id="ggr-sidebarToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="toggle-container">
+        <div class="toggle-label-container">
+            <span class="toggle-label">Smart Suggestions</span>
+            <p class="feature-description">Enable smart suggestions from your resume</p>
+        </div>
+        <label class="switch">
+            <input type="checkbox" id="ggr-suggestionsToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>
