@@ -1,10 +1,11 @@
 <template>
   <div v-if="accessToken">
     <div
-      class="ml-auto w-max text-sm text-black font-semibold gap-3 px-6 py-3 bg-gray-100 border border-gray-200 rounded-full cursor-pointer"
+      class="ml-auto w-max text-xs sm:text-sm text-black font-semibold gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3 bg-gray-100 border border-gray-200 rounded-full cursor-pointer"
       @click="router.push('/home')"
     >
-      Go To Dashboard
+      <span class="hidden sm:inline">Go To Dashboard</span>
+      <span class="sm:hidden">Dashboard</span>
     </div>
   </div>
 
@@ -12,12 +13,15 @@
     <!-- Loading State -->
     <div
       v-if="isSigningIn"
-      class="flex items-center justify-center gap-3 px-6 py-3 bg-gray-900 border border-gray-700 rounded-lg"
+      class="flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3 bg-gray-900 border border-gray-700 rounded-lg"
     >
       <div
-        class="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-white"
+        class="animate-spin rounded-full h-3 sm:h-4 w-3 sm:w-4 border-2 border-gray-300 border-t-white"
       ></div>
-      <span class="text-white text-sm font-medium">Signing in...</span>
+      <span class="text-white text-xs sm:text-sm font-medium">
+        <span class="hidden sm:inline">Signing in...</span>
+        <span class="sm:hidden">Signing in...</span>
+      </span>
     </div>
 
     <!-- Google Login Button -->
@@ -29,16 +33,17 @@
       :idConfiguration="idConfiguration"
     >
       <button
-        class="group relative w-full flex items-center justify-center gap-3 px-6 py-3 bg-gray-900 hover:bg-gray-800 active:bg-gray-950 border border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+        class="group relative w-full flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3 bg-gray-900 hover:bg-gray-800 active:bg-gray-950 border border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900"
       >
         <!-- Google Icon -->
         <div class="flex-shrink-0">
-          <GOOGLE_ICON />
+          <GOOGLE_ICON class="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
 
         <!-- Button Text -->
-        <span class="text-white font-medium text-sm">
-          Continue with Google
+        <span class="text-white font-medium text-xs sm:text-sm">
+          <span class="hidden sm:inline">Continue with Google</span>
+          <span class="sm:hidden">Sign In</span>
         </span>
 
         <!-- Subtle hover effect overlay -->
