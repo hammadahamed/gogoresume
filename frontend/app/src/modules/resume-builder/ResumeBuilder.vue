@@ -1,57 +1,90 @@
 <template>
-  <div class="resume-builder-container">
-    <div class="controls-section">
-      <!-- Template Selector -->
-      <div class="template-selector-section mb-6 p-4 bg-gray-50 rounded-lg">
-        <h3 class="text-lg font-semibold mb-3">Template</h3>
-        <div class="flex flex-wrap gap-2">
-          <button
-            v-for="template in availableTemplates"
-            :key="template.id"
-            @click="selectedTemplate = template.id"
-            :class="[
-              'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-              selectedTemplate === template.id
-                ? 'bg-primary text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200',
-            ]"
-          >
-            {{ template.name }}
-          </button>
+  <div class="h-screen flex flex-col">
+    <!-- Top Bar -->
+    <CreateResumeTopBar
+      v-model="selectedTemplate"
+      :resume-id="resumeId"
+      @template-change="handleTemplateChange"
+    />
+
+    <!-- Main Content -->
+    <div class="resume-builder-container flex-1">
+      <div class="controls-section">
+        <!-- Embed the actual UserInfo component -->
+        <div class="user-info-section">
+          <UserInfo />
         </div>
       </div>
 
-      <!-- Embed the actual UserInfo component -->
-      <div class="user-info-section">
-        <UserInfo />
+      <!-- React PDF Builder -->
+      <div class="pdf-section flex justify-center items-center">
+        <ReactResumeBuilder
+          :key="`${selectedTemplate}-${resumeId || 'new'}`"
+          :userData="userInfo"
+          :templateId="selectedTemplate"
+          :hideDownloadButton="true"
+        />
       </div>
-    </div>
-
-    <!-- React PDF Builder -->
-    <div class="pdf-section flex justify-center items-center">
-      <ReactResumeBuilder :userData="userInfo" :templateId="selectedTemplate" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { onMounted, ref, watch, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import ReactResumeBuilder from "../../ReactResumeBuilder.vue";
 import UserInfo from "../user-info/UserInfo.vue";
+import CreateResumeTopBar from "./CreateResumeTopBar.vue";
 import { useUserInfoManager } from "../../composables/useUserInfoManager";
-import { getAllTemplates } from "../../a-app-react/templates/TemplateManager.jsx";
+import resumeApi from "../../api-factory/resume";
+import { toast } from "vue3-toastify";
 
 const route = useRoute();
+const router = useRouter();
 const { userInfo, getUserProfile } = useUserInfoManager();
 
-// Get available templates
-const availableTemplates = ref(getAllTemplates());
-
-// Get template from query parameter, default to 'classic'
+// Get parameters from route
+const resumeId = computed(() => route.query.resumeId as string | undefined);
 const selectedTemplate = ref((route.query.template as string) || "classic");
 
-// Watch for route changes to update template
+// Handle template changes
+const handleTemplateChange = (template: string) => {
+  console.log("Template changed to:", template);
+  selectedTemplate.value = template;
+
+  // Update route query to reflect the change
+  router.replace({
+    query: {
+      ...route.query,
+      template: template,
+    },
+  });
+};
+
+// Load resume data if editing
+const loadResumeData = async () => {
+  if (!resumeId.value) return;
+
+  try {
+    const response = await resumeApi.getResumeById(resumeId.value);
+    if (response.data && response.data.data) {
+      // Load the resume data into userInfo
+      Object.assign(userInfo.value || {}, response.data.data);
+
+      // Update template if specified
+      if (response.data.templateId) {
+        selectedTemplate.value = response.data.templateId;
+      }
+    }
+  } catch (error: any) {
+    console.error("Error loading resume:", error);
+    toast.error("Failed to load resume data");
+    // Redirect to saved resumes on error
+    router.push("/saved-resumes");
+  }
+};
+
+// Watch for route changes
 watch(
   () => route.query.template,
   (newTemplate) => {
@@ -61,9 +94,37 @@ watch(
   }
 );
 
-// Load user profile data on mount
+watch(
+  () => route.query.resumeId,
+  (newResumeId) => {
+    if (newResumeId) {
+      loadResumeData();
+    }
+  }
+);
+
+// Watch for template changes to debug
+watch(
+  () => selectedTemplate.value,
+  (newTemplate, oldTemplate) => {
+    console.log(
+      "ResumeBuilder: Template changed from",
+      oldTemplate,
+      "to",
+      newTemplate
+    );
+  }
+);
+
+// Initialize component
 onMounted(async () => {
+  // Load user profile first
   await getUserProfile();
+
+  // Then load resume data if editing
+  if (resumeId.value) {
+    await loadResumeData();
+  }
 });
 </script>
 
@@ -71,10 +132,10 @@ onMounted(async () => {
 .resume-builder-container {
   display: flex;
   gap: 2rem;
-  margin: 0 auto;
-  height: 100vh;
+  margin: 0 80px 0 50px;
+  height: 100%;
   overflow: hidden;
-  max-width: 1200px;
+  margin-top: -10px;
 }
 
 .controls-section {

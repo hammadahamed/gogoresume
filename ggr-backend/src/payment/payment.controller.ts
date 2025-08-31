@@ -17,12 +17,18 @@ export class PaymentController {
 
   @Get('get-payment-link')
   @UseGuards(JwtAuthGuard)
-  async getPaymentLink(@Query('planId') productId: string, @Req() req: any) {
+  async getPaymentLink(
+    @Query('planId') productId: string,
+    @Query('isUpgrade') isUpgrade: boolean,
+    @Req() req: any,
+  ) {
     const userId = req.user.id;
-    const link = await this.paymentService.getPaymentLink(productId, userId);
-    return {
-      paymentLink: link,
-    };
+    const link = await this.paymentService.getPaymentLink(
+      productId,
+      userId,
+      isUpgrade,
+    );
+    return link;
   }
 
   @Post('purchase/verify')

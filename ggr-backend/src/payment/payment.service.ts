@@ -11,8 +11,8 @@ export class PaymentService {
     this.provider = dodoPaymentService;
   }
 
-  getPaymentLink(productId: string, userId: string) {
-    return this.provider.getPaymentLink(productId, userId);
+  getPaymentLink(productId: string, userId: string, isUpgrade = false) {
+    return this.provider.getPaymentLink(productId, userId, isUpgrade);
   }
 
   async processPayment(paymentIntentId: string) {

@@ -2,8 +2,8 @@
   <div class="h-full overflow-auto">
     <div class="mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Header -->
-      <div class="mb-8">
-        <p class="text-3xl font-bold text-gray-900">Resume Templates</p>
+      <div class="mb-8 -mt-2">
+        <p class="text-2xl font-bold text-gray-900">Resume Templates</p>
         <p class="mt-2 text-gray-600">
           ATS doesn't care about how beautiful your resume is, it only cares
           about

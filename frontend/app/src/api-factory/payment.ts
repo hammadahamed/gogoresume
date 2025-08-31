@@ -1,9 +1,9 @@
 import axios from "./axios";
 
 class PaymentApi {
-  static async getPaymentLink(planId: string) {
+  static async getPaymentLink(planId: string, isUpgrade = false) {
     const response = await axios.get("/payment/get-payment-link", {
-      params: { planId },
+      params: { planId, isUpgrade },
     });
     return response.data;
   }

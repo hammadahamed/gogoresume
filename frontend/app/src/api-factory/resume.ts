@@ -17,8 +17,51 @@ const getUserProfile = async () => {
   return response.data;
 };
 
+const saveResume = async (name: string, data: any, templateId?: string) => {
+  const response = await axios.post("resume/save", {
+    name,
+    data,
+    templateId,
+  });
+  return response.data;
+};
+
+const updateResume = async (
+  resumeId: string,
+  name: string,
+  data: any,
+  templateId?: string
+) => {
+  const response = await axios.put(`resume/save/${resumeId}`, {
+    name,
+    data,
+    templateId,
+  });
+  return response.data;
+};
+
+const getSavedResumes = async () => {
+  const response = await axios.get("resume/saved");
+  return response.data;
+};
+
+const getResumeById = async (resumeId: string) => {
+  const response = await axios.get(`resume/saved/${resumeId}`);
+  return response.data;
+};
+
+const deleteResume = async (resumeId: string) => {
+  const response = await axios.delete(`resume/saved/${resumeId}`);
+  return response.data;
+};
+
 export default {
   tweakResume,
   saveUserProfile,
   getUserProfile,
+  saveResume,
+  updateResume,
+  getSavedResumes,
+  getResumeById,
+  deleteResume,
 };

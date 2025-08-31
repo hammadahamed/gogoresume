@@ -39,6 +39,7 @@ interface Props {
   userData?: ResumeData;
   templateId?: string;
   templateView?: boolean;
+  hideDownloadButton?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -58,6 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
   }),
   templateId: "classic",
   templateView: false,
+  hideDownloadButton: false,
 });
 
 const isExtensionMode = inject("isExtensionMode");
@@ -137,6 +139,7 @@ const createReactComponent = () => {
             marginBottom: "16px",
           },
         },
+        // Download button (hidden when hideDownloadButton is true)
         !props.templateView &&
           createElement(
             PDFDownloadLink,
@@ -147,12 +150,18 @@ const createReactComponent = () => {
               }.pdf`.replace(/\s+/g, "_"),
               style: {
                 textDecoration: "none",
+                display: props.hideDownloadButton ? "none" : "block",
               },
             },
             ({ loading }: { loading: boolean }) =>
               createElement(
                 "button",
                 {
+                  ref: (el: HTMLButtonElement | null) => {
+                    if (props.hideDownloadButton) {
+                      downloadButtonRef = el;
+                    }
+                  },
                   disabled: loading,
                   style: {
                     padding: "6px 16px",
@@ -264,8 +273,35 @@ const createReactComponent = () => {
   return ResumeBuilder;
 };
 
+// Download trigger system
+let downloadEventListener: ((event: MessageEvent) => void) | null = null;
+let downloadButtonRef: HTMLButtonElement | null = null;
+
+const initDownloadEventListener = () => {
+  if (!props.hideDownloadButton) return;
+
+  downloadEventListener = (event: MessageEvent) => {
+    if (event.data?.type === "trigger-resume-download" && downloadButtonRef) {
+      downloadButtonRef.click();
+    }
+  };
+
+  window.addEventListener("message", downloadEventListener);
+};
+
+const destroyDownloadEventListener = () => {
+  if (downloadEventListener) {
+    window.removeEventListener("message", downloadEventListener);
+    downloadEventListener = null;
+    downloadButtonRef = null;
+  }
+};
+
 onMounted(async () => {
   try {
+    // Initialize download event listener if needed
+    initDownloadEventListener();
+
     if (reactContainer.value && hasUserData.value) {
       reactRoot = createRoot(reactContainer.value);
 
@@ -284,6 +320,9 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
+  // Clean up download event listener
+  destroyDownloadEventListener();
+
   if (updateTimeout) {
     clearTimeout(updateTimeout);
   }
@@ -300,11 +339,6 @@ watch(
   [() => props.userData, () => props.templateId],
   ([newUserData, newTemplateId]) => {
     renderCount++;
-    console.log(`🔄 PDF Re-render #${renderCount}`, {
-      name: newUserData?.personalInfo?.firstName,
-      experienceCount: newUserData?.workExperiences?.length,
-      template: newTemplateId,
-    });
 
     // Clear previous timeout
     if (updateTimeout) {

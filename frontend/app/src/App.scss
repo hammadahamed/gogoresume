@@ -213,3 +213,49 @@ html {
 .primary-btn-1 {
     @apply bg-black text-white px-4 py-2 pb-2.5 hover:bg-indigo-500 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 border-3 border-black transition-all duration-200;
 }
+
+.primary-btn-2 {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 6px 18px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background-color: var(--primary-hover);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.secondary-btn-1 {
+    padding: 6px 18px;
+    border: 1px solid #d1d5db;
+    color: black;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    &:hover {
+        background-color: #f9fafb;
+    }
+}
+
+.secondary-btn-2 {
+    padding: 8px 20px;
+    color: var(--primary-color);
+    font-weight: 600;
+    border-radius: 6px;
+    font-size: 14px;
+    border: 1px solid var(--primary-color);
+    transition: background-color 0.2s;
+    &:hover {
+        background-color: #f9fafb;
+    }
+}

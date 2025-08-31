@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Post, UseGuards, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  UseGuards,
+  Req,
+  Param,
+} from '@nestjs/common';
 import { ResumeService } from './resume.sevice';
 import { TweakResumeDTO, TweakResumeResponse } from './resume.types';
 import { ResumeTweakerService } from './resume-tweaker.service';
@@ -35,5 +45,59 @@ export class ResumeController {
     @Req() req: any,
   ): Promise<{ status: string; data: any }> {
     return this.resumeService.getUserProfile(req.user.id);
+  }
+
+  @Post('save')
+  @UseGuards(JwtAuthGuard)
+  async createResume(
+    @Req() req: any,
+    @Body() body: { name: string; data: any; templateId?: string },
+  ): Promise<{ status: string; message: string; resumeId: string }> {
+    return this.resumeService.saveResume(
+      req.user.id,
+      body.name,
+      body.data,
+      body.templateId,
+    );
+  }
+
+  @Put('save/:resumeId')
+  @UseGuards(JwtAuthGuard)
+  async updateResume(
+    @Req() req: any,
+    @Param('resumeId') resumeId: string,
+    @Body() body: { name: string; data: any; templateId?: string },
+  ): Promise<{ status: string; message: string }> {
+    return this.resumeService.updateResume(
+      req.user.id,
+      resumeId,
+      body.name,
+      body.data,
+      body.templateId,
+    );
+  }
+
+  @Get('saved')
+  @UseGuards(JwtAuthGuard)
+  async getSavedResumes(@Req() req: any) {
+    return this.resumeService.getSavedResumes(req.user.id);
+  }
+
+  @Get('saved/:resumeId')
+  @UseGuards(JwtAuthGuard)
+  async getResumeById(
+    @Req() req: any,
+    @Param('resumeId') resumeId: string,
+  ): Promise<{ status: string; data: any }> {
+    return this.resumeService.getResumeById(req.user.id, resumeId);
+  }
+
+  @Delete('saved/:resumeId')
+  @UseGuards(JwtAuthGuard)
+  async deleteResume(
+    @Req() req: any,
+    @Param('resumeId') resumeId: string,
+  ): Promise<{ status: string; message: string }> {
+    return this.resumeService.deleteResume(req.user.id, resumeId);
   }
 }

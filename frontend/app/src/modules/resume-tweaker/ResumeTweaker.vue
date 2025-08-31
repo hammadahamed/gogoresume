@@ -2,14 +2,16 @@
   <div class="flex flex-col h-screen w-full">
     <!-- Section 2: Main Content -->
     <div
-      class="flex-1 flex flex-col lg:flex-row mx-auto w-full max-w-[1000px]"
+      class="flex-1 flex flex-col lg:flex-row-reverse mx-auto w-full max-w-[1000px]"
       :class="{ 'justify-between': isExtensionMode }"
     >
       <!-- Left: Resume Preview -->
       <div v-if="!userInfo">No user info</div>
       <div
-        v-else
-        class="w-full p-6 flex flex-col max-w-[800px]"
+        v-else-if="
+          !isExtensionMode || (isExtensionMode && hasMeaningfulJobDescription)
+        "
+        class="w-full p-6 flex flex-col max-w-[800px] smooth-expand"
         :class="{ 'pb-0': isExtensionMode }"
       >
         <div
@@ -18,150 +20,279 @@
         >
           <SelectResume
             v-model="selectedResume"
+            class="z-10"
             :class="isExtensionMode ? 'w-[180px]' : 'w-[240px]'"
           />
-          <ReactResumeBuilder :userData="userInfo" class="-mt-15" />
+          <ReactResumeBuilder
+            :userData="userInfo"
+            class="-mt-15 animate-fade-in"
+          />
         </div>
       </div>
 
       <!-- Right: Interactive Cards -->
       <div
-        class="w-full flex flex-col justify-center"
+        class="w-full flex flex-col justify-center smooth-expand"
         :class="isExtensionMode ? 'pt-2 justify-end px-6' : 'p-6'"
       >
-        <!-- Job Description Card -->
+        <!-- Extension Mode ONLY: Initial State with JD Box -->
         <div
-          class="transition-all duration-300 mb-6"
-          :class="{
-            'p-0 mb-0 h-[50px]': isExtensionMode,
-            'h-[300px] max-h-[400px] px-1.5': !isExtensionMode,
-            'mb-0': isExtensionMode,
-          }"
+          v-if="isExtensionMode && !hasMeaningfulJobDescription"
+          class="flex flex-col items-center justify-center h-screen py-8 smooth-expand"
         >
-          <p
-            class="font-semibold text-gray-900 text-sm"
-            :class="
-              isExtensionMode ? 'pb-1 text-xs' : 'underline pb-2 text-base'
-            "
-          >
-            Job Description
-          </p>
-          <textarea
-            v-model="jobDescription"
-            placeholder="Paste the job description here..."
-            rows="4"
-            :style="{
-              height: isExtensionMode ? '50px' : 'calc(100% - 50px)',
-            }"
-            class="w-full bg--100 rounded border border-gray-400 p-3 text-sm text-gray-700 placeholder:text-gray-400 resize-none outline-none"
-          ></textarea>
-        </div>
-
-        <!-- Sections Card -->
-        <div
-          class="rounded-3xl transition-all duration-300"
-          :class="{
-            'p-0 mb-0 mt-2': isExtensionMode,
-            'mb-6 px-1.5': !isExtensionMode,
-          }"
-        >
-          <p
-            class="font-semibold text-gray-900 text-sm"
-            :class="{
-              'underline pb-2 text-base': !isExtensionMode,
-              'pb-1 text-xs': isExtensionMode,
-            }"
-          >
-            Sections to Optimize
-          </p>
-          <div
-            style="height: calc(100% - 50px)"
-            class="w-full bg-white/80 rounded-2xl"
-          >
+          <div class="text-center mb-6 animate-fade-in">
             <div
-              class="flex flex-wrap"
-              :class="isExtensionMode ? 'gap-1' : 'gap-2'"
+              class="w-12 h-12 bg-[var(--primary-color)] rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm"
             >
-              <button
-                v-for="section in sections"
-                :key="section.id"
-                @click="toggleSection(section.id)"
-                :class="[
-                  ' rounded-full text-xs font-medium transition-all duration-300  border',
-                  section.isSelected
-                    ? 'bg-[#6366f1] text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-400',
-
-                  isExtensionMode ? 'p-1 px-2' : 'px-3 py-1.5',
-                ]"
+              <svg
+                class="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                {{ section.label }}
-              </button>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-900 mb-1">
+              Ready to optimize?
+            </h3>
+            <p class="text-xs text-gray-500">
+              Paste the job description to get started
+            </p>
+          </div>
+
+          <div class="w-full">
+            <div
+              class="relative"
+              :class="{
+                'rainbow-border-wrapper': !hasMeaningfulJobDescription,
+              }"
+            >
+              <textarea
+                v-model="jobDescription"
+                placeholder="Paste the job description here..."
+                class="w-full h-[120px] bg-gray-50 rounded-lg border-[2px] border-[var(--primary-color)] p-3 text-sm text-gray-700 placeholder:text-gray-800 resize-none outline-none transition-all duration-300 relative z-10 focus:ring focus:ring-[var(--primary-color)] animate-rainbow-border"
+              ></textarea>
             </div>
           </div>
         </div>
 
-        <!-- Section 3: Bottom User Input -->
-        <div class="py-4" :class="{ 'py-0': isExtensionMode }">
-          <div class="w-[100%] mx-auto mb-5">
-            <div
-              class="px-1.5 border border-gray-300 bg-gray-100"
-              :class="isExtensionMode ? 'rounded-2xl' : 'rounded-3xl'"
-            >
-              <div class="flex items-end rounded-4xl">
-                <textarea
-                  v-model="customInstructions"
-                  placeholder="Add specific instructions for AI optimization..."
-                  class="flex-1 translate-y-1 bg-transparent text-sm border-0 outline-none resize-none p-3 placeholder:text-gray-600"
+        <!-- Full UI State (Normal mode OR Extension mode with JD) -->
+        <div v-else class="smooth-expand animate-fade-in">
+          <!-- Step 1: Job Description Card -->
+          <div
+            class="transition-all duration-300 mb-6 animate-fade-in"
+            :class="{
+              'p-0 mb-0 h-[50px]': isExtensionMode,
+              'h-[300px] max-h-[400px] px-1.5': !isExtensionMode,
+              'mb-0': isExtensionMode,
+            }"
+          >
+            <div class="flex items-center gap-3 mb-2">
+              <!-- indicator -->
+              <div
+                v-if="!isExtensionMode"
+                class="-translate-y-1 flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold"
+                :class="
+                  isStep1Complete
+                    ? 'bg-teal-500 text-white'
+                    : 'bg-gray-300 text-gray-600'
+                "
+              >
+                <span v-if="!isStep1Complete">1</span>
+                <TICK v-else class="w-3 h-3" />
+              </div>
+              <div>
+                <p
+                  class="font-semibold text-gray-900 text-sm"
+                  :class="isExtensionMode ? 'text-xs' : 'text-base'"
+                >
+                  Job Description
+                </p>
+                <p class="text-xs text-gray-500" v-if="!isExtensionMode">
+                  Paste the job posting you're applying for
+                </p>
+              </div>
+            </div>
+            <textarea
+              v-model="jobDescription"
+              placeholder="Paste the job description here..."
+              rows="4"
+              :style="{
+                height: isExtensionMode ? '50px' : 'calc(100% - 50px)',
+                marginLeft: isExtensionMode ? '0' : '33px',
+                width: isExtensionMode ? '100%' : 'calc(100% - 50px)',
+              }"
+              class="w-full bg--100 rounded border border-gray-400 p-3 text-sm text-gray-700 placeholder:text-gray-400 resize-none outline-none"
+            ></textarea>
+          </div>
+
+          <!-- Step 2: Sections Card -->
+          <div
+            class="rounded-3xl transition-all duration-300 animate-fade-in-delayed"
+            :class="{
+              'p-0 mt-2 mb-1': isExtensionMode,
+              'mb-6 px-1.5': !isExtensionMode,
+            }"
+          >
+            <div class="flex items-center gap-3 mb-2">
+              <!-- indicator -->
+              <div
+                v-if="!isExtensionMode"
+                class="-translate-y-1 flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold"
+                :class="
+                  isStep2Complete
+                    ? 'bg-teal-500 text-white'
+                    : 'bg-gray-300 text-gray-600'
+                "
+              >
+                <span v-if="!isStep2Complete">2</span>
+                <TICK v-else class="w-4 h-4" />
+              </div>
+              <div>
+                <p
+                  class="font-semibold text-gray-900 text-sm"
                   :class="
-                    isExtensionMode
-                      ? 'h-[80px] placeholder:text-sm'
-                      : 'h-[150px] '
-                  "
-                ></textarea>
-                <button
-                  @click="optimizeResume"
-                  :disabled="!enableOptimizeButton"
-                  class="m-1 mb-2 w-max flex items-center justify-center bg-black text-white hover:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed"
-                  :class="
-                    isExtensionMode
-                      ? 'px-3 rounded-2xl h-8'
-                      : 'px-3 pr-2 rounded-full h-9'
+                    isExtensionMode ? 'text-xs mt-3 ml-[1px]' : 'text-base'
                   "
                 >
-                  <p
-                    class="font-semibold"
-                    :class="isExtensionMode ? 'text-xs mr-1' : 'text-sm mr-2'"
-                  >
-                    {{ isOptimizing ? "Tweaking..." : "Tweak" }}
-                  </p>
-                  <p
-                    class="font-semibold"
-                    :class="{
-                      'text-lg': isExtensionMode,
-                      'text-xl': !isExtensionMode,
-                    }"
-                  >
-                    ⚡️
-                  </p>
+                  Sections to Optimize
+                </p>
+                <p class="text-xs text-gray-500" v-if="!isExtensionMode">
+                  Choose which parts of your resume to improve
+                </p>
+              </div>
+            </div>
+            <div
+              style="height: calc(100% - 50px)"
+              class="w-full bg-white/80 rounded-2xl"
+            >
+              <div
+                class="flex flex-wrap"
+                :class="isExtensionMode ? 'gap-1' : 'gap-2 ml-[30px]'"
+              >
+                <button
+                  v-for="section in sections"
+                  :key="section.id"
+                  @click="toggleSection(section.id)"
+                  :class="[
+                    ' rounded-full text-xs font-medium transition-all duration-300  border',
+                    section.isSelected
+                      ? 'bg-[#6366f1] text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-400',
 
-                  <!-- <component :is="SEND" class="w-4 h-4" /> -->
+                    isExtensionMode ? 'p-1 px-2' : 'px-3 py-1.5',
+                  ]"
+                >
+                  {{ section.label }}
                 </button>
               </div>
             </div>
           </div>
+
+          <!-- Step 3: Custom Instructions (Optional) -->
+          <div
+            class="py-4 animate-fade-in-delayed-2"
+            :class="{ 'py-0': isExtensionMode }"
+          >
+            <div
+              class="flex items-center gap-3 mb-3 ml-[33px]"
+              v-if="!isExtensionMode"
+            >
+              <!-- indicator -->
+              <div
+                v-if="false"
+                class="-translate-y-1 flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold transition-colors duration-200"
+                :class="
+                  isStep1Complete && isStep2Complete
+                    ? 'bg-gray-400 text-white'
+                    : 'bg-gray-200 text-gray-400'
+                "
+              >
+                3
+              </div>
+              <div>
+                <p class="font-semibold text-gray-900 text-base">
+                  Custom Instructions
+                </p>
+                <p class="text-xs text-gray-500">
+                  Optional • Add specific requirements or focus areas
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="w-[100%] mx-auto mb-5"
+              :class="isExtensionMode ? '' : 'ml-[31px] w-[calc(100%-50px)]'"
+            >
+              <div
+                class="px-1.5 border border-gray-300 bg-gray-100"
+                :class="
+                  isExtensionMode ? 'rounded-2xl h-[90px]' : 'rounded-2xl'
+                "
+              >
+                <div class="flex items-end rounded-4xl">
+                  <textarea
+                    v-model="customInstructions"
+                    placeholder="e.g. Make minor tweaks, don't lie."
+                    class="flex-1 translate-y-1 bg-transparent text-sm border-0 outline-none resize-none placeholder:text-gray-600"
+                    :class="
+                      isExtensionMode
+                        ? 'h-[80px] placeholder:text-sm p-1 pb-3'
+                        : 'h-[150px] p-3'
+                    "
+                  ></textarea>
+                  <button
+                    @click="optimizeResume"
+                    :disabled="!enableOptimizeButton"
+                    class="m-1 mb w-max flex items-center justify-center bg-black text-white hover:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed"
+                    :class="
+                      isExtensionMode
+                        ? 'px-3 rounded-2xl h-8 mb-0 mr-0'
+                        : 'px-3 pr-2 rounded-full h-9 mb-2 mr-0'
+                    "
+                  >
+                    <p
+                      class="font-semibold"
+                      :class="isExtensionMode ? 'text-xs mr-1' : 'text-sm mr-2'"
+                    >
+                      {{ isOptimizing ? "Tweaking..." : "Tweak" }}
+                    </p>
+                    <p
+                      class="font-semibold"
+                      :class="{
+                        'text-lg': isExtensionMode,
+                        'text-md': !isExtensionMode,
+                      }"
+                    >
+                      ⚡️
+                    </p>
+
+                    <!-- <component :is="SEND" class="w-4 h-4" /> -->
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+        <!-- End Full UI State -->
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import ReactResumeBuilder from "../../ReactResumeBuilder.vue";
 import { useUserInfoManager } from "../../composables/useUserInfoManager";
 import SelectResume from "./SelectResume.vue";
 import SEND from "@/assets/svg/send.svg";
+import TICK from "@/assets/svg/tick.svg";
 import resumeApi from "@/api-factory/resume";
 import { toast } from "vue3-toastify";
 
@@ -176,11 +307,30 @@ const selectedResume = ref("");
 const isOptimizing = ref(false);
 const isExtensionMode = inject("isExtensionMode");
 
+// Debounced job description for UI switching
+const debouncedJobDescription = ref("");
+let debounceTimer: NodeJS.Timeout | null = null;
+
+// Watch for changes in job description and debounce
+watch(
+  jobDescription,
+  (newValue) => {
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
+
+    debounceTimer = setTimeout(() => {
+      debouncedJobDescription.value = newValue;
+    }, 1000);
+  },
+  { immediate: true }
+);
+
 const sections = ref([
   {
     id: "professionalSummary",
     label: "Professional Summary",
-    isSelected: true,
+    isSelected: false,
   },
   { id: "workExperiences", label: "Work Experience", isSelected: false },
   { id: "skills", label: "Skills", isSelected: false },
@@ -201,6 +351,15 @@ const enableOptimizeButton = computed(() => {
     selectedSections?.value?.length > 0
   );
 });
+
+// Use debounced job description for UI switching
+const hasMeaningfulJobDescription = computed(() => {
+  return debouncedJobDescription.value.trim().length > 0;
+});
+
+// Step completion indicators
+const isStep1Complete = computed(() => hasMeaningfulJobDescription.value);
+const isStep2Complete = computed(() => selectedSections.value.length > 0);
 
 const toggleSection = (sectionId: string) => {
   const section = sections.value.find((section) => section.id === sectionId);
@@ -248,7 +407,4 @@ const optimizeResume = async () => {
   }
 };
 </script>
-
-<style scoped>
-/* Additional styles if needed */
-</style>
+<style scoped lang="scss" src="./ResumeTweaker.scss"></style>

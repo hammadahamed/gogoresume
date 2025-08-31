@@ -7,6 +7,7 @@ import router from "./router";
 import Vue3Toastify, { type ToastContainerOptions } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import "./App.scss";
+import "./styles/animated-border.scss";
 import { setupMessageHandler } from "./utils/messageHandler";
 import { GoogleAuth } from "./helper/google-auth.helper";
 

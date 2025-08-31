@@ -23,7 +23,7 @@ export const templatesList = {
   //   },
   hybrid: {
     id: "hybrid",
-    name: "Hybrid Executive",
+    name: "Modern Minimal",
     description:
       "Professional hybrid design combining modern and classic elements",
     component: Template3,

@@ -146,13 +146,9 @@ export class UsersService {
 
   async setupTweakUsage(userId: string) {
     const tweakUsage = await TweakUsageModel.findOne({ userId });
-    if (!tweakUsage) {
-      await TweakUsageModel.create({
-        userId,
-        dailyTweaks: 0,
-        totalTweaks: 0,
-      });
-    }
+    tweakUsage.dailyTweaks = 0;
+    tweakUsage.totalTweaks = 0;
+    await tweakUsage.save();
   }
 
   async updateUserPaymentDataAndPlan(userId: string, paymentDataFromDodo) {

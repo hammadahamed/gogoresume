@@ -119,9 +119,12 @@ const handlePlanSelection = async (plan: any) => {
 async function handlePayment(plan: any) {
   try {
     isLoading.value = true;
-    const response = await PaymentApi.getPaymentLink(plan.id);
-    if (response && response.paymentLink) {
-      window.location.href = response.paymentLink;
+    const response = await PaymentApi.getPaymentLink(
+      plan.id,
+      route.meta.restrictPlan
+    );
+    if (response && response) {
+      window.location.href = response;
     } else {
       console.error("Invalid payment link received");
       isLoading.value = false;

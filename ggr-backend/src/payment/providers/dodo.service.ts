@@ -44,13 +44,17 @@ export class DodoPaymentService {
     );
   }
 
-  async getPaymentLink(productId: string, userId: string): Promise<string> {
+  async getPaymentLink(
+    productId: string,
+    userId: string,
+    isUpgrade = false,
+  ): Promise<string> {
     const user = await UsersModel.findById(userId);
-    // TODO[PROD]: Uncomment this
-    //
-    const isUserAlreadyHasPlan = await checkIfUserAlreadyHasPlan(user);
-    if (isUserAlreadyHasPlan) {
-      throw new ForbiddenException(PaymentErrors.USER_ALREADY_HAS_PLAN);
+    if (!isUpgrade) {
+      const isUserAlreadyHasPlan = await checkIfUserAlreadyHasPlan(user);
+      if (isUserAlreadyHasPlan) {
+        throw new ForbiddenException(PaymentErrors.USER_ALREADY_HAS_PLAN);
+      }
     }
     const { orderId } = OrderHelper.createIdAndToken(userId, productId, true);
     const redirect_url = `${config.gogoresumeFrontendUrl}/payment-success?orderId=${orderId}`;

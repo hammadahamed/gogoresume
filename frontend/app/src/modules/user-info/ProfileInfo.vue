@@ -8,7 +8,7 @@
           <div
             class="w-64 h-64 flex items-center justify-center rounded-lg overflow-hidden"
           >
-            <component :is="FILLOUT_INFO" class="w-full h-full" />
+            <component :is="FILLOUT_INFO" class="h-full rounded-r-full" />
           </div>
         </div>
 
