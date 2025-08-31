@@ -1,44 +1,99 @@
 .pricing-page {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 64px;
+    padding: 32px 16px;
     background-color: #ffffff;
+
+    @media (min-width: 640px) {
+        padding: 48px 24px;
+    }
+
+    @media (min-width: 1024px) {
+        padding: 64px;
+    }
 
     &__header {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        margin-bottom: 64px;
-        height: 300px;
+        margin-bottom: 32px;
+        height: auto;
+        padding: 32px 16px;
+
+        @media (min-width: 640px) {
+            margin-bottom: 48px;
+            padding: 48px 16px;
+        }
+
+        @media (min-width: 1024px) {
+            margin-bottom: 64px;
+            height: 300px;
+            padding: 0;
+        }
 
         h1 {
-            font-size: 60px;
+            font-size: 32px;
             font-weight: 700;
             color: #111827;
             max-width: 1000px;
             text-align: center;
+            line-height: 1.2;
+
+            @media (min-width: 640px) {
+                font-size: 48px;
+            }
+
+            @media (min-width: 1024px) {
+                font-size: 60px;
+            }
         }
 
         p {
-            margin-top: 20px;
-            font-size: 20px;
+            margin-top: 16px;
+            font-size: 16px;
             color: #6b7280;
             max-width: 800px;
             text-align: center;
+            line-height: 1.6;
+
+            @media (min-width: 640px) {
+                margin-top: 20px;
+                font-size: 18px;
+            }
+
+            @media (min-width: 1024px) {
+                font-size: 20px;
+            }
         }
     }
 
     &__grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: 1fr;
         justify-content: center;
         align-self: start;
         justify-items: center;
-        gap: 64px;
-        margin-bottom: 84px;
+        gap: 32px;
+        margin-bottom: 48px;
         align-items: center;
         position: relative;
+
+        @media (min-width: 768px) {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        @media (min-width: 1024px) {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 48px;
+            margin-bottom: 64px;
+        }
+
+        @media (min-width: 1200px) {
+            gap: 64px;
+            margin-bottom: 84px;
+        }
     }
 
     &__comparison {
@@ -67,9 +122,13 @@
 
                 .feature-column,
                 .plan-column {
-                    padding: 16px;
+                    padding: 12px 8px;
                     display: flex;
                     align-items: center;
+
+                    @media (min-width: 640px) {
+                        padding: 16px;
+                    }
                 }
 
                 .feature-column {
@@ -79,7 +138,11 @@
 
                     .feature-name {
                         margin-right: 8px;
-                        font-size: $font-size-small;
+                        font-size: 14px;
+
+                        @media (min-width: 640px) {
+                            font-size: $font-size-small;
+                        }
                     }
 
                     .feature-info {
