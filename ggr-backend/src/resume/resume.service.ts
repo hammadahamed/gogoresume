@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import UserProfileModel from 'src/schemas/userProfile.schema';
 import SavedResumeModel, { ISavedResume } from 'src/schemas/savedResume.schema';
+import { planFeatures } from 'src/planConfig';
 
 @Injectable()
 export class ResumeService {
@@ -46,7 +47,7 @@ export class ResumeService {
     }
   }
 
-  async saveResume(
+  async createResume(
     userId: string,
     name: string,
     data: any,
@@ -100,16 +101,8 @@ export class ResumeService {
     }
   }
 
-  async getSavedResumes(userId: string): Promise<{
-    status: string;
-    data: {
-      id: string;
-      name: string;
-      templateId: string;
-      createdAt: Date;
-      updatedAt: Date;
-    }[];
-  }> {
+  async getSavedResumes(user: any) {
+    const { id: userId, currentPlan } = user;
     try {
       const fields: any = {
         _id: 1,
@@ -130,7 +123,14 @@ export class ResumeService {
         updatedAt: resume.updatedAt,
       }));
 
-      return { status: 'success', data: formattedResumes };
+      return {
+        status: 'success',
+        data: {
+          resumes: formattedResumes,
+          total: resumes.length,
+          max: planFeatures[currentPlan.planId].numberOfResumes,
+        },
+      };
     } catch (error) {
       console.error('Error loading saved resumes:', error);
       throw new Error('Failed to load saved resumes');

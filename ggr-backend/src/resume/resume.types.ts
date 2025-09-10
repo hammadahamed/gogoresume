@@ -1,33 +1,47 @@
-interface PersonalInfo {
+export interface PersonalInfo {
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
   location: string;
-  address: string;
   linkedin: string;
   portfolio: string;
   professionalLinks: Array<{ label: string; url: string }>;
   professionalSummary: string;
 }
 
-interface Experience {
+export interface Experience {
   company: string;
   position: string;
   location: string;
   startDate: string;
   endDate: string;
   current: boolean;
+  description: string[];
+}
+
+export interface Education {
+  school: string;
+  degree: string;
+  gpa?: string;
+  startDate: string;
+  endDate: string;
+  honors?: string[];
+}
+
+export interface Project {
+  name: string;
   description: string;
-  achievements: string[];
+  projectLink?: string;
+  sourceCode?: string;
 }
 
 export interface UserProfileData {
   personalInfo: PersonalInfo;
   workExperiences: Experience[];
-  education: any[]; // Add proper type if needed
+  education: Education[];
   skills: string[];
-  projects: any[]; // Add proper type if needed
+  projects: Project[];
 }
 
 export type SectionId =
@@ -40,9 +54,10 @@ export interface TweakResumeDTO {
   data: UserProfileData;
   jobDescription: string;
   userPrompt: string;
-  sections: SectionId[]; // sections to focus on
+  sections: SectionId[];
 }
 
 export interface TweakResumeResponse {
   data: UserProfileData;
+  matchScore: number;
 }

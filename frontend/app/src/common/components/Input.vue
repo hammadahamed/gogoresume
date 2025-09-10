@@ -1,31 +1,35 @@
 <template>
   <div class="mb-4">
-    <label class="block text-sm font-semibold text-left text-gray-700 mb-1.5">
+    <label
+      class="block text-sm font-semibold text-left text-gray-700 mb-1.5"
+      name="label"
+    >
       {{ label }}
     </label>
-    <div v-if="multiline">
-      <textarea
-        v-bind="inputProps"
-        :rows="rows"
-        :class="baseInputStyles"
-        ref="inputRef"
-        :placeholder="placeholder"
-        :value="modelValue"
-        @input="handleInput"
-      ></textarea>
-    </div>
-    <div v-else>
-      <input
-        v-bind="inputProps"
-        :type="type"
-        :class="baseInputStyles"
-        @click="handleClick"
-        ref="inputRef"
-        :placeholder="placeholder"
-        :value="modelValue"
-        @input="handleInput"
-      />
-    </div>
+    <textarea
+      name="textarea"
+      v-if="multiline"
+      v-bind="inputProps"
+      :rows="rows"
+      :class="baseInputStyles"
+      ref="inputRef"
+      :placeholder="placeholder"
+      :value="modelValue"
+      @input="handleInput"
+    ></textarea>
+
+    <input
+      v-else
+      v-bind="inputProps"
+      :id="id"
+      :type="type"
+      :class="baseInputStyles"
+      @click="handleClick"
+      ref="inputRef"
+      :placeholder="placeholder"
+      :value="modelValue"
+      @input="handleInput"
+    />
   </div>
 </template>
 
@@ -37,14 +41,13 @@ export default {
   props: {
     label: {
       type: String,
-      required: true,
     },
     multiline: {
       type: Boolean,
       default: false,
     },
     rows: {
-      type: Number,
+      type: [Number, String],
       default: 3,
     },
     type: {
@@ -57,6 +60,14 @@ export default {
     },
     modelValue: {
       type: [String, Number],
+      default: "",
+    },
+    className: {
+      type: String,
+      default: "",
+    },
+    id: {
+      type: String,
       default: "",
     },
   },

@@ -1,124 +1,53 @@
 <template>
-  <section class="py-12 sm:py-16 lg:py-20 bg-white">
+  <section id="faq" class="py-16 mb-24 sm:py-20 lg:py-24 bg-white">
     <div class="max-w-4xl mx-auto px-4 sm:px-6">
-      <div class="text-center mb-12 sm:mb-16">
-        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
-          Frequently Asked
-          <span class="bg-highlight text-black px-1 sm:px-2">Questions</span>
+      <div class="text-center mb-16 sm:mb-20">
+        <div
+          class="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full mb-6"
+        >
+          <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+          <span class="text-sm font-medium text-gray-600">FAQ</span>
+        </div>
+        <h2
+          class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6"
+        >
+          Frequently Asked Questions
         </h2>
-        <p class="text-lg sm:text-xl text-gray-600 px-4 sm:px-0">Everything you need to know about GoGoResume</p>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          Everything you need to know about
+          <span class="bg-highlight font-medium">GoGoResume</span>
+        </p>
       </div>
 
-      <div class="space-y-4 sm:space-y-6">
-        <!-- FAQ Item 1 -->
-        <div class="faq-item">
-          <button @click="toggleFaq(0)" class="faq-question">
-            <span>How does the AI optimization work?</span>
+      <div class="space-y-2">
+        <!-- FAQ Items -->
+        <div
+          v-for="(faq, index) in faqItems"
+          :key="index"
+          class="faq-item group"
+          :class="{ active: openFaqs[index] }"
+        >
+          <button @click="toggleFaq(index)" class="faq-question">
+            <span class="faq-text">{{ faq.question }}</span>
             <svg
               class="faq-icon"
-              :class="{ 'rotate-180': openFaqs[0] }"
+              :class="{ 'rotate-180': openFaqs[index] }"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              ></path>
             </svg>
           </button>
-          <div class="faq-answer" :class="{ open: openFaqs[0] }">
-            <p>
-              Our AI analyzes job descriptions and optimizes your resume content to include relevant keywords and
-              phrases that ATS systems look for. It also improves the overall structure and impact of your resume to
-              better showcase your qualifications.
-            </p>
-          </div>
-        </div>
-
-        <!-- FAQ Item 2 -->
-        <div class="faq-item">
-          <button @click="toggleFaq(1)" class="faq-question">
-            <span>What file formats can I download my resume in?</span>
-            <svg
-              class="faq-icon"
-              :class="{ 'rotate-180': openFaqs[1] }"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div class="faq-answer" :class="{ open: openFaqs[1] }">
-            <p>
-              You can download your resume in multiple formats including PDF, DOCX, and plain text. PDF is recommended
-              for most applications as it maintains formatting across different devices and systems.
-            </p>
-          </div>
-        </div>
-
-        <!-- FAQ Item 3 -->
-        <div class="faq-item">
-          <button @click="toggleFaq(2)" class="faq-question">
-            <span>Can I create multiple resumes for different jobs?</span>
-            <svg
-              class="faq-icon"
-              :class="{ 'rotate-180': openFaqs[2] }"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div class="faq-answer" :class="{ open: openFaqs[2] }">
-            <p>
-              Yes! You can create unlimited resumes with different templates and content optimized for specific job
-              positions. Each resume can be tailored to match the requirements of different job descriptions.
-            </p>
-          </div>
-        </div>
-
-        <!-- FAQ Item 4 -->
-        <div class="faq-item">
-          <button @click="toggleFaq(3)" class="faq-question">
-            <span>How do I know if my resume is ATS-friendly?</span>
-            <svg
-              class="faq-icon"
-              :class="{ 'rotate-180': openFaqs[3] }"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div class="faq-answer" :class="{ open: openFaqs[3] }">
-            <p>
-              All our templates are designed to be ATS-friendly with proper formatting, clear sections, and standard
-              fonts. Our AI optimization also ensures your content includes relevant keywords that ATS systems
-              recognize.
-            </p>
-          </div>
-        </div>
-
-        <!-- FAQ Item 5 -->
-        <div class="faq-item">
-          <button @click="toggleFaq(4)" class="faq-question">
-            <span>Is there a free trial available?</span>
-            <svg
-              class="faq-icon"
-              :class="{ 'rotate-180': openFaqs[4] }"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div class="faq-answer" :class="{ open: openFaqs[4] }">
-            <p>
-              Yes! You can try our basic features for free. Create your first resume and see how our platform works.
-              For full AI optimization and premium templates, you'll need to upgrade to our paid plan.
-            </p>
+          <div class="faq-answer" :class="{ open: openFaqs[index] }">
+            <div class="faq-answer-content">
+              <p style="color: #6b7280 !important">{{ faq.answer }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -129,8 +58,37 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+// FAQ data
+const faqItems = [
+  {
+    question: "How does the AI optimization work?",
+    answer:
+      "Our AI analyzes job descriptions and optimizes your resume content to include relevant keywords and phrases that ATS systems look for. It also improves the overall structure and impact of your resume to better showcase your qualifications.",
+  },
+  {
+    question: "What file formats can I download my resume in?",
+    answer:
+      "You can download your resume in multiple formats including PDF, DOCX, and plain text. PDF is recommended for most applications as it maintains formatting across different devices and systems.",
+  },
+  {
+    question: "Can I create multiple resumes for different jobs?",
+    answer:
+      "Yes! You can create unlimited resumes with different templates and content optimized for specific job positions. Each resume can be tailored to match the requirements of different job descriptions.",
+  },
+  {
+    question: "How do I know if my resume is ATS-friendly?",
+    answer:
+      "All our templates are designed to be ATS-friendly with proper formatting, clear sections, and standard fonts. Our AI optimization also ensures your content includes relevant keywords that ATS systems recognize.",
+  },
+  {
+    question: "Is there a free trial available?",
+    answer:
+      "Yes! You can try our basic features for free. Create your first resume and see how our platform works. For full AI optimization and premium templates, you'll need to upgrade to our paid plan.",
+  },
+];
+
 // FAQ functionality
-const openFaqs = ref<boolean[]>([false, false, false, false, false]);
+const openFaqs = ref<boolean[]>(new Array(faqItems.length).fill(false));
 
 const toggleFaq = (index: number) => {
   openFaqs.value[index] = !openFaqs.value[index];
@@ -138,16 +96,23 @@ const toggleFaq = (index: number) => {
 </script>
 
 <style scoped lang="scss">
-// FAQ Section Styles
+// Minimal Cool FAQ Section Styles
 .faq-item {
   border: 1px solid #e5e7eb;
-  border-radius: 0.75rem;
+  border-radius: 12px;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
 
   &:hover {
+    transform: translateY(-1px);
     border-color: #d1d5db;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
+  }
+
+  &.active {
+    border-color: #9ca3af;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.1);
   }
 }
 
@@ -156,94 +121,139 @@ const toggleFaq = (index: number) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem;
-  background: white;
+  padding: 1.5rem 1.75rem;
+  background: transparent;
   border: none;
   text-align: left;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #374151;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 
-  &:hover {
-    background: #f9fafb;
+  .faq-text {
+    flex: 1;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #374151;
+    line-height: 1.5;
+    transition: color 0.3s ease;
+    margin-right: 1rem;
   }
 
-  span {
-    flex: 1;
-    margin-right: 1rem;
+  &:hover .faq-text {
+    color: #111827;
+  }
+
+  .faq-item.active & .faq-text {
+    color: #111827;
   }
 }
 
 .faq-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  color: #6b7280;
-  transition: transform 0.3s ease;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #9ca3af;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
 
   &.rotate-180 {
     transform: rotate(180deg);
+  }
+
+  .faq-question:hover & {
+    color: #6b7280;
+  }
+
+  .faq-item.active & {
+    color: #374151;
   }
 }
 
 .faq-answer {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease, padding 0.3s ease;
-  background: #f9fafb;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #fafafa;
+  border-top: 1px solid #f3f4f6;
 
   &.open {
-    max-height: 200px;
-    padding: 1.5rem;
+    max-height: 300px;
+  }
+
+  .faq-answer-content {
+    padding: 1.5rem 1.75rem;
+    transform: translateY(-10px);
+    transition: all 0.3s ease 0.1s;
+
+    .faq-answer.open & {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   p {
     margin: 0;
     color: #6b7280;
-    line-height: 1.6;
+    line-height: 1.7;
+    font-size: 0.95rem;
   }
 }
 
-// Responsive adjustments for FAQ
+// Responsive adjustments
 @media (max-width: 768px) {
   .faq-question {
-    padding: 1.25rem 1rem;
-    font-size: 1rem;
-    
-    span {
-      margin-right: 0.75rem;
+    padding: 1.25rem 1.5rem;
+
+    .faq-text {
+      font-size: 1rem;
     }
-  }
-
-  .faq-answer.open {
-    padding: 1.25rem 1rem;
-  }
-
-  .faq-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .faq-question {
-    padding: 1rem 0.75rem;
-    font-size: 0.925rem;
-    
-    span {
-      margin-right: 0.5rem;
-    }
-  }
-
-  .faq-answer.open {
-    padding: 1rem 0.75rem;
   }
 
   .faq-icon {
     width: 1.125rem;
     height: 1.125rem;
+  }
+
+  .faq-answer-content {
+    padding: 1.25rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .faq-question {
+    padding: 1rem 1.25rem;
+
+    .faq-text {
+      font-size: 0.95rem;
+    }
+  }
+
+  .faq-answer-content {
+    padding: 1rem 1.25rem;
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Smooth animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.faq-item {
+  animation: fadeInUp 0.6s ease forwards;
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
   }
 }
 </style>

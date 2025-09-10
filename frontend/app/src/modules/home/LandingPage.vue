@@ -1,9 +1,9 @@
 <template>
-  <div class="h-screen w-screen overflow-y-auto" style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);">
+  <div class="h-screen w-screen overflow-y-auto">
     <Navigation />
     <HeroSection @scroll-to-pricing="scrollToPricing" />
-    <HowItWorksSection />
-    <WorkingProcessSection />
+
+    <HowItWorks />
     <!-- <ComparisonSection /> -->
     <PricingSection ref="pricingSection" />
     <FAQSection />
@@ -15,8 +15,7 @@
 import { ref } from "vue";
 import Navigation from "./Navigation.vue";
 import HeroSection from "./HeroSection.vue";
-import HowItWorksSection from "./HowItWorksSection.vue";
-import WorkingProcessSection from "./WorkingProcessSection.vue";
+import HowItWorks from "./HowItWorks.vue";
 // import ComparisonSection from "./ComparisonSection.vue";
 import PricingSection from "./PricingSection.vue";
 import FAQSection from "./FAQSection.vue";

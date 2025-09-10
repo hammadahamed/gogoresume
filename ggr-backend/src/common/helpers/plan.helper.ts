@@ -58,14 +58,16 @@ const planUpgradeData = (currentPlan: Plans) => {
 
 export const constructPlanDataForBootstrap = async (user: IUser) => {
   const paymentIdMongo = user.plan?.currentPaymentId;
+  const defaultReturn = {
+    internalPlanId: Plans.FREE,
+    isActive: false,
+    ...planUpgradeData(Plans.FREE),
+  };
   if (!user.plan || !paymentIdMongo) {
-    return {
-      internalPlanId: Plans.FREE,
-      isActive: false,
-      ...planUpgradeData(Plans.FREE),
-    };
+    return defaultReturn;
   }
   const payment = await PaymentModel.findById(paymentIdMongo).select(fields);
+  if (!payment) return defaultReturn;
   const isExpired = getIsExpired(user.plan.planEnd);
 
   //  we are supplying the plan details even after plan expiry

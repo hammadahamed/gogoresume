@@ -14,18 +14,16 @@
 
         <!-- Messaging -->
         <div class="space-y-6">
-          <p class="text-4xl text-left font-bold text-gray-900 leading-tight">
+          <p class="text-3xl text-left font-bold text-gray-900 leading-tight">
             Build Your Master Profile
           </p>
-          <p class="text-gray-700">
+          <p class="text-gray-700" style="line-height: 35px">
             Instead of typing your profile 1000s of times across many sites,
 
-            <span class="font-bold squiggly-underline">
-              Type here just once</span
-            >
+            <span class="font-bold bg-highlight"> Type here just once</span>
           </p>
           <!-- Benefits -->
-          <div class="space-y-2 mt-8 mb-8">
+          <div class="space-y-1 mt-8 mb-8">
             <div
               v-for="benefit in benefits"
               :key="benefit.id"
@@ -33,9 +31,9 @@
             >
               <div
                 :style="{
-                  background: 'var(--primary-color)',
+                  background: 'black',
                 }"
-                class="w-2 h-2 rounded-full transform rotate-45"
+                class="w-1.5 h-1.5 rounded-full transform rotate-45"
               ></div>
               <span class="font">{{ benefit.text }}</span>
             </div>
@@ -61,27 +59,37 @@
     </div>
 
     <!-- Right pane - UserInfo Form -->
+
     <div
       class="w-[50%] bg-white border-4 border-black m-10"
       style="height: calc(100vh - 120px)"
     >
-      <UserInfo />
+      <div v-if="loading" class="flex justify-center items-center h-full">
+        <Spinner />
+      </div>
+      <UserInfo v-else />
       <div class="flex justify-end pb-10 mt-4">
-        <SaveProfileBtn :userInfo="userInfo" />
+        <SaveProfileBtn :userInfo="currentResume" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import UserInfo from "./UserInfo.vue";
 import SaveProfileBtn from "./SaveProfileBtn.vue";
-import FILLOUT_INFO from "../../assets/illustrations/fillout_resume_info.svg";
+import FILLOUT_INFO from "@/assets/illustrations/fillout_resume_info.svg";
 import { useAppStore } from "../../stores/useAppStore";
-import { useUserInfoManager } from "../../composables/useUserInfoManager";
+import { useDataManager } from "../../composables/useDataManager";
+import { useUserStore } from "@/stores/useUserStore";
+import { toast } from "vue3-toastify";
+import Spinner from "@/common/components/Spinner.vue";
 
 const appStore = useAppStore();
-const { userInfo } = useUserInfoManager();
+const { currentResume, getUserProfile } = useDataManager();
+const userStore = useUserStore();
+const loading = ref(true);
 
 const benefits = [
   {
@@ -97,6 +105,23 @@ const benefits = [
     text: "AI-powered job optimization",
   },
 ];
+
+const init = async () => {
+  try {
+    loading.value = true;
+    await getUserProfile();
+    userStore.setCurrentResume(userStore.userInfo);
+  } catch (error) {
+    console.error("Error initializing user info:", error);
+    toast.error("Failed to initialize user info");
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(async () => {
+  await init();
+});
 </script>
 
 <style scoped>

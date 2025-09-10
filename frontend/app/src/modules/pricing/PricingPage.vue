@@ -1,7 +1,10 @@
 <!-- PricingPage.vue -->
 <template>
-  <div class="pricing-page">
-    <div class="pricing-page__header" v-if="!route.meta.restrictPlan">
+  <div class="pricing-page pb-0">
+    <div
+      class="pricing-page__header"
+      v-if="!route.meta.restrictPlan && !homeView"
+    >
       <h1>
         Screw the ATS ,
         <p class="squiggly-underlin bg-highlight font-bold text-black">
@@ -18,7 +21,7 @@
         without breaking the bank.
       </p>
     </div>
-    <div v-else>
+    <div v-else-if="!homeView">
       <p class="text-center text-5xl font-bold mb-28 mt-10">
         <span class="bg-highlight font-bold text-black">Upgrade</span> to unlock
         more power
@@ -48,7 +51,7 @@
       />
     </div>
 
-    <div class="pricing-page__comparison py-24 pb-48">
+    <div class="pricing-page__comparison py-24 pb-0">
       <div class="comparison-table">
         <div class="comparison-row header-row">
           <div class="feature-column">Features</div>
@@ -90,6 +93,13 @@ import Spinner from "@/common/components/Spinner.vue";
 import PaymentApi from "@/api-factory/payment";
 import { toast } from "vue3-toastify";
 import { useUserStore } from "@/stores/useUserStore";
+
+const props = defineProps({
+  homeView: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const router = useRouter();
 const isLoading = ref(false);

@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common';
 import { ResumeController } from './resume.controller';
 import { OpenAIModule } from '../openai/openai.module';
-import { ResumeService } from './resume.sevice';
+import { ClaudeModule } from '../claude/claude.module';
+import { ResumeService } from './resume.service';
 import { ResumeTweakerService } from './resume-tweaker.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersService } from 'src/users/users.service';
+import { FeaturesGuard } from 'src/guards/features.guard';
 
 @Module({
-  imports: [OpenAIModule, JwtModule],
+  imports: [OpenAIModule, ClaudeModule, JwtModule],
   controllers: [ResumeController],
   providers: [
     ResumeTweakerService,
@@ -16,6 +18,7 @@ import { UsersService } from 'src/users/users.service';
     JwtService,
     AuthService,
     UsersService,
+    FeaturesGuard,
   ],
 })
 export class ResumeModule {}

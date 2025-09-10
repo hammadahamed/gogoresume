@@ -12,3 +12,11 @@ export const TweakErrors = {
 export const TweakErrorCode = {
   TWEAK_USAGE_LIMIT_REACHED: 'TWEAK_USAGE_LIMIT_REACHED',
 };
+
+export const ResumeErrors = {
+  RESUME_LIMIT_REACHED: 'Resume creation limit reached',
+};
+
+export const ResumeErrorCode = {
+  RESUME_LIMIT_REACHED: 'RESUME_LIMIT_REACHED',
+};

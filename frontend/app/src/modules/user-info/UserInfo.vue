@@ -3,9 +3,9 @@
     <div class="flex justify-center pt-10 mx-10">
       <form @submit.prevent class="pb-32" style="width: 550px">
         <PersonalInfoForm
-          v-if="userInfo.personalInfo"
-          :personalInfo="userInfo.personalInfo"
-          :ProfessionalSummary="userInfo.professionalSummary"
+          v-if="currentResume.personalInfo"
+          :personalInfo="currentResume.personalInfo"
+          :professionalSummary="currentResume.professionalSummary"
           :onChange="handlePersonalInfoChange"
         />
 
@@ -106,7 +106,7 @@ import EducationForm from "./components/EducationForm.vue";
 import ProjectForm from "./components/ProjectForm.vue";
 import SkillsForm from "./components/SkillsForm.vue";
 import Section from "./components/Section.vue";
-import { useUserInfoManager } from "../../composables/useUserInfoManager";
+import { useDataManager } from "../../composables/useDataManager";
 import {
   emptyExperience,
   emptyEducation,
@@ -117,79 +117,80 @@ import {
   cleanupWindowEvents,
 } from "../../utils/windowEvents";
 
-const { userInfo, getUserProfile } = useUserInfoManager();
+const { getUserProfile, currentResume } = useDataManager();
 
 // Initialize window events for suggestions
 onMounted(() => {
-  initializeWindowEvents();
-  // Load user profile
-  getUserProfile();
+  //   initializeWindowEvents();
 
   // Cleanup on unmount
   return () => {
-    cleanupWindowEvents();
+    // cleanupWindowEvents();
   };
 });
 
 // Computed properties with default values
-const workExperiences = computed(() => userInfo.value.workExperiences);
-const education = computed(() => userInfo.value.education);
-const skills = computed(() => userInfo.value.skills);
-const projects = computed(() => userInfo.value.projects);
+const workExperiences = computed(
+  () => currentResume.value.workExperiences || []
+);
+const education = computed(() => currentResume.value.education || []);
+const skills = computed(() => currentResume.value.skills || []);
+const projects = computed(() => currentResume.value.projects || []);
 
 function handlePersonalInfoChange(updatedInfo) {
-  userInfo.value.personalInfo = updatedInfo.personalInfo;
-  userInfo.value.personalInfo.professionalLinks = updatedInfo.professionalLinks;
-  userInfo.value.professionalSummary = updatedInfo.professionalSummary;
+  currentResume.value.personalInfo = updatedInfo.personalInfo;
+  currentResume.value.personalInfo.professionalLinks =
+    updatedInfo.professionalLinks;
+  currentResume.value.professionalSummary = updatedInfo.professionalSummary;
 }
 
 function handleAddExperience() {
-  userInfo.value.workExperiences.push({ ...emptyExperience });
+  currentResume.value.workExperiences.push({ ...emptyExperience });
 }
 
 function handleExperienceChange(index, updatedExperience) {
-  userInfo.value.workExperiences[index] = updatedExperience;
+  currentResume.value.workExperiences[index] = updatedExperience;
   if (updatedExperience.current) {
-    userInfo.value.workExperiences.forEach((exp, i) => {
+    currentResume.value.workExperiences.forEach((exp, i) => {
       if (i !== index) exp.current = false;
     });
   }
 }
 
 function handleDeleteExperience(index) {
-  userInfo.value.workExperiences.splice(index, 1);
+  currentResume.value.workExperiences.splice(index, 1);
 }
 
 function handleAddEducation() {
-  userInfo.value.education.push({ ...emptyEducation });
+  currentResume.value.education.push({ ...emptyEducation });
 }
 
 function handleEducationChange(index, updatedEducation) {
-  userInfo.value.education[index] = updatedEducation;
+  currentResume.value.education[index] = updatedEducation;
 }
 
 function handleDeleteEducation(index) {
-  userInfo.value.education.splice(index, 1);
+  currentResume.value.education.splice(index, 1);
 }
 
 function handleSkillsChange(updatedSkills) {
-  userInfo.value.skills = updatedSkills;
+  currentResume.value.skills = updatedSkills;
 }
 
 function handleAddProject() {
-  userInfo.value.projects.push({ ...emptyProject });
+  currentResume.value.projects.push({ ...emptyProject });
 }
 
 function handleProjectChange(index, updatedProject) {
-  userInfo.value.projects[index] = updatedProject;
+  currentResume.value.projects[index] = updatedProject;
 }
 
 function handleDeleteProject(index) {
-  userInfo.value.projects.splice(index, 1);
+  currentResume.value.projects.splice(index, 1);
 }
 
 const hasCurrentExperience = computed(() => {
-  return userInfo.value.workExperiences.some((exp) => exp.current);
+  return currentResume.value.workExperiences.some((exp) => exp.current);
 });
 </script>
 

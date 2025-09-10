@@ -1,17 +1,17 @@
 import { getSuggestions } from "./suggestions";
-import { useUserInfoManager } from "../composables/useUserInfoManager";
+import { useDataManager } from "../composables/useDataManager";
 
 export function setupMessageHandler() {
   console.log("Setting up message handler");
-  const { getUserProfile } = useUserInfoManager();
+  const { getUserProfile } = useDataManager();
 
   // Load user data when message handler is initialized
-  getUserProfile().then(() => {
-    console.log("User profile loaded in message handler");
-  });
+  //   getUserProfile().then(() => {
+  //     console.log("User profile loaded in message handler");
+  //   });
 
   window.addEventListener("message", (event) => {
-    console.log("🔥🔥 Message received in iframe:", event.data);
+    // console.log("🔥🔥 Message received in iframe:", event.data);
 
     // Handle field click events from content script
     if (event.data.type === "FIELD_CLICK") {

@@ -31,13 +31,6 @@ export class OpenAIService {
         temperature: 0.7,
         max_tokens: 4000, // Increased for GPT-4
       });
-      console.log(
-        '🚀 ~ OpenAIService ~ generateContent ~ completion:',
-        completion,
-      );
-
-      console.log('\n\n\n>>>>>>');
-      console.dir(completion.choices[0]?.message?.content, { depth: 10 });
 
       return completion.choices[0]?.message?.content || '{}';
     } catch (error) {

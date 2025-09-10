@@ -2,13 +2,12 @@
   <div class="flex flex-col h-screen w-full">
     <!-- Section 2: Main Content -->
     <div
-      class="flex-1 flex flex-col lg:flex-row-reverse mx-auto w-full max-w-[1000px]"
-      :class="{ 'justify-between': isExtensionMode }"
+      class="flex-1 flex flex-col lg:flex-row-reverse mx-auto w-full max-w-[1100px]"
+      :class="{ 'justify-between': isExtensionMode, 'pr-10': !isExtensionMode }"
     >
       <!-- Left: Resume Preview -->
-      <div v-if="!userInfo">No user info</div>
       <div
-        v-else-if="
+        v-if="
           !isExtensionMode || (isExtensionMode && hasMeaningfulJobDescription)
         "
         class="w-full p-6 flex flex-col max-w-[800px] smooth-expand"
@@ -18,393 +17,341 @@
           class="flex-1 flex flex-col justify-center"
           :class="isExtensionMode ? 'w-full' : 'w-auto'"
         >
-          <SelectResume
-            v-model="selectedResume"
-            class="z-10"
-            :class="isExtensionMode ? 'w-[180px]' : 'w-[240px]'"
-          />
-          <ReactResumeBuilder
-            :userData="userInfo"
-            class="-mt-15 animate-fade-in"
-          />
+          <div class="flex items-center gap-3">
+            <SelectResume
+              v-model="selectedResumeId"
+              :options="resumeOptions"
+              :loading="resumesLoading"
+              class="z-10"
+              :class="isExtensionMode ? 'w-[130px]' : 'w-[240px]'"
+            />
+
+            <!-- Undo/Redo Controls -->
+            <UndoRedoControls
+              v-if="!loading && currentResume"
+              :can-undo="historyState.canUndo"
+              :can-redo="historyState.canRedo"
+              @undo="handleUndo"
+              @redo="handleRedo"
+            />
+          </div>
+
+          <div
+            v-if="loading"
+            class="flex items-center justify-center border-3 border-gray-800"
+            style="height: auto; aspect-ratio: 1 / 1.41"
+          >
+            <Spinner />
+          </div>
+
+          <div class="relative" :class="!isExtensionMode && 'w-[520px]'">
+            <MatchScoreDisplay
+              :matchScore="matchScore"
+              :show-score="!loading"
+            />
+            <ReactResumeBuilder
+              v-show="!loading"
+              :userData="currentResume"
+              class="-mt-15 animate-fade-in"
+            />
+
+            <!-- Clean Twinkling Overlay -->
+            <div
+              v-show="!loading && isOptimizing"
+              class="absolute inset-0 pointer-events-none z-10 h-full -mt-2"
+              style="aspect-ratio: 1 / 1.42"
+            >
+              <!-- Subtle backdrop -->
+              <div
+                class="absolute inset-0 bg-black-50/90 backdrop-blur-[0.75px] rounded-lg"
+              ></div>
+
+              <!-- Scattered sparkle elements -->
+              <div class="sparkle-blob large" style="top: 25%; left: 20%"></div>
+              <div
+                class="sparkle-blob medium"
+                style="top: 20%; left: 75%"
+              ></div>
+              <div class="sparkle-blob small" style="top: 75%; left: 80%"></div>
+              <div
+                class="sparkle-blob medium"
+                style="top: 80%; left: 25%"
+              ></div>
+
+              <!-- Center sparkle -->
+              <div
+                class="sparkle-blob large center-sparkle"
+                style="top: 50%; left: 50%; transform: translate(-50%, -50%)"
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Right: Interactive Cards -->
-      <div
-        class="w-full flex flex-col justify-center smooth-expand"
-        :class="isExtensionMode ? 'pt-2 justify-end px-6' : 'p-6'"
-      >
-        <!-- Extension Mode ONLY: Initial State with JD Box -->
-        <div
-          v-if="isExtensionMode && !hasMeaningfulJobDescription"
-          class="flex flex-col items-center justify-center h-screen py-8 smooth-expand"
-        >
-          <div class="text-center mb-6 animate-fade-in">
-            <div
-              class="w-12 h-12 bg-[var(--primary-color)] rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm"
-            >
-              <svg
-                class="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
-            </div>
-            <h3 class="text-sm font-semibold text-gray-900 mb-1">
-              Ready to optimize?
-            </h3>
-            <p class="text-xs text-gray-500">
-              Paste the job description to get started
-            </p>
-          </div>
-
-          <div class="w-full">
-            <div
-              class="relative"
-              :class="{
-                'rainbow-border-wrapper': !hasMeaningfulJobDescription,
-              }"
-            >
-              <textarea
-                v-model="jobDescription"
-                placeholder="Paste the job description here..."
-                class="w-full h-[120px] bg-gray-50 rounded-lg border-[2px] border-[var(--primary-color)] p-3 text-sm text-gray-700 placeholder:text-gray-800 resize-none outline-none transition-all duration-300 relative z-10 focus:ring focus:ring-[var(--primary-color)] animate-rainbow-border"
-              ></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- Full UI State (Normal mode OR Extension mode with JD) -->
-        <div v-else class="smooth-expand animate-fade-in">
-          <!-- Step 1: Job Description Card -->
-          <div
-            class="transition-all duration-300 mb-6 animate-fade-in"
-            :class="{
-              'p-0 mb-0 h-[50px]': isExtensionMode,
-              'h-[300px] max-h-[400px] px-1.5': !isExtensionMode,
-              'mb-0': isExtensionMode,
-            }"
-          >
-            <div class="flex items-center gap-3 mb-2">
-              <!-- indicator -->
-              <div
-                v-if="!isExtensionMode"
-                class="-translate-y-1 flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold"
-                :class="
-                  isStep1Complete
-                    ? 'bg-teal-500 text-white'
-                    : 'bg-gray-300 text-gray-600'
-                "
-              >
-                <span v-if="!isStep1Complete">1</span>
-                <TICK v-else class="w-3 h-3" />
-              </div>
-              <div>
-                <p
-                  class="font-semibold text-gray-900 text-sm"
-                  :class="isExtensionMode ? 'text-xs' : 'text-base'"
-                >
-                  Job Description
-                </p>
-                <p class="text-xs text-gray-500" v-if="!isExtensionMode">
-                  Paste the job posting you're applying for
-                </p>
-              </div>
-            </div>
-            <textarea
-              v-model="jobDescription"
-              placeholder="Paste the job description here..."
-              rows="4"
-              :style="{
-                height: isExtensionMode ? '50px' : 'calc(100% - 50px)',
-                marginLeft: isExtensionMode ? '0' : '33px',
-                width: isExtensionMode ? '100%' : 'calc(100% - 50px)',
-              }"
-              class="w-full bg--100 rounded border border-gray-400 p-3 text-sm text-gray-700 placeholder:text-gray-400 resize-none outline-none"
-            ></textarea>
-          </div>
-
-          <!-- Step 2: Sections Card -->
-          <div
-            class="rounded-3xl transition-all duration-300 animate-fade-in-delayed"
-            :class="{
-              'p-0 mt-2 mb-1': isExtensionMode,
-              'mb-6 px-1.5': !isExtensionMode,
-            }"
-          >
-            <div class="flex items-center gap-3 mb-2">
-              <!-- indicator -->
-              <div
-                v-if="!isExtensionMode"
-                class="-translate-y-1 flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold"
-                :class="
-                  isStep2Complete
-                    ? 'bg-teal-500 text-white'
-                    : 'bg-gray-300 text-gray-600'
-                "
-              >
-                <span v-if="!isStep2Complete">2</span>
-                <TICK v-else class="w-4 h-4" />
-              </div>
-              <div>
-                <p
-                  class="font-semibold text-gray-900 text-sm"
-                  :class="
-                    isExtensionMode ? 'text-xs mt-3 ml-[1px]' : 'text-base'
-                  "
-                >
-                  Sections to Optimize
-                </p>
-                <p class="text-xs text-gray-500" v-if="!isExtensionMode">
-                  Choose which parts of your resume to improve
-                </p>
-              </div>
-            </div>
-            <div
-              style="height: calc(100% - 50px)"
-              class="w-full bg-white/80 rounded-2xl"
-            >
-              <div
-                class="flex flex-wrap"
-                :class="isExtensionMode ? 'gap-1' : 'gap-2 ml-[30px]'"
-              >
-                <button
-                  v-for="section in sections"
-                  :key="section.id"
-                  @click="toggleSection(section.id)"
-                  :class="[
-                    ' rounded-full text-xs font-medium transition-all duration-300  border',
-                    section.isSelected
-                      ? 'bg-[#6366f1] text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-400',
-
-                    isExtensionMode ? 'p-1 px-2' : 'px-3 py-1.5',
-                  ]"
-                >
-                  {{ section.label }}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Step 3: Custom Instructions (Optional) -->
-          <div
-            class="py-4 animate-fade-in-delayed-2"
-            :class="{ 'py-0': isExtensionMode }"
-          >
-            <div
-              class="flex items-center gap-3 mb-3 ml-[33px]"
-              v-if="!isExtensionMode"
-            >
-              <!-- indicator -->
-              <div
-                v-if="false"
-                class="-translate-y-1 flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold transition-colors duration-200"
-                :class="
-                  isStep1Complete && isStep2Complete
-                    ? 'bg-gray-400 text-white'
-                    : 'bg-gray-200 text-gray-400'
-                "
-              >
-                3
-              </div>
-              <div>
-                <p class="font-semibold text-gray-900 text-base">
-                  Custom Instructions
-                </p>
-                <p class="text-xs text-gray-500">
-                  Optional • Add specific requirements or focus areas
-                </p>
-              </div>
-            </div>
-
-            <div
-              class="w-[100%] mx-auto mb-5"
-              :class="isExtensionMode ? '' : 'ml-[31px] w-[calc(100%-50px)]'"
-            >
-              <div
-                class="px-1.5 border border-gray-300 bg-gray-100"
-                :class="
-                  isExtensionMode ? 'rounded-2xl h-[90px]' : 'rounded-2xl'
-                "
-              >
-                <div class="flex items-end rounded-4xl">
-                  <textarea
-                    v-model="customInstructions"
-                    placeholder="e.g. Make minor tweaks, don't lie."
-                    class="flex-1 translate-y-1 bg-transparent text-sm border-0 outline-none resize-none placeholder:text-gray-600"
-                    :class="
-                      isExtensionMode
-                        ? 'h-[80px] placeholder:text-sm p-1 pb-3'
-                        : 'h-[150px] p-3'
-                    "
-                  ></textarea>
-                  <button
-                    @click="optimizeResume"
-                    :disabled="!enableOptimizeButton"
-                    class="m-1 mb w-max flex items-center justify-center bg-black text-white hover:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed"
-                    :class="
-                      isExtensionMode
-                        ? 'px-3 rounded-2xl h-8 mb-0 mr-0'
-                        : 'px-3 pr-2 rounded-full h-9 mb-2 mr-0'
-                    "
-                  >
-                    <p
-                      class="font-semibold"
-                      :class="isExtensionMode ? 'text-xs mr-1' : 'text-sm mr-2'"
-                    >
-                      {{ isOptimizing ? "Tweaking..." : "Tweak" }}
-                    </p>
-                    <p
-                      class="font-semibold"
-                      :class="{
-                        'text-lg': isExtensionMode,
-                        'text-md': !isExtensionMode,
-                      }"
-                    >
-                      ⚡️
-                    </p>
-
-                    <!-- <component :is="SEND" class="w-4 h-4" /> -->
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- End Full UI State -->
-      </div>
+      <TweakerInputs
+        :current-resume="currentResume"
+        @resume-updated="handleResumeUpdate"
+        @job-description-state="handleJobDescriptionState"
+        @optimizing-state="handleOptimizingState"
+        @match-score="handleMatchScore"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, inject, ref, watch } from "vue";
+import { inject, onMounted, onUnmounted, ref, watch } from "vue";
 import ReactResumeBuilder from "../../ReactResumeBuilder.vue";
-import { useUserInfoManager } from "../../composables/useUserInfoManager";
+import { useDataManager } from "../../composables/useDataManager";
 import SelectResume from "./SelectResume.vue";
-import SEND from "@/assets/svg/send.svg";
-import TICK from "@/assets/svg/tick.svg";
-import resumeApi from "@/api-factory/resume";
+import TweakerInputs from "./TweakerInputs.vue";
+import MatchScoreDisplay from "./components/MatchScoreDisplay.vue";
+import UndoRedoControls from "./components/UndoRedoControls.vue";
 import { toast } from "vue3-toastify";
+import { useRoute } from "vue-router";
+import { useUserStore } from "@/stores/useUserStore";
+import { UserInfo } from "@/types/resume.types";
+import { DEFAULT_RESUME } from "@/constants/app.constants";
+import Spinner from "@/common/components/Spinner.vue";
+import resumeApi from "@/api-factory/resume";
+import { useResumeHistory } from "@/composables/useResumeHistory";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3010";
+const route = useRoute();
+const userStore = useUserStore();
 
-const { userInfo } = useUserInfoManager();
-const jobDescription = ref("");
-const customInstructions = ref("");
-const selectedResume = ref("");
+const {
+  currentResume,
+  getUserProfile,
+  loadSavedResumes,
+  resumeOptions,
+  resumesLoading,
+} = useDataManager();
 
-const isOptimizing = ref(false);
+// Initialize history management
+const {
+  history,
+  state: historyState,
+  saveState,
+  undo,
+  redo,
+  clearHistory,
+} = useResumeHistory();
+
+const loading = ref(true);
+const selectedResumeId = ref("");
 const isExtensionMode = inject("isExtensionMode");
+const hasMeaningfulJobDescription = ref(false);
+const isOptimizing = ref(false);
+const matchScore = ref(0);
 
-// Debounced job description for UI switching
-const debouncedJobDescription = ref("");
-let debounceTimer: NodeJS.Timeout | null = null;
-
-// Watch for changes in job description and debounce
-watch(
-  jobDescription,
-  (newValue) => {
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
-    }
-
-    debounceTimer = setTimeout(() => {
-      debouncedJobDescription.value = newValue;
-    }, 1000);
-  },
-  { immediate: true }
-);
-
-const sections = ref([
-  {
-    id: "professionalSummary",
-    label: "Professional Summary",
-    isSelected: false,
-  },
-  { id: "workExperiences", label: "Work Experience", isSelected: false },
-  { id: "skills", label: "Skills", isSelected: false },
-  { id: "projects", label: "Projects", isSelected: false },
-]);
-
-const selectedSections = computed(() => {
-  return sections.value
-    .filter((section) => section.isSelected)
-    .map((section) => section.id);
+watch(selectedResumeId, (newVal) => {
+  setSelectedResumeData();
 });
 
-const enableOptimizeButton = computed(() => {
-  return (
-    jobDescription.value &&
-    userInfo.value &&
-    !isOptimizing.value &&
-    selectedSections?.value?.length > 0
-  );
-});
-
-// Use debounced job description for UI switching
-const hasMeaningfulJobDescription = computed(() => {
-  return debouncedJobDescription.value.trim().length > 0;
-});
-
-// Step completion indicators
-const isStep1Complete = computed(() => hasMeaningfulJobDescription.value);
-const isStep2Complete = computed(() => selectedSections.value.length > 0);
-
-const toggleSection = (sectionId: string) => {
-  const section = sections.value.find((section) => section.id === sectionId);
-  if (section) {
-    section.isSelected = !section.isSelected;
-  }
+// Handle resume update from TweakerInputs component
+const handleResumeUpdate = (updatedResume: UserInfo) => {
+  // Save current state to history before updating
+  saveState(updatedResume);
+  userStore.setCurrentResume(updatedResume);
 };
 
-const optimizeResume = async () => {
-  if (!enableOptimizeButton.value) return;
-  isOptimizing.value = true;
+const resetMatchScore = () => (matchScore.value = 0);
+
+// Handle undo action
+const handleUndo = () => {
+  undo();
+  resetMatchScore();
+};
+
+// Handle redo action
+const handleRedo = () => {
+  redo();
+  resetMatchScore();
+};
+
+// Handle job description state from TweakerInputs component
+const handleJobDescriptionState = (hasDescription: boolean) => {
+  hasMeaningfulJobDescription.value = hasDescription;
+};
+
+// Handle optimizing state from TweakerInputs component
+const handleOptimizingState = (optimizing: boolean) => {
+  isOptimizing.value = optimizing;
+};
+
+// Handle match score from TweakerInputs component
+const handleMatchScore = (score: number) => {
+  matchScore.value = score;
+};
+
+const setSelectedResumeData = async () => {
+  loading.value = true;
+  resetMatchScore();
+  clearHistory();
+  const resumeId = selectedResumeId.value;
 
   try {
-    const data = {};
-
-    selectedSections.value.forEach((section) => {
-      data[section] = userInfo.value[section as keyof UserInfo];
-    });
-
-    const body = {
-      data,
-      jobDescription: jobDescription.value,
-      userPrompt: customInstructions.value,
-      sections: selectedSections.value,
-    };
-
-    const response = await resumeApi.tweakResume(body);
-
-    if (!response.ok) {
-      throw new Error("Failed to optimize resume");
+    // check cache
+    if (userStore.resumesDataCache[resumeId]) {
+      const resumeFromCache = userStore.resumesDataCache[resumeId];
+      userStore.setCurrentResume(resumeFromCache);
+      return;
+    }
+    // check if it is default resume
+    else if (resumeId === DEFAULT_RESUME.id) {
+      if (!userStore.userInfo) await getUserProfile();
+      userStore.setCurrentResume(userStore.userInfo);
+      return;
     }
 
-    const result = await response.json();
-    console.log("🚀 ~ optimizeResume ~ result:", result);
-
-    // Update the resume data with the tweaked content
-    selectedSections.value.forEach((section) => {
-      userInfo.value[section as keyof UserInfo] = result.data[section];
-    });
+    const response = await resumeApi.getResumeById(resumeId);
+    if (response && response.data) {
+      userStore.setResumesDataCache(response.data._id, response.data.data);
+      userStore.setCurrentResume(response.data.data);
+    }
   } catch (error) {
-    console.error("Failed to optimize resume:", error);
+    console.error("Failed to get selected resume data:", error);
     toast.error(error?.response?.data?.message || error.message);
   } finally {
-    isOptimizing.value = false;
+    setTimeout(() => {
+      loading.value = false;
+    }, 200);
+  }
+  return null;
+};
+
+const init = async () => {
+  loading.value = true;
+
+  try {
+    await loadSavedResumes();
+    const resumeId = route.query.resumeId as string | undefined;
+    selectedResumeId.value = resumeId || DEFAULT_RESUME.id;
+    await setSelectedResumeData();
+    saveState(currentResume.value);
+  } catch (error) {
+    console.error("Failed to initialize resume data:", error);
+    toast.error(error?.response?.data?.message || error.message);
+  }
+  return null;
+};
+
+// Keyboard shortcuts handler
+const handleKeyboardShortcuts = (event: KeyboardEvent) => {
+  const isMac =
+    typeof navigator !== "undefined" &&
+    navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+  const isCmdOrCtrl = isMac ? event.metaKey : event.ctrlKey;
+
+  if (isCmdOrCtrl && event.key === "z" && !event.shiftKey) {
+    event.preventDefault();
+    if (historyState.canUndo) {
+      handleUndo();
+    }
+  } else if (
+    (isCmdOrCtrl && event.key === "y") ||
+    (isCmdOrCtrl && event.key === "z" && event.shiftKey)
+  ) {
+    event.preventDefault();
+    if (historyState.canRedo) {
+      handleRedo();
+    }
   }
 };
+
+onMounted(async () => {
+  await init();
+  document.addEventListener("keydown", handleKeyboardShortcuts);
+});
+
+onUnmounted(() => {
+  userStore.clearResumesDataCache();
+  userStore.clearCurrentResume();
+  document.removeEventListener("keydown", handleKeyboardShortcuts);
+  clearHistory();
+});
 </script>
 <style scoped lang="scss" src="./ResumeTweaker.scss"></style>
+<style scoped>
+/* 4-pointed sparkle shapes */
+.sparkle-blob {
+  position: absolute;
+  animation: sparkle-twinkle 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.sparkle-blob::before,
+.sparkle-blob::after {
+  content: "";
+  position: absolute;
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  transform-origin: center;
+}
+
+/* Create 4-pointed sparkle with two diamond shapes */
+.sparkle-blob::before {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.sparkle-blob::after {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Size variations */
+.sparkle-blob.large::before,
+.sparkle-blob.large::after {
+  width: 24px;
+  height: 6px;
+  border-radius: 50px;
+}
+
+.sparkle-blob.medium::before,
+.sparkle-blob.medium::after {
+  width: 16px;
+  height: 4px;
+  border-radius: 50px;
+}
+
+.sparkle-blob.small::before,
+.sparkle-blob.small::after {
+  width: 10px;
+  height: 3px;
+  border-radius: 50px;
+}
+
+/* Animation delays */
+.sparkle-blob.large {
+  animation-delay: 0s;
+}
+
+.sparkle-blob.medium {
+  animation-delay: 1s;
+}
+
+.sparkle-blob.small {
+  animation-delay: 2s;
+}
+
+.center-sparkle {
+  animation-delay: 0.5s;
+}
+
+/* Sparkle twinkle animation */
+@keyframes sparkle-twinkle {
+  0%,
+  100% {
+    transform: scale(0.6) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 1;
+  }
+}
+</style>
+../../composables/useResumeHistory

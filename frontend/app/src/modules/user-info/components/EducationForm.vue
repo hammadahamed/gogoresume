@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import Input from "@/common/components/Input.vue";
-import AddButton from "@/common/components/AddButton.vue";
 
 // Define props
 const props = defineProps<{
   education: {
     school: string;
     degree: string;
-    fieldOfStudy: string;
     gpa?: string;
     startDate: string;
     endDate: string;
-    honors?: string[];
   };
   index: number;
 }>();
@@ -22,27 +18,6 @@ const emit = defineEmits<{
   (e: "onChange", updated: any): void;
   (e: "onDelete"): void;
 }>();
-
-// Local state for new honor
-const newHonor = ref("");
-
-// Methods to handle changes
-function handleAddHonor() {
-  if (newHonor.value.trim()) {
-    emit("onChange", {
-      ...props.education,
-      honors: [...(props.education.honors || []), newHonor.value.trim()],
-    });
-    newHonor.value = "";
-  }
-}
-
-function handleRemoveHonor(index: number) {
-  emit("onChange", {
-    ...props.education,
-    honors: props.education.honors?.filter((_, i) => i !== index) || [],
-  });
-}
 </script>
 
 <template>
@@ -71,13 +46,6 @@ function handleRemoveHonor(index: number) {
           placeholder="e.g., B.S., M.A."
         />
         <Input
-          label="Field of Study"
-          name="fieldOfStudy"
-          v-model="props.education.fieldOfStudy"
-          required
-          placeholder="e.g., Computer Science"
-        />
-        <Input
           label="GPA (optional)"
           name="gpa"
           v-model="props.education.gpa"
@@ -97,51 +65,6 @@ function handleRemoveHonor(index: number) {
           v-model="props.education.endDate"
           required
         />
-      </div>
-
-      <div class="mt-6">
-        <div class="flex items-center justify-between mb-3">
-          <label class="block text-sm font-semibold text-gray-700">
-            Honors & Awards
-          </label>
-          <AddButton @click="handleAddHonor" />
-        </div>
-
-        <div class="flex gap-4 mb">
-          <div class="flex-grow">
-            <Input
-              label=""
-              v-model="newHonor"
-              @keypress.enter.prevent="handleAddHonor"
-              placeholder="Enter an honor or award and press Enter"
-            />
-          </div>
-        </div>
-
-        <div class="flex flex-wrap gap-2">
-          <div
-            v-for="(honor, index) in props.education.honors"
-            :key="index"
-            class="flex items-center bg-gray-100 rounded-lg px-4 py-1 text-gray-900"
-          >
-            <span class="text-sm font-medium">{{ honor }}</span>
-            <button
-              type="button"
-              @click="handleRemoveHonor(index)"
-              class="ml-2 text-gray-500 hover:text-gray-700"
-            >
-              ×
-            </button>
-          </div>
-          <p
-            v-if="
-              !props.education.honors || props.education.honors.length === 0
-            "
-            class="text-gray-500 text-sm"
-          >
-            Add honors, awards, or notable academic achievements
-          </p>
-        </div>
       </div>
 
       <div class="mt-6 flex justify-end pt-4">

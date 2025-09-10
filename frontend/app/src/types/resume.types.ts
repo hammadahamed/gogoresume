@@ -1,14 +1,18 @@
+export interface ProfessionalLink {
+  label: string;
+  url: string;
+}
+
 export interface PersonalInfo {
   firstName: string;
   lastName: string;
+  title: string;
   email: string;
   phone: string;
   location: string;
-  address?: string;
   linkedin?: string;
   portfolio?: string;
-  professionalLinks: { label: string; url: string }[];
-  professionalSummary?: string;
+  professionalLinks: ProfessionalLink[];
 }
 
 export interface Experience {
@@ -18,18 +22,22 @@ export interface Experience {
   startDate: string;
   endDate: string;
   current: boolean;
-  description: string;
-  achievements: string[];
+  description: string[];
 }
 
 export interface Education {
   school: string;
   degree: string;
-  fieldOfStudy: string;
   gpa?: string;
   startDate: string;
   endDate: string;
-  honors?: string[];
+}
+
+export interface Project {
+  name: string;
+  description: string;
+  projectLink?: string;
+  sourceCode?: string;
 }
 
 export interface UserInfo {
@@ -38,5 +46,5 @@ export interface UserInfo {
   workExperiences: Experience[];
   education: Education[];
   skills: string[];
-  projects: any[]; // We can type this more specifically if needed
+  projects: Project[];
 }

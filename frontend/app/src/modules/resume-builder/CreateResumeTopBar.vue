@@ -1,6 +1,6 @@
 <template>
   <div class="px-6 py-3 mx-4">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="mx-auto flex items-center justify-between">
       <!-- Left: Resume Name -->
       <div class="flex items-center gap-4">
         <div class="flex items-center gap-2">
@@ -71,12 +71,14 @@ import { toast } from "vue3-toastify";
 import TemplateSelector from "../../modules/templates/TemplateSelector.vue";
 import Spinner from "@/common/components/Spinner.vue";
 import resumeApi from "../../api-factory/resume";
-import { useUserInfoManager } from "../../composables/useUserInfoManager";
+import { useDataManager } from "../../composables/useDataManager";
 import { triggerResumeDownload } from "../../utils/resumeDownload";
+import { UserInfo } from "@/types/resume.types";
 
 interface Props {
   modelValue?: string; // selected template
   resumeId?: string; // when editing
+  resumeData?: UserInfo;
 }
 
 interface Emits {
@@ -94,7 +96,7 @@ const emit = defineEmits<Emits>();
 
 const route = useRoute();
 const router = useRouter();
-const { userInfo } = useUserInfoManager();
+const { currentResume } = useDataManager();
 
 // Component state
 const resumeName = ref("");
@@ -106,7 +108,7 @@ const originalResumeData = ref<any>(null);
 // Computed
 const isEditing = computed(() => !!props.resumeId);
 const canSave = computed(() => {
-  return resumeName.value.trim() && userInfo.value && !nameError.value;
+  return resumeName.value.trim() && currentResume.value && !nameError.value;
 });
 
 // Watch for prop changes
@@ -147,7 +149,7 @@ const handleTemplateChange = (template: any) => {
 };
 
 const handleSave = async () => {
-  if (!validateName() || !userInfo.value) return;
+  if (!validateName() || !currentResume.value) return;
 
   isSaving.value = true;
 
@@ -157,7 +159,7 @@ const handleSave = async () => {
       await resumeApi.updateResume(
         props.resumeId,
         resumeName.value.trim(),
-        userInfo.value,
+        currentResume.value,
         selectedTemplate.value
       );
 
@@ -167,7 +169,7 @@ const handleSave = async () => {
       // Create new resume
       const response = await resumeApi.saveResume(
         resumeName.value.trim(),
-        userInfo.value,
+        currentResume.value,
         selectedTemplate.value
       );
 
@@ -197,41 +199,21 @@ const handleDownload = () => {
 
 const handleCancel = () => {
   // Reset to original data if editing
-  if (originalResumeData.value && userInfo.value) {
-    Object.assign(userInfo.value, originalResumeData.value);
+  if (originalResumeData.value && currentResume.value) {
+    Object.assign(currentResume.value, originalResumeData.value);
   }
 
   // Navigate back to saved resumes
   router.push("/my-resumes");
 };
 
-const loadResumeData = async () => {
-  if (!props.resumeId) return;
-
-  try {
-    const response = await resumeApi.getResumeById(props.resumeId);
-    if (response.data) {
-      resumeName.value = response.data.name;
-      selectedTemplate.value = response.data.templateId || "classic";
-
-      // Store original data for cancel functionality
-      originalResumeData.value = { ...response.data.data };
-
-      emit("update:modelValue", selectedTemplate.value);
-      emit("template-change", selectedTemplate.value);
-    }
-  } catch (error) {
-    console.error("Error loading resume:", error);
-    toast.error("Failed to load resume data");
-  }
-};
-
 // Initialize component
 onMounted(() => {
-  if (isEditing.value) {
-    loadResumeData();
-  } else {
-    // Set default name for new resume
+  if (props.resumeData) {
+    resumeName.value = props.resumeData.name;
+    selectedTemplate.value = props.resumeData.templateId;
+  }
+  if (!isEditing.value) {
     const now = new Date();
     resumeName.value = `Untitled Resume`;
   }

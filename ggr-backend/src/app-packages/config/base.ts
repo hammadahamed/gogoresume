@@ -29,6 +29,7 @@ export function initConfig(name: string): nconf.Provider {
 
 // Export environment variables directly
 export function initEnv() {
+  console.log('🚀 ~ initEnv ~ process.env.NODE_ENV:', process.env.NODE_ENV);
   if (process.env.NODE_ENV === 'production') {
     dotenv.config();
   } else {
@@ -43,6 +44,17 @@ export function initEnv() {
     `[Config] Loaded environment variables for environment: ${environment}`,
   );
 
+  setupOverrides();
   // Return process.env directly
   return process.env;
 }
+
+const setupOverrides = () => {
+  if (process.env.NODE_ENV === 'development') {
+    process.env.GOOGLE_REDIRECT_URI = 'http://localhost:5173';
+    console.log(
+      '🚀 ~ setupOverrides ~  process.env.GOOGLE_REDIRECT_URI:',
+      process.env.GOOGLE_REDIRECT_URI,
+    );
+  }
+};

@@ -6,6 +6,12 @@ export const calculateTweaksUsage = async (
   tweakUsage: ITweakUsage,
   userPlan: string,
 ) => {
+  const today = moment().startOf('day').toDate();
+  if (moment(tweakUsage.lastTweaked).isBefore(today)) {
+    tweakUsage.dailyTweaks = 0;
+    tweakUsage.lastTweaked = today;
+    await tweakUsage.save();
+  }
   const totalTweaksUsed = tweakUsage.totalTweaks;
   const dailyTweaksUsed =
     userPlan === Plans.FREE ? totalTweaksUsed : tweakUsage.dailyTweaks;

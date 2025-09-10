@@ -48,6 +48,10 @@ export class GoogleService {
       grant_type: 'authorization_code',
       redirect_uri: this.GOOGLE_REDIRECT_URI,
     };
+    console.log(
+      '🚀 ~ GoogleService ~ exchangeAuthCodeForIdToken ~ params:',
+      params,
+    );
 
     try {
       const response = await axios.post(tokenUrl, new URLSearchParams(params), {

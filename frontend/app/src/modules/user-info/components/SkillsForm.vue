@@ -1,5 +1,8 @@
 <template>
   <div>
+    <p class="text-gray-500 text-sm">
+      Separate skills with commas (,) to add multiple skills
+    </p>
     <div class="flex items-center gap-4 mb-4">
       <div class="flex-grow">
         <Input
@@ -11,7 +14,7 @@
       <button
         type="button"
         @click="handleAddSkill"
-        class="-mt-2.5 h-min px-4 py-3 bg-gray-900 text-white hover:bg-gray-400 text-sm font-semibold transition-all duration-200"
+        class="-mt-2.5 h-min px-4 py-2 rounded-sm bg-gray-900 text-white hover:bg-gray-400 text-sm font-semibold transition-all duration-200"
       >
         Add
       </button>
@@ -21,7 +24,7 @@
       <div
         v-for="(skill, index) in skills"
         :key="index"
-        class="flex items-center bg-gray-100 rounded-full px-4 py-2 text-black font-semibold"
+        class="flex items-center bg-gray-100 rounded-full px-4 py-2 text-sm text-black font-semibold"
       >
         <span>{{ skill }}</span>
         <button
@@ -55,7 +58,13 @@ export default {
 
     const handleAddSkill = () => {
       if (newSkill.value.trim()) {
-        emit("update:skills", [...props.skills, newSkill.value.trim()]);
+        // Check if the input contains commas and split accordingly
+        const skillsToAdd = newSkill.value
+          .split(",")
+          .map((skill) => skill.trim())
+          .filter((skill) => skill.length > 0);
+
+        emit("update:skills", [...props.skills, ...skillsToAdd]);
         newSkill.value = "";
       }
     };

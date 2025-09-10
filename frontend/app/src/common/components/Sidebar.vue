@@ -11,7 +11,6 @@
         <p class="text-lg font-bold text-gray-900">{{ appTitle }}</p>
       </div>
     </div>
-
     <!-- Navigation Items -->
     <nav class="flex-1 py-6 ml-2">
       <ul class="space-y-4 px-3">
@@ -98,6 +97,7 @@ import { DEFAULT_SIDEBAR_ITEMS } from "../../types/sidebar";
 import { useAppStore } from "../../stores/useAppStore";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/useUserStore";
+import { useDataManager } from "../../composables/useDataManager";
 
 const appStore = useAppStore();
 const router = useRouter();

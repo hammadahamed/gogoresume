@@ -2,10 +2,15 @@
   <div class="react-resume-builder" :class="{ 'template-view': templateView }">
     <!-- Show placeholder when no user data -->
     <div
-      v-if="!hasUserData && !templateView"
+      v-if="!hasUserData && !templateView && !builderMode"
       class="no-data-placeholder"
       :class="{ 'max-h-[45vh]': isExtensionMode }"
-      style="margin-top: 50px"
+      style="
+        margin-top: 50px;
+        aspect-ratio: 1 / 1.42;
+        width: 450px;
+        height: auto;
+      "
     >
       <div class="placeholder-content">
         <div class="placeholder-icon">📄</div>
@@ -32,7 +37,8 @@ import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import { getTemplate } from "./a-app-react/templates/TemplateManager.jsx";
 import type { ResumeData } from "./types/resume.types";
 import { useRouter } from "vue-router";
-import { useUserInfoManager } from "./composables/useUserInfoManager";
+import { useDataManager } from "./composables/useDataManager";
+import { UserInfo } from "./types/resume.types";
 
 // Props to receive data from parent Vue component
 interface Props {
@@ -40,32 +46,42 @@ interface Props {
   templateId?: string;
   templateView?: boolean;
   hideDownloadButton?: boolean;
+  dataLoading?: boolean;
+  builderMode?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  userData: () => ({
-    personalInfo: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      location: "",
-      professionalLinks: [],
-    },
-    workExperiences: [],
-    education: [],
-    skills: [],
-    projects: [],
-  }),
-  templateId: "classic",
-  templateView: false,
+const props = defineProps({
+  userData: {
+    type: Object as PropType<UserInfo>,
+    default: () => ({}),
+  },
+  templateId: {
+    type: String,
+    default: "classic",
+  },
+  templateView: {
+    type: Boolean,
+    default: false,
+  },
+  hideDownloadButton: {
+    type: Boolean,
+    default: false,
+  },
+  builderMode: {
+    type: Boolean,
+    default: false,
+  },
   hideDownloadButton: false,
 });
 
 const isExtensionMode = inject("isExtensionMode");
 
 const router = useRouter();
-const { hasUserData } = useUserInfoManager();
+const { hasUserData } = useDataManager();
+
+const hasData = computed(() => {
+  return props.builderMode ? true : hasUserData.value;
+});
 
 const reactContainer = ref<HTMLElement>();
 let reactRoot: any = null;
@@ -87,7 +103,7 @@ const createReactComponent = () => {
     const [templateId, setTemplateId] = useState(
       initialTemplateId || "classic"
     );
-    const [isUpdating, setIsUpdating] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(true);
     const [opacity, setOpacity] = useState(1);
 
     useEffect(() => {
@@ -164,11 +180,12 @@ const createReactComponent = () => {
                   },
                   disabled: loading,
                   style: {
+                    marginTop: "4px",
                     padding: "6px 16px",
                     backgroundColor: loading ? "#9ca3af" : "#6366f1",
                     color: "white",
                     border: "none",
-                    borderRadius: "0px",
+                    borderRadius: "4px",
                     fontSize: "13px",
                     cursor: loading ? "not-allowed" : "pointer",
                     fontWeight: "600",
@@ -193,13 +210,8 @@ const createReactComponent = () => {
         "div",
         {
           style: {
-            position: "relative",
-            ...(props.templateView && { width: "100%" }),
-            maxHeight: props.templateView ? "50%" : "calc(100vh - 150px)",
             aspectRatio: "1 / 1.42",
             border: "1px solid black",
-            overflow: "hidden",
-            margin: "auto",
           },
         },
         createElement(
@@ -214,58 +226,10 @@ const createReactComponent = () => {
               transform: isUpdating ? "scale(0.98)" : "scale(1)",
               filter: isUpdating ? "blur(1px)" : "blur(0px)",
             },
-            showToolbar: false, // Hide the built-in PDF viewer toolbar
+            showToolbar: false,
           },
           renderTemplate()
-        ),
-        // Loading overlay with smooth animation
-        isUpdating &&
-          createElement(
-            "div",
-            {
-              style: {
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(248, 250, 252, 0.95)",
-                backdropFilter: "blur(4px)",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: "8px",
-                opacity: 1,
-                transition: "opacity 0.2s ease",
-              },
-            },
-            // Animated spinner
-            createElement("div", {
-              style: {
-                width: "24px",
-                height: "24px",
-                border: "3px solid #e2e8f0",
-                borderTop: "3px solid #6366f1",
-                borderRadius: "50%",
-                animation: "spin 0.8s linear infinite",
-                marginBottom: "12px",
-              },
-            }),
-            // Loading text
-            createElement(
-              "div",
-              {
-                style: {
-                  color: "#64748b",
-                  fontSize: "13px",
-                  fontWeight: "500",
-                  letterSpacing: "0.025em",
-                },
-              },
-              "Updating..."
-            )
-          )
+        )
       )
     );
   };
@@ -299,10 +263,24 @@ const destroyDownloadEventListener = () => {
 
 onMounted(async () => {
   try {
+    // Add spinner keyframes to global CSS
+    const styleId = "react-resume-spinner-keyframes";
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.textContent = `
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
     // Initialize download event listener if needed
     initDownloadEventListener();
 
-    if (reactContainer.value && hasUserData.value) {
+    if (reactContainer.value && hasData.value) {
       reactRoot = createRoot(reactContainer.value);
 
       // Create stable component once
@@ -348,7 +326,7 @@ watch(
     // Debounce the update
     updateTimeout = setTimeout(() => {
       // If no React root exists but we now have data, create it
-      if (!reactRoot && reactContainer.value && hasUserData.value) {
+      if (!reactRoot && reactContainer.value && hasData.value) {
         reactRoot = createRoot(reactContainer.value);
         stableResumeBuilderComponent = createReactComponent();
       }
@@ -357,7 +335,7 @@ watch(
         reactRoot &&
         newUserData &&
         stableResumeBuilderComponent &&
-        hasUserData.value
+        hasData.value
       ) {
         // Reuse the same component instead of recreating
         reactRoot.render(
@@ -368,7 +346,7 @@ watch(
           })
         );
       }
-    }, 800); // Reduced to 200ms for faster feedback
+    }, 200); // Reduced to 200ms for faster feedback
   },
   { deep: true }
 );
@@ -381,6 +359,18 @@ watch(
 
 #react-pdf-container {
   width: 100%;
+  /* Allow native browser zoom on container */
+  zoom: auto;
+  transform-origin: center center;
+}
+
+/* Override any zoom-blocking styles from react-pdf */
+#react-pdf-container iframe {
+  /* Force enable native zoom gestures */
+  touch-action: pan-x pan-y pinch-zoom !important;
+  -webkit-touch-callout: default !important;
+  -webkit-user-select: text !important;
+  user-select: text !important;
 }
 
 .no-data-placeholder {
@@ -424,22 +414,5 @@ watch(
   font-size: 0.85rem !important;
   color: #94a3b8 !important;
   font-style: italic;
-}
-
-/* Global animations */
-:global(@keyframes spin) {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Add smooth transitions for all elements */
-#react-pdf-container {
-  * {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
 }
 </style>

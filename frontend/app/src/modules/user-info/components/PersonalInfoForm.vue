@@ -8,7 +8,7 @@ import AddButton from "@/common/components/AddButton.vue";
 // Define props
 const props = defineProps<{
   personalInfo: any;
-  professionalSummary: string;
+  professionalSummary?: string;
   onChange: (updatedInfo: any) => void;
 }>();
 
@@ -36,7 +36,7 @@ function handleAddLink() {
     personalInfo: props.personalInfo,
     professionalSummary: props.professionalSummary,
     professionalLinks: [
-      ...props.personalInfo.professionalLinks,
+      ...(props?.personalInfo.professionalLinks ?? []),
       { ...newLink.value },
     ],
   });
@@ -83,7 +83,14 @@ function handleKeyPress(event: KeyboardEvent) {
           label="Last Name"
           name="lastName"
           v-model="props.personalInfo.lastName"
-          placeholder="e.g., Smith"
+          placeholder="e.g., Doe"
+        />
+        <Input
+          label="Title"
+          name="title"
+          class="col-span-2"
+          v-model="props.personalInfo.title"
+          placeholder="e.g., Senior Software Engineer with 5+ years of experience"
         />
       </div>
     </Section>
@@ -91,11 +98,10 @@ function handleKeyPress(event: KeyboardEvent) {
     <Section title="Contact Information">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
         <Input
-          label="Email"
-          type="email"
-          name="email"
-          v-model="props.personalInfo.email"
-          placeholder="e.g., john.smith@example.com"
+          label="Location"
+          name="location"
+          v-model="props.personalInfo.location"
+          placeholder="e.g., San Francisco, CA"
         />
         <Input
           label="Phone"
@@ -105,16 +111,13 @@ function handleKeyPress(event: KeyboardEvent) {
           placeholder="e.g., +1 (555) 123-4567"
         />
         <Input
-          label="Location"
-          name="location"
-          v-model="props.personalInfo.location"
-          placeholder="e.g., San Francisco, CA"
-        />
-        <Input
-          label="Address (optional)"
-          name="address"
-          v-model="props.personalInfo.address"
-          placeholder="e.g., 123 Main St, Apt 4B"
+          label="Email"
+          id="email"
+          type="email"
+          name="email"
+          class="col-span-2"
+          v-model="props.personalInfo.email"
+          placeholder="e.g., john.smith@example.com"
         />
       </div>
     </Section>
@@ -139,18 +142,19 @@ function handleKeyPress(event: KeyboardEvent) {
         </div>
 
         <div class="mt-6">
-          <div class="flex items-center justify-between mb-3">
-            <label class="block text-sm font-semibold text-gray-700">
+          <div class="flex items-center justify-between mb">
+            <label class="block font-semibold text-gray-700">
               Additional Links
             </label>
             <AddButton @click="handleAddLink" />
           </div>
+          <p class="text-gray-400 text-sm">Hit enter(⏎) to add</p>
 
-          <div class="space-y-2 mb-4">
+          <div class="space-y-2 mb-4 mt-4">
             <div
               v-for="(link, index) in props.personalInfo.professionalLinks"
               :key="index"
-              class="flex items-center bg-gray-100 rounded-lg px-4 py-2 text-gray-900"
+              class="flex items-center bg-gray-100/50 border border-gray-200 rounded-xs px-4 py-2 text-gray-900"
             >
               <span class="font-medium text-sm">{{ link.label }}:</span>
               <span class="ml-2 text-gray-600 truncate flex-grow text-sm">
@@ -188,7 +192,6 @@ function handleKeyPress(event: KeyboardEvent) {
         </div>
       </div>
     </Section>
-
     <Section title="Professional Summary">
       <Input
         label="Summary"

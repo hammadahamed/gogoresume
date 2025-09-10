@@ -4,63 +4,65 @@ import { Document, Page, View, Text, StyleSheet } from "@react-pdf/renderer";
 // Template 1 - Professional Resume Template
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
+    padding: "20 30",
     fontSize: 11,
     fontFamily: "Helvetica",
     lineHeight: 1.5,
   },
   header: {
     textAlign: "center",
-    marginBottom: 20,
-    paddingBottom: 15,
+    marginBottom: 10,
+    paddingBottom: 5,
     borderBottom: "2pt solid #333",
   },
   name: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     marginBottom: 18,
     color: "#333",
   },
   contactInfo: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#666",
+    whiteSpace: "nowrap",
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 13,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 2,
     color: "#333",
-    borderBottom: "1pt solid #333",
-    paddingBottom: 3,
+    paddingBottom: 0,
   },
   jobTitle: {
-    fontSize: 13,
-    fontWeight: "bold",
-    marginBottom: 3,
+    fontSize: 12,
+    fontWeight: "550",
+    marginLeft: 8,
     color: "#333",
   },
   jobCompany: {
     fontSize: 11,
     fontStyle: "italic",
-    marginBottom: 8,
     color: "#666",
+    marginTop: 4,
   },
   bulletPoint: {
     fontSize: 10,
     marginBottom: 3,
-    marginLeft: 15,
+    marginLeft: 12,
+    lineHeight: 1.3,
     color: "#555",
   },
   skillsText: {
-    fontSize: 11,
+    fontSize: 10,
     lineHeight: 1.4,
     color: "#555",
   },
   educationItem: {
     marginBottom: 8,
+    marginTop: 8,
   },
   educationDegree: {
     fontSize: 12,
@@ -72,10 +74,23 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   professionalSummary: {
-    fontSize: 11,
+    fontSize: 10,
     lineHeight: 1.4,
     color: "#555",
     textAlign: "justify",
+    wordBreak: "keep-all",
+  },
+  flexRow: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+    marginBottom: 5,
+    marginTop: 5,
+  },
+  projectLink: {
+    fontSize: 9,
+    color: "#6B7280",
+    fontStyle: "italic",
   },
 });
 
@@ -91,12 +106,8 @@ const Template1 = ({ userData }) => {
   } = personalInfo;
 
   // Extract LinkedIn from professional links for backward compatibility
-  const linkedin =
-    professionalLinks.find(
-      (link) =>
-        link.label?.toLowerCase().includes("linkedin") ||
-        link.url?.toLowerCase().includes("linkedin")
-    )?.url || "linkedin.com/in/johndoe";
+  const linkedin = personalInfo.linkedin || "linkedin.com/in/johndoe";
+  const portfolio = personalInfo.portfolio || "johndoe.dev";
 
   const fullName = `${firstName} ${lastName}`.trim() || "John Doe";
   const workExperiences = userData?.workExperiences || [];
@@ -104,6 +115,7 @@ const Template1 = ({ userData }) => {
   const skills = userData?.skills || [];
   const projects = userData?.projects || [];
   const professionalSummary = userData?.professionalSummary || "";
+
   return (
     <Document title={fullName} pageMode="useNone">
       <Page size="A4" style={styles.page}>
@@ -111,8 +123,9 @@ const Template1 = ({ userData }) => {
         <View style={styles.header}>
           <Text style={styles.name}>{fullName}</Text>
           <Text style={styles.contactInfo}>
-            {email} | {phone} | {linkedin}
+            {email} {phone && ` | ${phone}`} {linkedin && ` | ${linkedin}`}{" "}
           </Text>
+          {portfolio && <Text style={styles.contactInfo}>{portfolio}</Text>}
         </View>
 
         {/* Summary Section */}
@@ -137,43 +150,57 @@ const Template1 = ({ userData }) => {
 
         {/* Experience Section */}
         {workExperiences && workExperiences.length > 0 && (
-          <View style={styles.section}>
+          <React.Fragment>
             <Text style={styles.sectionTitle}>Professional Experience</Text>
             {workExperiences.map((exp, index) => (
-              <View key={index} style={{ marginBottom: 15 }}>
-                <Text style={styles.jobTitle}>{exp.position}</Text>
-                <Text style={styles.jobCompany}>
-                  {exp.company} | {exp.location} | {exp.startDate} -{" "}
-                  {exp.current ? "Present" : exp.endDate}
-                </Text>
-                {exp.description && (
-                  <Text style={styles.bulletPoint}>• {exp.description}</Text>
-                )}
-                {exp.achievements &&
-                  exp.achievements.map((achievement, idx) => (
+              <View key={index} style={{ marginBottom: 5 }}>
+                <View style={styles.flexRow}>
+                  <Text style={styles.jobTitle}>{exp.position}</Text>
+                  <Text style={styles.jobCompany}>
+                    {exp.company} | {exp.startDate} -{" "}
+                    {exp.current ? "Present" : exp.endDate}
+                  </Text>
+                </View>
+                {exp.description &&
+                  exp.description.map((desc, idx) => (
                     <Text key={idx} style={styles.bulletPoint}>
-                      • {achievement}
+                      • {desc}
                     </Text>
                   ))}
               </View>
             ))}
-          </View>
+          </React.Fragment>
         )}
 
         {/* Projects Section */}
         {projects && projects.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Projects</Text>
+            <Text style={{ ...styles.sectionTitle }}>Projects</Text>
             {projects.map((project, index) => (
-              <View key={index} style={{ marginBottom: 10 }}>
-                <Text style={styles.jobTitle}>{project.name}</Text>
-                <Text style={styles.skillsText}>{project.description}</Text>
-                {project.technologies && project.technologies.length > 0 && (
-                  <Text style={styles.bulletPoint}>
-                    Technologies: {project.technologies.join(", ")}
+              <React.Fragment>
+                <Text style={{ ...styles.jobTitle, marginTop: 10 }}>
+                  {project.name}
+                </Text>
+                <Text style={{ ...styles.skillsText, marginLeft: 8.5 }}>
+                  {project.description}
+                </Text>
+                {project.projectLink && (
+                  <Text style={{ ...styles.projectLink, marginLeft: 8.5 }}>
+                    Link: {project.projectLink}
                   </Text>
                 )}
-              </View>
+                {project.sourceCode && (
+                  <Text
+                    style={{
+                      ...styles.projectLink,
+                      marginTop: -5,
+                      marginLeft: 8.5,
+                    }}
+                  >
+                    Source Code: {project.sourceCode}
+                  </Text>
+                )}
+              </React.Fragment>
             ))}
           </View>
         )}
@@ -182,22 +209,22 @@ const Template1 = ({ userData }) => {
         {education && education.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Education</Text>
-            {education.map((edu, index) => (
-              <View key={index} style={styles.educationItem}>
-                <Text style={styles.educationDegree}>
-                  {edu.degree} in {edu.fieldOfStudy}
-                </Text>
-                <Text style={styles.educationDetails}>
-                  {edu.school} | {edu.startDate} - {edu.endDate}
-                  {edu.gpa && ` | GPA: ${edu.gpa}`}
-                </Text>
-                {edu.honors && edu.honors.length > 0 && (
-                  <Text style={styles.bulletPoint}>
-                    Honors: {edu.honors.join(", ")}
+            <View style={{ marginLeft: 8 }}>
+              {education.map((edu, index) => (
+                <View key={index} style={styles.educationItem}>
+                  <Text style={styles.educationDegree}>{edu.degree}</Text>
+                  <Text style={styles.educationDetails}>
+                    {edu.school} | {edu.startDate} - {edu.endDate}
+                    {edu.gpa && ` | GPA: ${edu.gpa}`}
                   </Text>
-                )}
-              </View>
-            ))}
+                  {edu.honors && edu.honors.length > 0 && (
+                    <Text style={{ ...styles.bulletPoint, marginLeft: 0 }}>
+                      Honors: {edu.honors.join(", ")}
+                    </Text>
+                  )}
+                </View>
+              ))}
+            </View>
           </View>
         )}
       </Page>

@@ -3,21 +3,37 @@
     <Select
       v-model="selectedResume"
       :options="resumeOptions"
-      placeholder="Select resume to tweak"
+      :placeholder="
+        props.loading ? 'Loading resumes...' : 'Select resume to tweak'
+      "
       value-key="value"
       label-key="label"
       :class="{ 'text-xs': isExtensionMode }"
+      :disabled="props.loading || resumeOptions.length === 0"
       @change="handleResumeChange"
     />
+    <p
+      v-if="!props.loading && resumeOptions.length === 0"
+      class="text-gray-500 text-sm mt-2"
+    >
+      No saved resumes found. Create a resume first to use the tweaker.
+    </p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { inject, ref, watch } from "vue";
+import { inject, ref, watch, computed } from "vue";
 import Select from "../../common/components/Select.vue";
+
+interface ResumeOption {
+  value: string;
+  label: string;
+}
 
 const props = defineProps<{
   modelValue: string;
+  options: ResumeOption[];
+  loading: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -26,18 +42,20 @@ const emit = defineEmits<{
 
 const isExtensionMode = inject("isExtensionMode");
 
-const resumeOptions = [
-  { value: "software-engineer", label: "Software Engineer Resume" },
-  { value: "product-manager", label: "Product Manager Resume" },
-  { value: "marketing-specialist", label: "Marketing Specialist Resume" },
-];
-
+// State
 const selectedResume = ref(props.modelValue);
 
+// Computed
+const resumeOptions = computed(() => props.options);
+
+// Methods
+
 const handleResumeChange = (option: any) => {
+  selectedResume.value = option.value;
   emit("update:modelValue", option.value);
 };
 
+// Watchers
 watch(
   () => props.modelValue,
   (newValue) => {

@@ -1,9 +1,20 @@
 <template>
-  <div class="h-full overflow-auto bg-white">
+  <div
+    class=""
+    :class="{
+      'bg-transparent': homeView,
+      'bg-white h-full overflow-auto': !homeView,
+    }"
+  >
     <div class="max-w-[900px] mx-auto px-6 py-16">
       <!-- Hero Section -->
       <div class="text-center mb-22">
-        <p class="text-3xl font-bold text-gray-900 mb-2 leading-tight">
+        <p
+          class="text-3xl font-bold text-gray-900 mb-2 leading-tight"
+          :class="{
+            'text-5xl mb-8': homeView,
+          }"
+        >
           AI-Powered Resume Optimizer
         </p>
 
@@ -49,7 +60,10 @@
             </div>
 
             <!-- Content Section (Bottom) -->
-            <div class="p-5 flex flex-col flex-grow h-60">
+            <div
+              class="p-5 flex flex-col flex-grow"
+              :class="{ 'h-60': !homeView }"
+            >
               <!-- Text Content -->
               <div class="mb-6 flex-grow">
                 <h3 class="text-xl font-bold text-gray-900 mb-3">
@@ -61,7 +75,7 @@
               </div>
 
               <!-- Action Button -->
-              <div class="mt-auto">
+              <div v-if="!homeView" class="mt-auto">
                 <SpecialBtn
                   :text="step.buttonText"
                   size="default"
@@ -93,7 +107,14 @@ import ChromeExtPromotion from "./ChromeExtPromotion.vue";
 import FILLOUT_INFO from "../../assets/illustrations/fillout_resume_info.svg";
 import MULTIPLE_RESUMES from "../../assets/illustrations/create_multiple_versions.svg";
 import PICK_AND_TWEAK from "../../assets/illustrations/tweak_with_ai.svg";
+import { defineProps } from "vue";
 
+const props = defineProps({
+  homeView: {
+    type: Boolean,
+    default: false,
+  },
+});
 const appStore = useAppStore();
 
 const steps = [
@@ -117,7 +138,7 @@ const steps = [
       "Create multiple versions of your resume with different templates & content",
     buttonText: "See Templates",
     buttonVariant: "default",
-    route: "templates",
+    route: "my-resumes",
     illustrationBg: "bg-purple-100",
     mainEmoji: "🎨",
     supportEmoji: "📄",

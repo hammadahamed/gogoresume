@@ -1,6 +1,7 @@
 import React from "react";
 import { Document, Page, View, Text, StyleSheet } from "@react-pdf/renderer";
 
+const primaryColor = "#1c4ed8";
 // Template 3 - Hybrid Resume Template (Based on the provided resume image)
 const styles = StyleSheet.create({
   page: {
@@ -11,27 +12,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   header: {
-    marginBottom: 25,
-    paddingBottom: 20,
-    borderBottom: "3pt solid #4F46E5",
+    marginBottom: 5,
   },
   name: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#4F46E5",
+    fontSize: 24,
+    color: primaryColor,
     marginBottom: 8,
     letterSpacing: 0.5,
   },
   subtitle: {
-    fontSize: 14,
-    color: "#6B7280",
-    marginBottom: 15,
-    fontWeight: "normal",
+    fontSize: 10,
+    color: "#1F2937",
+    fontWeight: "bold",
+    marginTop: 10,
   },
   contactInfo: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    flexWrap: "wrap",
     fontSize: 10,
     color: "#374151",
   },
@@ -50,29 +45,24 @@ const styles = StyleSheet.create({
     width: "35%",
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: "bold",
-    color: "#4F46E5",
-    marginBottom: 12,
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-    borderBottom: "1.5pt solid #4F46E5",
-    paddingBottom: 4,
+    color: primaryColor,
+    marginBottom: 8,
   },
   rightSectionTitle: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#4F46E5",
+    color: primaryColor,
     marginBottom: 10,
-    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   professionalSummary: {
-    fontSize: 11,
-    lineHeight: 1.5,
+    fontSize: 10,
+    lineHeight: 1.4,
     color: "#374151",
     textAlign: "justify",
     marginBottom: 5,
@@ -85,17 +75,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 5,
+    marginTop: 5,
   },
   jobTitle: {
     fontSize: 13,
     fontWeight: "bold",
     color: "#1F2937",
     marginBottom: 2,
+    marginTop: 5,
   },
   jobCompany: {
     fontSize: 12,
     fontWeight: "bold",
-    color: "#4F46E5",
+    color: primaryColor,
     marginBottom: 2,
   },
   jobDuration: {
@@ -104,6 +96,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     textAlign: "right",
     minWidth: 120,
+    marginTop: 7,
   },
   jobLocation: {
     fontSize: 10,
@@ -113,9 +106,9 @@ const styles = StyleSheet.create({
   bulletPoint: {
     fontSize: 10,
     marginBottom: 3,
-    marginLeft: 12,
+    marginLeft: 2,
     color: "#374151",
-    lineHeight: 1.4,
+    lineHeight: 1.3,
   },
   skillsGrid: {
     flexDirection: "row",
@@ -128,14 +121,14 @@ const styles = StyleSheet.create({
   skillCategoryTitle: {
     fontSize: 11,
     fontWeight: "bold",
-    color: "#4F46E5",
+    color: primaryColor,
     marginBottom: 6,
   },
   skillItem: {
     fontSize: 10,
     color: "#374151",
     marginBottom: 3,
-    paddingLeft: 8,
+    lineHeight: 1.4,
   },
   educationItem: {
     marginBottom: 15,
@@ -148,7 +141,7 @@ const styles = StyleSheet.create({
   },
   educationSchool: {
     fontSize: 10,
-    color: "#4F46E5",
+    color: primaryColor,
     fontWeight: "bold",
     marginBottom: 2,
   },
@@ -158,11 +151,10 @@ const styles = StyleSheet.create({
     lineHeight: 1.2,
   },
   projectItem: {
-    marginBottom: 12,
+    marginBottom: 5,
   },
   projectTitle: {
     fontSize: 11,
-    fontWeight: "bold",
     color: "#1F2937",
     marginBottom: 3,
   },
@@ -172,10 +164,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     lineHeight: 1.3,
   },
-  projectTech: {
+  projectLink: {
     fontSize: 9,
     color: "#6B7280",
     fontStyle: "italic",
+    lineHeight: 1.2,
   },
   highlight: {
     backgroundColor: "#FEF3C7",
@@ -194,6 +187,7 @@ const Template3 = ({ userData }) => {
     phone = "123-456-7890",
     location = "City, Country",
     professionalLinks = [],
+    title = "Software Engineer",
   } = personalInfo;
 
   const fullName = `${firstName} ${lastName}`.trim() || "John Doe";
@@ -203,95 +197,21 @@ const Template3 = ({ userData }) => {
   const projects = userData?.projects || [];
   const professionalSummary = userData?.professionalSummary || "";
 
-  // Get professional title and experience
-  const currentRole =
-    workExperiences.find((exp) => exp.current)?.position ||
-    workExperiences[0]?.position ||
-    "Software Engineer";
-  const totalExperience =
-    workExperiences.length > 0
-      ? `${Math.max(1, workExperiences.length)} Years of Experience`
-      : "";
-
-  // Categorize skills
-  const skillCategories = {
-    "Programming Languages": skills.filter((skill) =>
-      [
-        "Javascript",
-        "Typescript",
-        "Python",
-        "Dart",
-        "Java",
-        "C++",
-        "C#",
-      ].includes(skill)
-    ),
-    Frontend: skills.filter((skill) =>
-      [
-        "Flutter",
-        "Vue.js",
-        "Vue3",
-        "React",
-        "Angular.js",
-        "HTML",
-        "CSS",
-        "SCSS",
-        "Tailwind",
-      ].includes(skill)
-    ),
-    Backend: skills.filter((skill) =>
-      [
-        "Node.js",
-        "Nest.js",
-        "Express.js",
-        "Fastify",
-        "Spring Boot",
-        "Django",
-        "Flask",
-      ].includes(skill)
-    ),
-    "Database & Cloud": skills.filter((skill) =>
-      [
-        "Mongo Db",
-        "Postgres",
-        "Firebase",
-        "AWS",
-        "Docker",
-        "Redis",
-        "Google cloud",
-        "Kubernetes",
-      ].includes(skill)
-    ),
-  };
-
   return (
     <Document title={fullName} pageMode="useNone">
       <Page size="A4" style={styles.page}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.name}>{fullName}</Text>
-          <Text style={styles.subtitle}>
-            {currentRole} {totalExperience && `| ${totalExperience}`}
-          </Text>
-          <View style={styles.contactInfo}>
-            <Text style={styles.contactItem}>{email}</Text>
-            <Text style={styles.contactItem}>{phone}</Text>
-            <Text style={styles.contactItem}>{location}</Text>
-            {professionalLinks.map((link, index) => (
-              <Text key={index} style={styles.contactItem}>
-                {link.url}
-              </Text>
-            ))}
-          </View>
-        </View>
-
         <View style={styles.container}>
           {/* Left Column */}
           <View style={styles.leftColumn}>
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={styles.name}>{fullName}</Text>
+              <Text style={styles.subtitle}>{title}</Text>
+            </View>
+
             {/* Professional Summary */}
             {professionalSummary && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Relevant Experience</Text>
                 <Text style={styles.professionalSummary}>
                   {professionalSummary}
                 </Text>
@@ -299,126 +219,92 @@ const Template3 = ({ userData }) => {
             )}
 
             {/* Experience */}
-            {workExperiences && workExperiences.length > 0 && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Professional Experience</Text>
-                {workExperiences.map((exp, index) => (
-                  <View key={index} style={styles.experienceItem}>
-                    <View style={styles.jobHeader}>
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.jobTitle}>
-                          {index + 1}. {exp.position}
-                        </Text>
-                        <Text style={styles.jobCompany}>{exp.company}</Text>
-                        <Text style={styles.jobLocation}>{exp.location}</Text>
-                      </View>
-                      <Text style={styles.jobDuration}>
-                        {exp.startDate} -{" "}
-                        {exp.current ? "Present" : exp.endDate}
-                      </Text>
+            {workExperiences &&
+              workExperiences.length > 0 &&
+              workExperiences.map((exp, index) => (
+                <React.Fragment>
+                  <Text style={{ ...styles.sectionTitle, marginBottom: 0 }}>
+                    Professional Experience
+                  </Text>
+                  <View style={styles.jobHeader}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.jobTitle}>{exp.position}</Text>
+                      <Text style={styles.jobCompany}>{exp.company}</Text>
                     </View>
-
-                    {exp.description && (
-                      <Text style={styles.bulletPoint}>
-                        • {exp.description}
-                      </Text>
-                    )}
-                    {exp.achievements &&
-                      exp.achievements.map((achievement, idx) => (
-                        <Text key={idx} style={styles.bulletPoint}>
-                          • {achievement}
-                        </Text>
-                      ))}
+                    <Text style={styles.jobDuration}>
+                      {exp.startDate} - {exp.current ? "Present" : exp.endDate}
+                    </Text>
                   </View>
-                ))}
+
+                  {exp.description &&
+                    exp.description.map((desc, idx) => (
+                      <Text key={idx} style={styles.bulletPoint}>
+                        • {desc}
+                      </Text>
+                    ))}
+                </React.Fragment>
+              ))}
+          </View>
+
+          {/* Right Column */}
+          <View style={styles.rightColumn}>
+            <View
+              style={{ ...styles.contactInfo, marginBottom: 10, marginTop: 10 }}
+            >
+              <Text style={styles.contactItem}>{email}</Text>
+              <Text style={styles.contactItem}>
+                {phone}, {location}
+              </Text>
+              {professionalLinks.map((link, index) => (
+                <Text key={index} style={styles.contactItem}>
+                  {link.url}
+                </Text>
+              ))}
+            </View>
+
+            {/* Skills */}
+            {skills && skills.length > 0 && (
+              <View style={styles.section}>
+                <Text style={styles.rightSectionTitle}>Skills</Text>
+                <Text style={styles.skillItem}>{skills.join(", ")}</Text>
               </View>
             )}
 
             {/* Projects */}
             {projects && projects.length > 0 && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>
-                  Selected Projects (Personal)
-                </Text>
+              <>
+                <Text style={styles.rightSectionTitle}>Selected Projects</Text>
                 {projects.map((project, index) => (
                   <View key={index} style={styles.projectItem}>
-                    <Text style={styles.projectTitle}>
-                      {project.name} •{" "}
-                      {project.technologies
-                        ? project.technologies.slice(0, 2).join(" • ")
-                        : ""}
-                    </Text>
+                    <Text style={styles.projectTitle}>{project.name}</Text>
                     <Text style={styles.projectDescription}>
                       {project.description}
                     </Text>
-                    {project.technologies &&
-                      project.technologies.length > 2 && (
-                        <Text style={styles.projectTech}>
-                          Additional tech:{" "}
-                          {project.technologies.slice(2).join(", ")}
-                        </Text>
-                      )}
+                    {project.projectLink && (
+                      <Text style={styles.projectLink}>
+                        Link: {project.projectLink}
+                      </Text>
+                    )}
+                    {project.sourceCode && (
+                      <Text style={styles.projectLink}>
+                        Source Code: {project.sourceCode}
+                      </Text>
+                    )}
                   </View>
                 ))}
-              </View>
-            )}
-          </View>
-
-          {/* Right Column */}
-          <View style={styles.rightColumn}>
-            {/* Skills */}
-            {skills && skills.length > 0 && (
-              <View style={styles.section}>
-                <Text style={styles.rightSectionTitle}>Skills</Text>
-                {Object.entries(skillCategories).map(
-                  ([category, categorySkills]) =>
-                    categorySkills.length > 0 && (
-                      <View key={category} style={styles.skillCategory}>
-                        <Text style={styles.skillCategoryTitle}>
-                          {category}
-                        </Text>
-                        {categorySkills.map((skill, index) => (
-                          <Text key={index} style={styles.skillItem}>
-                            {skill}
-                          </Text>
-                        ))}
-                      </View>
-                    )
-                )}
-
-                {/* Uncategorized skills */}
-                {skills.filter(
-                  (skill) =>
-                    !Object.values(skillCategories).flat().includes(skill)
-                ).length > 0 && (
-                  <View style={styles.skillCategory}>
-                    <Text style={styles.skillCategoryTitle}>Other</Text>
-                    {skills
-                      .filter(
-                        (skill) =>
-                          !Object.values(skillCategories).flat().includes(skill)
-                      )
-                      .map((skill, index) => (
-                        <Text key={index} style={styles.skillItem}>
-                          {skill}
-                        </Text>
-                      ))}
-                  </View>
-                )}
-              </View>
+              </>
             )}
 
             {/* Education */}
             {education && education.length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.rightSectionTitle}>Education</Text>
+                <Text style={{ ...styles.rightSectionTitle, marginTop: 10 }}>
+                  Education
+                </Text>
                 {education.map((edu, index) => (
                   <View key={index} style={styles.educationItem}>
                     <Text style={styles.educationSchool}>{edu.school}</Text>
                     <Text style={styles.educationDegree}>{edu.degree}</Text>
-                    <Text style={styles.educationDetails}>
-                      {edu.fieldOfStudy}
-                    </Text>
                     <Text style={styles.educationDetails}>
                       {edu.startDate} - {edu.endDate}
                       {edu.gpa && ` | GPA: ${edu.gpa}`}
@@ -429,12 +315,12 @@ const Template3 = ({ userData }) => {
             )}
 
             {/* Interests */}
-            <View style={styles.section}>
+            {/* <View style={styles.section}>
               <Text style={styles.rightSectionTitle}>Interests</Text>
               <Text style={styles.skillItem}>
                 Designing and Building Products at Low to No cost.
               </Text>
-            </View>
+            </View> */}
           </View>
         </View>
       </Page>

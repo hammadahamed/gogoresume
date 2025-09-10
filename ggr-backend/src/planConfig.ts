@@ -67,7 +67,7 @@ export const planFeatures = {
     countPeriod: PlanSpan.DAY,
     carryForward: true,
     planPeriod: PlanSpan.MONTH,
-    numberOfResumes: 20,
+    numberOfResumes: 10,
   },
   [Plans.PRO_3_MONTHS]: {
     count: 100,

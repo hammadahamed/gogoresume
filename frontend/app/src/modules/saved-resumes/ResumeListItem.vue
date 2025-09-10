@@ -1,26 +1,34 @@
 <template>
   <div
-    class="group bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-200 p-5 hover:shadow-sm relative"
-    :class="{ 'pointer-events-none': isDuplicating }"
+    class="group py-5 px-6 transition-all rounded duration-200 relative cursor-pointer hover:border-indigo-400 border border-gray-200"
+    :class="{ 'pointer-events-none opacity-50': isDuplicating }"
+    @click="$emit('edit', resume.id)"
     @mouseleave="handleMouseLeave"
   >
-    <!-- Resume Header -->
-    <div class="flex items-start justify-between mb-4">
+    <div class="flex items-center justify-between gap-4">
+      <!-- Resume Info -->
       <div class="flex-1 min-w-0">
-        <h3 class="text-base font-medium text-gray-900 truncate mb-1">
+        <h3 class="text-sm font-medium text-gray-900 truncate">
           {{ resume.name }}
         </h3>
-        <div class="flex items-center gap-3 text-xs text-gray-500">
+        <div class="flex items-center gap-4 mt-1 text-xs text-gray-500">
           <span>{{ getTemplateName(resume.templateId) }}</span>
-          <span class="text-gray-300">•</span>
           <span>{{ getRelativeDate(resume.updatedAt) }}</span>
         </div>
       </div>
+
+      <!-- Actions (hover only) -->
       <div
-        class="ml-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+        class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
       >
-        <!-- Actions Menu (hover only) -->
-        <div @click.stop>
+        <button
+          @click.stop="$emit('use-for-tweak', resume.id)"
+          :disabled="isDuplicating"
+          class="text-[12px] font-semibold rounded-full border border-black bg-black text-white px-2 py-1 transition-colors hover:opacity-70"
+        >
+          Tweak ⚡️
+        </button>
+        <div @click.stop class="text-gray-400 hover:text-gray-600">
           <Dropdown
             ref="dropdownRef"
             :options="menuOptions"
@@ -30,33 +38,13 @@
       </div>
     </div>
 
-    <!-- Primary Actions (always visible) -->
-    <div class="flex gap-2">
-      <button
-        @click="$emit('edit', resume.id)"
-        :disabled="isDuplicating"
-        class="flex-1 px-3 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Edit Resume
-      </button>
-      <button
-        @click="$emit('use-for-tweak', resume.id)"
-        :disabled="isDuplicating"
-        class="px-3 py-2 text-sm font-medium text-gray-600 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        AI Tweak
-      </button>
-    </div>
-
     <!-- Loading Overlay -->
     <div
       v-if="isDuplicating"
-      class="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center z-10"
+      class="absolute inset-0 bg-gray-50 flex items-center justify-center"
     >
-      <div
-        class="flex items-center gap-2 text-sm text-gray-600 bg-white px-3 py-2 rounded-md shadow-sm border"
-      >
-        <Spinner size="16px" color="#6366f1" />
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <Spinner size="12px" color="#6366f1" />
         <span>Duplicating...</span>
       </div>
     </div>

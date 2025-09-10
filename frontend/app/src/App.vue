@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useUserInfoManager } from "./composables/useUserInfoManager";
+import { useDataManager } from "./composables/useDataManager";
 import useAuthComposable from "./composables/useAuth";
 import Onboarding from "./common/functional-components/Onboarding.vue";
 import { useAppStore } from "./stores/useAppStore";
@@ -23,12 +23,11 @@ const isLoading = ref(true);
 
 const appStore = useAppStore();
 const { bootstrap } = useAuthComposable();
-const { getUserProfile } = useUserInfoManager();
 
 onMounted(async () => {
   try {
     await bootstrap();
-    await getUserProfile();
+    // await getUserProfile();
   } finally {
     isLoading.value = false;
   }

@@ -188,6 +188,7 @@ export class AuthService {
 
       return data as any;
     } catch (error) {
+      this.logger.error('Failed to bootstrap user', error);
       // If it's already an HTTP exception (like UnauthorizedException), rethrow it
       if (error.getStatus) {
         throw error;

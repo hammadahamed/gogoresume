@@ -27,6 +27,7 @@ const userStore = useUserStore();
 const isSaving = ref(false);
 
 async function handleSave() {
+  console.log("🚀 ~ handleSave ~ props.userInfo:", props.userInfo);
   if (isSaving.value) return;
   try {
     isSaving.value = true;

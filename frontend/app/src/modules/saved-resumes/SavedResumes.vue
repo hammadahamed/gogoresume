@@ -6,19 +6,41 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-2xl font-bold text-gray-900">Saved Resumes</p>
-            <p class="mt-2 text-gray-600">
+            <p
+              class="mt-2 text-gray-600 md:max-w-[calc(100vw-500px)] lg:max-w-[calc(100vw-700px)]"
+            >
               Create and save multiple versions of your resume for
-              <span class="squiggly-underline">different job roles</span>
+              <span class="bg-highlight">different job roles</span>
               and contexts to quickly pull and tweak later.
             </p>
           </div>
-          <button
-            v-if="resumes.length"
-            @click="handleCreateNewResume"
-            class="primary-btn-2"
-          >
-            Create New Resume
-          </button>
+          <div class="flex items-center gap-4 md:flex-col lg:flex-row">
+            <!-- Resume Count Progress -->
+            <div v-if="!loading && max > 0" class="text-center">
+              <div class="text-xs text-gray-500 mb-1">
+                {{ total }}/{{ max }} resumes
+              </div>
+              <div class="w-24 h-1 bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  class="h-full transition-all duration-300 rounded-full"
+                  :class="{
+                    'bg-blue-500': total < max * 0.8,
+                    'bg-yellow-500': total >= max * 0.8 && total < max,
+                    'bg-red-500': total >= max,
+                  }"
+                  :style="{ width: `${Math.min((total / max) * 100, 100)}%` }"
+                ></div>
+              </div>
+            </div>
+
+            <button
+              v-if="resumes.length"
+              @click="handleCreateNewResume"
+              class="primary-btn-2 whitespace-nowrap"
+            >
+              Create New Resume
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -34,9 +56,9 @@
       <!-- Empty State -->
       <div v-else-if="!resumes.length" class="text-center py-16 mt-16">
         <div
-          class="w-32 h-32 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center"
+          class="w-52 h-52 overflow-hidden mx-auto mb-6 bg-slate-50 rounded-full flex items-center justify-center"
         >
-          <BOX_ICON class="w-12 h-12" />
+          <FILLOUT_INFO class="w-52 h-52" />
         </div>
         <p class="font-medium text-gray-900 mb-4">No resume created yet</p>
         <button @click="handleCreateNewResume" class="secondary-btn-2">
@@ -45,7 +67,7 @@
       </div>
 
       <!-- Resumes Grid -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         <ResumeListItem
           v-for="resume in resumes"
           :key="resume.id"
@@ -90,13 +112,15 @@ import ConfirmModal from "../../common/components/ConfirmModal.vue";
 import ResumeListItem, { type SavedResume } from "./ResumeListItem.vue";
 import { ConfirmModalTypes } from "../../constants/componentConstants";
 import resumeApi from "../../api-factory/resume";
-import BOX_ICON from "@/assets/svg/box.svg";
+import FILLOUT_INFO from "@/assets/illustrations/fillout_resume_info.svg";
 
 const router = useRouter();
 
 // Component state
 const loading = ref(true);
 const resumes = ref<SavedResume[]>([]);
+const max = ref(0);
+const total = ref(0);
 
 // Delete confirmation state
 const deleteConfirmModal = ref({ show: false });
@@ -120,7 +144,7 @@ const editResume = (resumeId: string) => {
 
 const useForTweak = (resumeId: string) => {
   router.push({
-    path: "/resume-tweaker",
+    path: `/resume-tweaker?resumeId=${resumeId}`,
     query: { resumeId },
   });
 };
@@ -144,7 +168,7 @@ const duplicateResume = async (resume: SavedResume) => {
     }
   } catch (error: any) {
     console.error("Error duplicating resume:", error);
-    toast.error("Failed to duplicate resume");
+    toast.error(error?.response?.data?.message || "Failed to duplicate resume");
   } finally {
     duplicatingId.value = null; // Clear loading state
   }
@@ -172,6 +196,7 @@ const confirmDeleteResume = async () => {
     resumes.value = resumes.value.filter(
       (resume) => resume.id !== resumeIdToDelete
     );
+    total.value = total.value - 1;
 
     toast.success("Resume deleted successfully!");
     deleteConfirmModal.value.show = false;
@@ -194,7 +219,9 @@ const loadResumes = async () => {
   loading.value = true;
   try {
     const response = await resumeApi.getSavedResumes();
-    resumes.value = response.data || [];
+    resumes.value = response.data.resumes || [];
+    max.value = response.data.max;
+    total.value = response.data.total;
   } catch (error: any) {
     console.error("Error loading resumes:", error);
     toast.error("Failed to load resumes");

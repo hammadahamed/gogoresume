@@ -6,6 +6,7 @@
       sizeClasses,
       disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
       'rainbow-border',
+      props.className,
     ]"
     :style="buttonStyles"
     :disabled="disabled"
@@ -53,6 +54,7 @@ const props = defineProps<{
   primaryColor?: string;
   secondaryColor?: string;
   textColor?: string;
+  className?: string;
 }>();
 
 defineEmits<{

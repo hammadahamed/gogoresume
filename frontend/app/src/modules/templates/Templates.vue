@@ -15,9 +15,9 @@
       </div>
 
       <!-- Templates Grid -->
-      <div class="mt-30 flex flex-wrap gap-x-40 gap-y-80 justify-center">
+      <div class="mt-30 flex flex-wrap gap-x-40 gap-y-20 justify-center">
         <div
-          v-for="template in templates"
+          v-for="(template, index) in templates"
           :key="template.id"
           @click="selectTemplate(template)"
           class="w-[380px] overflow-hidden"
@@ -25,16 +25,12 @@
         >
           <!-- Preview Container -->
           <ReactResumeBuilder
-            :templateView="true"
-            :userData="previewData"
+            :key="`${selectedTemplate}-${resumeId || 'new'}`"
+            :userData="sampleUserData"
+            :builderMode="true"
             :templateId="template.id"
-            class=""
+            :hideDownloadButton="true"
           />
-
-          <!-- Template Info -->
-          <div class="mt-24 font-semibold">
-            {{ template.name }}
-          </div>
         </div>
       </div>
     </div>
@@ -45,15 +41,17 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { getAllTemplates } from "../../a-app-react/templates/TemplateManager.jsx";
-import { sampleUserData } from "../../a-app-react/templates/sampleData";
-import { useUserInfoManager } from "../../composables/useUserInfoManager";
+import { useSampleUserData } from "../../a-app-react/templates/sampleData";
+import { useDataManager } from "../../composables/useDataManager";
 import ReactResumeBuilder from "../../ReactResumeBuilder.vue";
+import ReactResumeBuilder2 from "../../ReactResumeBuilder2.vue";
 
 const router = useRouter();
-const { userInfo, hasUserData } = useUserInfoManager();
+const { userInfo, hasUserData } = useDataManager();
 
 // Get templates from TemplateManager
 const templates = ref(getAllTemplates());
+const { sampleUserData } = useSampleUserData();
 
 // Use actual user data if available, otherwise use sample data
 const previewData = computed(() => {

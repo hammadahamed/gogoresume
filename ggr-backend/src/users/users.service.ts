@@ -14,9 +14,9 @@ import PaymentModel from 'src/schemas/payment.schema';
 import { PaymentStatus } from 'src/constants/payment.constants';
 import * as moment from 'moment';
 import { getPlanEnd } from 'src/common/helpers/plan.helper';
-import TweakUsageModel, { ITweakUsage } from 'src/schemas/tweaksUsage.schema';
+import TweakUsageModel from 'src/schemas/tweaksUsage.schema';
 import { calculateTweaksUsage } from 'src/common/helpers/tweak.helper';
-import { IJwtPayload, IJwtPayloadPlan } from 'src/common/types/app.types';
+import { IJwtPayloadPlan } from 'src/common/types/app.types';
 
 @Injectable()
 export class UsersService {

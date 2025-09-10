@@ -274,18 +274,18 @@ function handleMessage(message, source) {
     saveToStorage(STORAGE_KEY_USER_INFO, message.userInfo);
   } else if (message.type === MESSAGE_TYPE_LOAD_USER_INFO) {
     console.log("Loading user info from storage");
-    loadFromStorage(STORAGE_KEY_USER_INFO, null).then((userInfo) => {
-      console.log("Loaded user info from storage:", userInfo);
-      if (source && source.postMessage) {
-        source.postMessage(
-          {
-            type: MESSAGE_TYPE_USER_INFO_LOADED,
-            userInfo,
-          },
-          "*"
-        );
-      }
-    });
+    // loadFromStorage(STORAGE_KEY_USER_INFO, null).then((userInfo) => {
+    //   console.log("Loaded user info from storage:", userInfo);
+    //   if (source && source.postMessage) {
+    //     source.postMessage(
+    //       {
+    //         type: MESSAGE_TYPE_USER_INFO_LOADED,
+    //         userInfo,
+    //       },
+    //       "*"
+    //     );
+    //   }
+    // });
   }
 }
 

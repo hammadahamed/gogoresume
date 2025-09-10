@@ -181,6 +181,32 @@ html {
     background-size: 60px 12px;
 }
 
+/* Animated reveal modifier - only when both classes are used */
+.squiggly-underline.animated::after {
+    width: 0%;
+    right: auto; /* Override the right: 0 */
+    animation: squigglyReveal 1s ease-out 0.8s forwards;
+    overflow: hidden;
+}
+
+@keyframes squigglyReveal {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+// Accessibility: Respect user's motion preferences for squiggly underline
+@media (prefers-reduced-motion: reduce) {
+    .squiggly-underline.animated::after {
+        animation: none;
+        width: 100%;
+        right: 0; /* Restore full width behavior */
+    }
+}
+
 .bg-highlight {
     color: var(--white) !important;
     font-size: inherit !important;
@@ -188,6 +214,7 @@ html {
     margin: 0 4px;
     z-index: 2;
     position: relative;
+    white-space: nowrap;
 }
 
 .bg-highlight::after {

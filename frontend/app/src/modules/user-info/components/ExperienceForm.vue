@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import Input from "@/common/components/Input.vue";
 import Checkbox from "@/common/components/Checkbox.vue";
-import AddButton from "@/common/components/AddButton.vue";
 
 // Define props
 const props = defineProps<{
@@ -12,8 +12,7 @@ const props = defineProps<{
     startDate: string;
     endDate: string;
     current: boolean;
-    description: string;
-    achievements: string[];
+    description: string[];
   };
   index: number;
   disableCurrentOption: boolean;
@@ -25,26 +24,17 @@ const emit = defineEmits<{
   (e: "onDelete"): void;
 }>();
 
-// Methods to handle changes
-function handleAchievementChange(index: number, value: string) {
-  const newAchievements = [...props.experience.achievements];
-  newAchievements[index] = value;
-  emit("onChange", { ...props.experience, achievements: newAchievements });
-}
-
-function addAchievement() {
-  emit("onChange", {
-    ...props.experience,
-    achievements: [...props.experience.achievements, ""],
-  });
-}
-
-function removeAchievement(index: number) {
-  const newAchievements = props.experience.achievements.filter(
-    (_, i) => i !== index
-  );
-  emit("onChange", { ...props.experience, achievements: newAchievements });
-}
+// Computed property to join description array for textarea display
+const descriptionText = computed({
+  get: () => props.experience.description.join("\n"),
+  set: (value: string) => {
+    const descriptionArray = value
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+    emit("onChange", { ...props.experience, description: descriptionArray });
+  },
+});
 </script>
 
 <template>
@@ -89,17 +79,21 @@ function removeAchievement(index: number) {
           label="Start Date"
           type="month"
           name="startDate"
+          :class="{ 'col-span-2': props.experience.current }"
           v-model="props.experience.startDate"
           required
         />
-        <Input
-          label="End Date"
-          type="month"
-          name="endDate"
-          v-model="props.experience.endDate"
-          :disabled="props.experience.current"
-          :required="!props.experience.current"
-        />
+        <Transition name="fade">
+          <Input
+            v-if="!props.experience.current"
+            label="End Date"
+            type="month"
+            name="endDate"
+            v-model="props.experience.endDate"
+            :disabled="props.experience.current"
+            :required="!props.experience.current"
+          />
+        </Transition>
       </div>
 
       <div class="mt-2">
@@ -118,51 +112,12 @@ function removeAchievement(index: number) {
         <Input
           label="Description"
           name="description"
-          v-model="props.experience.description"
+          v-model="descriptionText"
           multiline
           rows="3"
           required
-          placeholder="Describe your role, responsibilities, and key contributions..."
+          placeholder="Describe your role, responsibilities, and key contributions...&#10;Each line will be treated as a separate bullet point."
         />
-      </div>
-
-      <div class="mt-6">
-        <div class="flex items-center justify-between mb-3">
-          <label class="block text-sm font-semibold text-gray-700">
-            Key Achievements
-          </label>
-          <AddButton @click="addAchievement" />
-        </div>
-        <div class="">
-          <div
-            v-for="(achievement, index) in props.experience.achievements"
-            :key="index"
-            class="flex gap-2 items-center"
-          >
-            <div class="flex-grow">
-              <Input
-                label=""
-                v-model="props.experience.achievements[index]"
-                class="mb-0"
-                placeholder="e.g., Increased team productivity by 25% through process improvements"
-                @keydown.enter.prevent
-              />
-            </div>
-            <button
-              type="button"
-              @click="removeAchievement(index)"
-              class="-mt-3 text-gray-400 hover:text-gray-600"
-            >
-              ×
-            </button>
-          </div>
-          <p
-            v-if="props.experience.achievements.length === 0"
-            class="text-gray-500 text-sm"
-          >
-            Add key achievements or notable accomplishments from this role
-          </p>
-        </div>
       </div>
 
       <div class="mt-6 flex justify-end">

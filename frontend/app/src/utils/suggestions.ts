@@ -40,21 +40,15 @@ function getStructuredValuesFromUserInfo(
       email = "",
       phone = "",
       location = "",
-      address = "",
       linkedin = "",
       portfolio = "",
       professionalLinks = [],
     } = userInfo.personalInfo;
 
     // Basic personal info
-    result.personalInfo = [
-      firstName,
-      lastName,
-      email,
-      phone,
-      location,
-      address,
-    ].filter(Boolean) as string[];
+    result.personalInfo = [firstName, lastName, email, phone, location].filter(
+      Boolean
+    ) as string[];
 
     // Professional links
     result.links = [

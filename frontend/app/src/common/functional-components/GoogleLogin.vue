@@ -1,7 +1,7 @@
 <template>
   <div v-if="accessToken">
     <div
-      class="ml-auto w-max text-xs sm:text-sm text-black font-semibold gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3 bg-gray-100 border border-gray-200 rounded-full cursor-pointer"
+      class="ml-auto w-max text-xs sm:text-sm text-black font-semibold gap-2 sm:gap-3 px-3 sm:px-6 py-2 bg-gray-100 border border-gray-400 hover:ring hover:ring-black transition-all duration-200 rounded-full cursor-pointer"
       @click="router.push('/home')"
     >
       <span class="hidden sm:inline">Go To Dashboard</span>
@@ -33,11 +33,11 @@
       :idConfiguration="idConfiguration"
     >
       <button
-        class="group relative w-full flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3 bg-gray-900 hover:bg-gray-800 active:bg-gray-950 border border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+        class="group relative w-full flex items-center justify-center gap-2 sm:gap-3 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 active:bg-gray-950 border border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900"
       >
         <!-- Google Icon -->
         <div class="flex-shrink-0">
-          <GOOGLE_ICON class="w-4 h-4 sm:w-5 sm:h-5" />
+          <GOOGLE_ICON class="w-4 h-4" />
         </div>
 
         <!-- Button Text -->
@@ -82,10 +82,12 @@ const emit = defineEmits<{
 }>();
 
 const idConfiguration = {
+  client_id: process.env.GOOGLE_CLIENT_ID, // Add your Google OAuth client ID
   ux_mode: "popup",
   use_fedcm_for_prompt: false, // Disable FedCM prompt to avoid browser settings issues
   cancel_on_tap_outside: true, // Allow users to cancel by clicking outside
 };
+console.log("🚀 ~ idConfiguration:", idConfiguration);
 
 // State
 const isSigningIn = ref(false);

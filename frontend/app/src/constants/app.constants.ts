@@ -5,8 +5,7 @@ export const emptyExperience = {
   startDate: "",
   endDate: "",
   current: false,
-  description: "",
-  achievements: [],
+  description: [],
 };
 
 export const emptyEducation = {
@@ -26,4 +25,10 @@ export const emptyProject = {
   outcome: "",
   projectLink: "",
   sourceCode: "",
+};
+
+export const DEFAULT_RESUME = {
+  id: "default",
+  name: "Your Profile",
+  templateId: "classic",
 };

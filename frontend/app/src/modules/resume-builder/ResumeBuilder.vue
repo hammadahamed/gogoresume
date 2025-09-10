@@ -1,9 +1,14 @@
 <template>
-  <div class="h-screen flex flex-col">
+  <div v-if="loading" class="h-screen flex items-center justify-center gap-4">
+    <Spinner />
+    <p>Initializing Resume Data...</p>
+  </div>
+  <div v-else class="h-screen flex flex-col">
     <!-- Top Bar -->
     <CreateResumeTopBar
       v-model="selectedTemplate"
       :resume-id="resumeId"
+      :resume-data="resumeData"
       @template-change="handleTemplateChange"
     />
 
@@ -12,7 +17,7 @@
       <div class="controls-section">
         <!-- Embed the actual UserInfo component -->
         <div class="user-info-section">
-          <UserInfo />
+          <UserInfoComponent />
         </div>
       </div>
 
@@ -20,32 +25,51 @@
       <div class="pdf-section flex justify-center items-center">
         <ReactResumeBuilder
           :key="`${selectedTemplate}-${resumeId || 'new'}`"
-          :userData="userInfo"
+          :userData="currentResume"
+          :builderMode="true"
           :templateId="selectedTemplate"
           :hideDownloadButton="true"
         />
       </div>
     </div>
+
+    <!-- Master Profile Modal -->
+    <PrePopulateConfirmModal
+      :show="showMasterProfileModal"
+      @populate-from-master="handlePopulateFromMaster"
+      @start-fresh="handleStartFresh"
+      @close="handleStartFresh"
+      @update:show="showMasterProfileModal = $event"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch, computed } from "vue";
+import { onMounted, ref, watch, computed, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ReactResumeBuilder from "../../ReactResumeBuilder.vue";
-import UserInfo from "../user-info/UserInfo.vue";
+import UserInfoComponent from "../user-info/UserInfo.vue";
 import CreateResumeTopBar from "./CreateResumeTopBar.vue";
-import { useUserInfoManager } from "../../composables/useUserInfoManager";
+import PrePopulateConfirmModal from "./PrePopulateConfirmModal.vue";
+import { useDataManager } from "../../composables/useDataManager";
 import resumeApi from "../../api-factory/resume";
 import { toast } from "vue3-toastify";
+import { UserInfo } from "@/types/resume.types";
+import Spinner from "@/common/components/Spinner.vue";
+import { useUserStore } from "@/stores/useUserStore";
 
 const route = useRoute();
 const router = useRouter();
-const { userInfo, getUserProfile } = useUserInfoManager();
+const loading = ref(false);
+const { getUserProfile, currentResume, setEmptyCurrentResume, hasUserData } =
+  useDataManager();
+const userStore = useUserStore();
+const resumeData = ref<UserInfo | null>(null);
+const showMasterProfileModal = ref(false);
 
 // Get parameters from route
 const resumeId = computed(() => route.query.resumeId as string | undefined);
-const selectedTemplate = ref((route.query.template as string) || "classic");
+const selectedTemplate = ref("classic");
 
 // Handle template changes
 const handleTemplateChange = (template: string) => {
@@ -61,17 +85,36 @@ const handleTemplateChange = (template: string) => {
   });
 };
 
+// Handle modal actions
+const handlePopulateFromMaster = async () => {
+  showMasterProfileModal.value = false;
+  try {
+    await getUserProfile();
+    userStore.setCurrentResume(userStore.userInfo);
+    resumeData.value = { data: userStore.userInfo };
+    toast.success("Populated from master profile");
+  } catch (error) {
+    console.error("Error loading master profile:", error);
+    toast.error("Failed to load master profile");
+    handleStartFresh();
+  }
+};
+
+const handleStartFresh = () => {
+  showMasterProfileModal.value = false;
+};
+
 // Load resume data if editing
 const loadResumeData = async () => {
+  loading.value = true;
   if (!resumeId.value) return;
 
   try {
     const response = await resumeApi.getResumeById(resumeId.value);
-    if (response.data && response.data.data) {
-      // Load the resume data into userInfo
-      Object.assign(userInfo.value || {}, response.data.data);
+    if (response.data && response.data) {
+      resumeData.value = response.data;
+      userStore.setCurrentResume(response.data.data);
 
-      // Update template if specified
       if (response.data.templateId) {
         selectedTemplate.value = response.data.templateId;
       }
@@ -81,27 +124,10 @@ const loadResumeData = async () => {
     toast.error("Failed to load resume data");
     // Redirect to saved resumes on error
     router.push("/saved-resumes");
+  } finally {
+    loading.value = false;
   }
 };
-
-// Watch for route changes
-watch(
-  () => route.query.template,
-  (newTemplate) => {
-    if (newTemplate && typeof newTemplate === "string") {
-      selectedTemplate.value = newTemplate;
-    }
-  }
-);
-
-watch(
-  () => route.query.resumeId,
-  (newResumeId) => {
-    if (newResumeId) {
-      loadResumeData();
-    }
-  }
-);
 
 // Watch for template changes to debug
 watch(
@@ -116,15 +142,42 @@ watch(
   }
 );
 
+// Watch modal state for debugging
+watch(
+  () => showMasterProfileModal.value,
+  (newValue) => {
+    console.log("showMasterProfileModal changed to:", newValue);
+  }
+);
+
 // Initialize component
 onMounted(async () => {
-  // Load user profile first
-  await getUserProfile();
+  try {
+    loading.value = true;
+    console.log("ResumeBuilder mounted, resumeId:", resumeId.value);
 
-  // Then load resume data if editing
-  if (resumeId.value) {
-    await loadResumeData();
+    if (resumeId.value) {
+      await loadResumeData();
+    } else {
+      setEmptyCurrentResume();
+      setTimeout(() => {
+        showMasterProfileModal.value = true;
+      }, 1000);
+    }
+  } catch (error) {
+    console.error("Error initializing resume data:", error);
+    toast.error("Failed to initialize resume data");
+  } finally {
+    loading.value = false;
+    console.log(
+      "ResumeBuilder initialization complete, showMasterProfileModal:",
+      showMasterProfileModal.value
+    );
   }
+});
+
+onUnmounted(() => {
+  userStore.clearCurrentResume();
 });
 </script>
 

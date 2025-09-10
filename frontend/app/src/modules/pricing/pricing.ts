@@ -13,7 +13,7 @@ export const freePlan = {
   price: 0,
   color: "#fcf2fd",
   features: [
-    "1 resume",
+    "2 resumes",
     "2 AI-powered tweaks/month",
     "Basic templates",
     "Text-only download",
@@ -29,7 +29,7 @@ export const pricedPlans = [
     price: 7,
     color: "#fffbe2",
     features: [
-      "Unlimited resumes",
+      "10 resumes",
       "20 AI-powered tweaks/day (140/week)",
       "Premium templates",
       "PDF downloads",
@@ -45,7 +45,7 @@ export const pricedPlans = [
     color: "#e8e8ff",
     isPopular: true,
     features: [
-      "Unlimited resumes",
+      "20 resumes",
       "50 AI-powered tweaks/day (1,500/month)",
       "Premium templates",
       "PDF downloads",
@@ -60,7 +60,7 @@ export const pricedPlans = [
     price: 59,
     color: "#ebf9fc",
     features: [
-      "Unlimited resumes",
+      "50 resumes",
       "100 AI-powered tweaks/day (9,000/3 months)",
       "Premium templates",
       "PDF downloads",
@@ -76,7 +76,7 @@ export const comparisonFeatures = [
     name: "Basic Features",
     info: true,
     values: {
-      free: true,
+      [Plans.FREE]: true,
       [Plans.PRO_7_DAYS]: true,
       [Plans.PRO_1_MONTH]: true,
       [Plans.PRO_3_MONTHS]: true,
@@ -87,10 +87,10 @@ export const comparisonFeatures = [
     name: "Resumes",
     info: true,
     values: {
-      free: "1",
-      [Plans.PRO_7_DAYS]: "Unlimited",
-      [Plans.PRO_1_MONTH]: "Unlimited",
-      [Plans.PRO_3_MONTHS]: "Unlimited",
+      [Plans.FREE]: "2",
+      [Plans.PRO_7_DAYS]: "10",
+      [Plans.PRO_1_MONTH]: "20",
+      [Plans.PRO_3_MONTHS]: "50",
     },
     description: "Number of resumes you can create and save",
   },
@@ -98,7 +98,7 @@ export const comparisonFeatures = [
     name: "AI-Powered Tweaks",
     info: true,
     values: {
-      free: "5 / month",
+      [Plans.FREE]: "10 / month",
       [Plans.PRO_7_DAYS]: "20 / day",
       [Plans.PRO_1_MONTH]: "50 / day",
       [Plans.PRO_3_MONTHS]: "100 / day",
@@ -109,7 +109,7 @@ export const comparisonFeatures = [
     name: "Chrome Extension",
     info: true,
     values: {
-      free: true,
+      [Plans.FREE]: true,
       [Plans.PRO_7_DAYS]: true,
       [Plans.PRO_1_MONTH]: true,
       [Plans.PRO_3_MONTHS]: true,
@@ -153,7 +153,7 @@ export const comparisonFeatures = [
     name: "Support",
     info: true,
     values: {
-      free: "Community",
+      [Plans.FREE]: "Community",
       [Plans.PRO_7_DAYS]: "Email",
       [Plans.PRO_1_MONTH]: "Email",
       [Plans.PRO_3_MONTHS]: "Priority Email",

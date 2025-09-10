@@ -61,7 +61,7 @@
     >
       <div
         v-show="isOpen"
-        class="absolute z-50 mt-2 w-full bg-white rounded-lg shadow-lg border border-gray-200 py-2 max-h-64 overflow-auto"
+        class="absolute z-50 mt-1 w-full bg-white rounded-lg shadow-lg border border-gray-200 py-1 pb-3 max-h-64 overflow-auto"
       >
         <div
           v-for="option in options"
@@ -76,9 +76,13 @@
           <div class="flex items-center justify-between">
             <span
               class="truncate"
-              :class="{ 'font-medium': isSelected(option) }"
+              :class="{
+                'font-medium': isSelected(option),
+                'text-slate-600 font-semibold': option.value === 'default',
+              }"
             >
               {{ getOptionLabel(option) }}
+              {{ option.value === "default" ? "📒" : "" }}
             </span>
 
             <!-- Selected checkmark -->

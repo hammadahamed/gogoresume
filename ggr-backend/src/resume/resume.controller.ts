@@ -9,10 +9,15 @@ import {
   Req,
   Param,
 } from '@nestjs/common';
-import { ResumeService } from './resume.sevice';
+import { ResumeService } from './resume.service';
 import { TweakResumeDTO, TweakResumeResponse } from './resume.types';
 import { ResumeTweakerService } from './resume-tweaker.service';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import {
+  FeaturesGuard,
+  CheckFeature,
+  FeatureType,
+} from 'src/guards/features.guard';
 
 @Controller('resume')
 export class ResumeController {
@@ -22,7 +27,8 @@ export class ResumeController {
   ) {}
 
   @Post('tweak')
-  @UseGuards(JwtAuthGuard)
+  @CheckFeature(FeatureType.TWEAK)
+  @UseGuards(JwtAuthGuard, FeaturesGuard)
   async tweakResume(
     @Req() req: any,
     @Body() dto: TweakResumeDTO,
@@ -48,12 +54,13 @@ export class ResumeController {
   }
 
   @Post('save')
-  @UseGuards(JwtAuthGuard)
+  @CheckFeature(FeatureType.RESUME)
+  @UseGuards(JwtAuthGuard, FeaturesGuard)
   async createResume(
     @Req() req: any,
     @Body() body: { name: string; data: any; templateId?: string },
   ): Promise<{ status: string; message: string; resumeId: string }> {
-    return this.resumeService.saveResume(
+    return this.resumeService.createResume(
       req.user.id,
       body.name,
       body.data,
@@ -80,7 +87,7 @@ export class ResumeController {
   @Get('saved')
   @UseGuards(JwtAuthGuard)
   async getSavedResumes(@Req() req: any) {
-    return this.resumeService.getSavedResumes(req.user.id);
+    return this.resumeService.getSavedResumes(req.user);
   }
 
   @Get('saved/:resumeId')
