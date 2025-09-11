@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["nodejs_24", "pnpm-9_x"]
+nixPkgs = ["nodejs_24", "pnpm-9_x"]  # pin to what you know works
 
 [phases.install]
 cmds = ["pnpm install --frozen-lockfile"]
@@ -8,4 +8,5 @@ cmds = ["pnpm install --frozen-lockfile"]
 cmds = ["pnpm run build"]
 
 [start]
-cmd = ["npm run start:prod"]
+# Probably use your production start command
+cmd = "npm run start:prod"
