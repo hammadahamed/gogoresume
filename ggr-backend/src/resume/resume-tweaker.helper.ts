@@ -1,9 +1,9 @@
-import { UserProfileData } from 'src/resume/resume.types';
+import { UserInfo } from 'src/resume/resume.types';
 
 export const getTweakPrompt = (
   jobDescription: string,
   userPrompt: string,
-  data: UserProfileData,
+  data: UserInfo,
 ) => {
   const prompt = `
       Job Description: ${jobDescription}

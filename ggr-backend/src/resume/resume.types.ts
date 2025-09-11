@@ -36,7 +36,7 @@ export interface Project {
   sourceCode?: string;
 }
 
-export interface UserProfileData {
+export interface UserInfo {
   personalInfo: PersonalInfo;
   workExperiences: Experience[];
   education: Education[];
@@ -51,13 +51,13 @@ export type SectionId =
   | 'projects';
 
 export interface TweakResumeDTO {
-  data: UserProfileData;
+  data: UserInfo;
   jobDescription: string;
   userPrompt: string;
   sections: SectionId[];
 }
 
 export interface TweakResumeResponse {
-  data: UserProfileData;
+  data: UserInfo;
   matchScore: number;
 }

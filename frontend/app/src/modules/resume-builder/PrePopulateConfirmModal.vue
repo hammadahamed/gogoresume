@@ -11,8 +11,8 @@
         Prefill Your Resume ?
       </h3>
       <p class="text-gray-600 mb-8 text-center text-base">
-        Would you like to pre-populate your resume with data from your master
-        profile?
+        Would you like to pre-populate your resume with data from your
+        <span class="font-bold squiggly-underline">Master Profile</span> ?
       </p>
       <div
         class="flex gap-3 justify-center text-sm font-medium transition-all duration-200"

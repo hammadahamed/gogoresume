@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import Input from "@/common/components/Input.vue";
 import Checkbox from "@/common/components/Checkbox.vue";
+import { stringToDate, dateToString } from "@/helper/resume.helper";
 
 // Define props
 const props = defineProps<{
@@ -33,6 +34,23 @@ const descriptionText = computed({
       .map((line) => line.trim())
       .filter((line) => line.length > 0);
     emit("onChange", { ...props.experience, description: descriptionArray });
+  },
+});
+
+// Computed values for DatePicker v-model
+const startDateValue = computed({
+  get: () => stringToDate(props.experience.startDate),
+  set: (date: Date | null) => {
+    const dateString = dateToString(date);
+    emit("onChange", { ...props.experience, startDate: dateString });
+  },
+});
+
+const endDateValue = computed({
+  get: () => stringToDate(props.experience.endDate),
+  set: (date: Date | null) => {
+    const dateString = dateToString(date);
+    emit("onChange", { ...props.experience, endDate: dateString });
   },
 });
 </script>
@@ -75,24 +93,38 @@ const descriptionText = computed({
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <Input
-          label="Start Date"
-          type="month"
-          name="startDate"
-          :class="{ 'col-span-2': props.experience.current }"
-          v-model="props.experience.startDate"
-          required
-        />
-        <Transition name="fade">
-          <Input
-            v-if="!props.experience.current"
-            label="End Date"
-            type="month"
-            name="endDate"
-            v-model="props.experience.endDate"
-            :disabled="props.experience.current"
-            :required="!props.experience.current"
+        <div :class="{ 'col-span-2': props.experience.current }" class="mb-4">
+          <label
+            class="block text-sm font-semibold text-left text-gray-700 mb-1.5"
+          >
+            Start Date
+          </label>
+          <DatePicker
+            v-model="startDateValue"
+            view="month"
+            size="small"
+            dateFormat="M yy"
+            placeholder="Select start date"
+            fluid
           />
+        </div>
+        <Transition name="fade">
+          <div v-if="!props.experience.current" class="mb-4">
+            <label
+              class="block text-sm font-semibold text-left text-gray-700 mb-1.5"
+            >
+              End Date
+            </label>
+            <DatePicker
+              v-model="endDateValue"
+              view="month"
+              size="small"
+              dateFormat="M yy"
+              placeholder="Select end date"
+              fluid
+              :disabled="props.experience.current"
+            />
+          </div>
         </Transition>
       </div>
 

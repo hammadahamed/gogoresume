@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import config from '../../config';
+import config from '../../appConfig';
 import UsersModel from 'src/schemas/users.schema';
 import paymentConfig from '../../planConfig';
 import DodoPayments from 'dodopayments';

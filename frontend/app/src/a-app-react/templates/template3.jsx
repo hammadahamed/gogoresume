@@ -219,31 +219,34 @@ const Template3 = ({ userData }) => {
             )}
 
             {/* Experience */}
-            {workExperiences &&
-              workExperiences.length > 0 &&
-              workExperiences.map((exp, index) => (
-                <React.Fragment>
-                  <Text style={{ ...styles.sectionTitle, marginBottom: 0 }}>
-                    Professional Experience
-                  </Text>
-                  <View style={styles.jobHeader}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.jobTitle}>{exp.position}</Text>
-                      <Text style={styles.jobCompany}>{exp.company}</Text>
-                    </View>
-                    <Text style={styles.jobDuration}>
-                      {exp.startDate} - {exp.current ? "Present" : exp.endDate}
-                    </Text>
-                  </View>
-
-                  {exp.description &&
-                    exp.description.map((desc, idx) => (
-                      <Text key={idx} style={styles.bulletPoint}>
-                        • {desc}
+            {workExperiences && workExperiences.length > 0 && (
+              <>
+                <Text style={{ ...styles.sectionTitle, marginBottom: 0 }}>
+                  Professional Experience
+                </Text>
+                {workExperiences.map((exp, index) => (
+                  <React.Fragment key={index}>
+                    <View style={styles.jobHeader}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.jobTitle}>{exp.position}</Text>
+                        <Text style={styles.jobCompany}>{exp.company}</Text>
+                      </View>
+                      <Text style={styles.jobDuration}>
+                        {exp.startDate} -{" "}
+                        {exp.current ? "Present" : exp.endDate}
                       </Text>
-                    ))}
-                </React.Fragment>
-              ))}
+                    </View>
+
+                    {exp.description &&
+                      exp.description.map((desc, idx) => (
+                        <Text key={idx} style={styles.bulletPoint}>
+                          • {desc}
+                        </Text>
+                      ))}
+                  </React.Fragment>
+                ))}
+              </>
+            )}
           </View>
 
           {/* Right Column */}

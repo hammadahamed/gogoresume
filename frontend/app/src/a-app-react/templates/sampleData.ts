@@ -125,7 +125,7 @@ const sampleUserData: UserInfo = {
     {
       name: "Budget Buddy",
       description:
-        "Personal finance management tool with automated expense categorization and financial goal tracking. This is a very long description to test the layout of the resume.",
+        "Personal finance management tool with automated expense categorization and financial goal tracking.",
       projectLink: "https://budget-buddy.example.com",
       sourceCode: "https://github.com/budget-buddy",
     },

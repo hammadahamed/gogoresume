@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import Input from "@/common/components/Input.vue";
+import { stringToDate, dateToString } from "@/helper/resume.helper";
 
 // Define props
 const props = defineProps<{
@@ -18,6 +20,23 @@ const emit = defineEmits<{
   (e: "onChange", updated: any): void;
   (e: "onDelete"): void;
 }>();
+
+// Computed values for DatePicker v-model
+const startDateValue = computed({
+  get: () => stringToDate(props.education.startDate),
+  set: (date: Date | null) => {
+    const dateString = dateToString(date);
+    emit("onChange", { ...props.education, startDate: dateString });
+  },
+});
+
+const endDateValue = computed({
+  get: () => stringToDate(props.education.endDate),
+  set: (date: Date | null) => {
+    const dateString = dateToString(date);
+    emit("onChange", { ...props.education, endDate: dateString });
+  },
+});
 </script>
 
 <template>
@@ -32,6 +51,7 @@ const emit = defineEmits<{
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
         <Input
+          class="col-span-2"
           label="School"
           name="school"
           v-model="props.education.school"
@@ -51,23 +71,39 @@ const emit = defineEmits<{
           v-model="props.education.gpa"
           placeholder="e.g., 3.8/4.0"
         />
-        <Input
-          label="Start Date"
-          type="month"
-          name="startDate"
-          v-model="props.education.startDate"
-          required
-        />
-        <Input
-          label="End Date"
-          type="month"
-          name="endDate"
-          v-model="props.education.endDate"
-          required
-        />
+        <div class="mb-4">
+          <label
+            class="block text-sm font-semibold text-left text-gray-700 mb-1.5"
+          >
+            Start Date
+          </label>
+          <DatePicker
+            v-model="startDateValue"
+            view="month"
+            size="small"
+            dateFormat="M yy"
+            placeholder="Select start date"
+            fluid
+          />
+        </div>
+        <div class="mb-4">
+          <label
+            class="block text-sm font-semibold text-left text-gray-700 mb-1.5"
+          >
+            End Date
+          </label>
+          <DatePicker
+            v-model="endDateValue"
+            view="month"
+            size="small"
+            dateFormat="M yy"
+            placeholder="Select end date"
+            fluid
+          />
+        </div>
       </div>
 
-      <div class="mt-6 flex justify-end pt-4">
+      <div class="flex justify-end pt-4">
         <button
           type="button"
           @click="emit('onDelete')"

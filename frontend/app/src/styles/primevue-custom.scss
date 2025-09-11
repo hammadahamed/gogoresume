@@ -1,0 +1,15 @@
+.p-datepicker-month {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.p-inputtext {
+    border-radius: 0px !important;
+    padding-block: 5px !important;
+    border: 1px solid #d1d5db;
+    color: black !important;
+
+    &:focus {
+        @apply focus:border-black focus:ring-2 focus:ring-black !important;
+    }
+}

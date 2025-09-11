@@ -33,7 +33,7 @@ export class ResumeController {
     @Req() req: any,
     @Body() dto: TweakResumeDTO,
   ): Promise<TweakResumeResponse> {
-    return this.resumeTweakerService.tweakResume(req.user, dto);
+    return this.resumeTweakerService.tweakResumeWithClaude(req.user, dto);
   }
 
   @Post('user-profile')
