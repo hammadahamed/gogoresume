@@ -4,8 +4,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as nanoidModule from 'nanoid';
-const nanoid = nanoidModule.nanoid;
+import { nanoid } from 'nanoid';
 
 export interface OrderPayload {
   orderId: string;
