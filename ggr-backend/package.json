@@ -8,8 +8,8 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "node dist/main",
-    "start2": "nest start",
+    "start": "nest start",
+    "start:prod": "node dist/main",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
     "start:dev:local-env": "dotenv -e .env.local -- cross-env NODE_ENV=development nest start --watch",
     "start:staging": "cross-env NODE_ENV=staging nest start --watch",
@@ -20,10 +20,6 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
-  },
-  "engines": {
-    "node": "24.x",
-    "pnpm": "9.x"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.61.0",
