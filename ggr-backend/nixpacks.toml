@@ -7,6 +7,6 @@ cmds = ["pnpm install --frozen-lockfile"]
 [phases.build]
 cmds = ["pnpm run build"]
 
-[phases.start]
+[start]
 # Probably use your production start command
 cmds = ["npm run start:prod"]
