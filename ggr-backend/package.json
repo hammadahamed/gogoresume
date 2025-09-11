@@ -1,6 +1,5 @@
 {
   "name": "gogoresume-backend",
-  "type": "module",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -21,6 +20,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "engines": {
+    "node": "24.x",
+    "pnpm": "9.x"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.61.0",
