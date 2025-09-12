@@ -9,8 +9,8 @@ import dotenv from "dotenv";
 const env = process.env.NODE_ENV;
 console.log("🚀 ~ env:", env);
 
-const envPath = `./.env.${
-  process.env.NODE_ENV !== "production" ? "staging" : "production"
+const envPath = `./.env${
+  process.env.NODE_ENV !== "production" ? ".staging" : ""
 }`;
 console.log("🚀 ~ envPath:", envPath);
 dotenv.config({ path: envPath });

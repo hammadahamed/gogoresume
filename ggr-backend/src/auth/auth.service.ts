@@ -14,6 +14,9 @@ import {
 } from 'src/common/helpers/plan.helper';
 import TweakUsageModel from 'src/schemas/tweaksUsage.schema';
 import { IJwtPayload, IJwtPayloadPlan } from 'src/common/types/app.types';
+import { WelcomeEmail } from 'src/emailTemplates';
+import { ZeptoMailService } from 'src/app-mailer/zepto-mail/zepto-mail.service';
+import { AppEmails } from 'src/appConfig';
 
 @Injectable()
 export class AuthService {
@@ -21,18 +24,34 @@ export class AuthService {
   private readonly ACCESS_TOKEN_SECRET = process.env.JWT_SECRET_ACCESS_TOKEN;
   private readonly REFRESH_TOKEN_SECRET = process.env.JWT_SECRET_REFRESH_TOKEN;
 
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly appMailerService: ZeptoMailService,
+  ) {}
 
-  async findOrCreateUser(email: string, authMethod: AuthMethod, data?: any) {
+  async findOrCreateUser(
+    email: string,
+    authMethod: AuthMethod,
+    data?: any,
+    name?: string,
+  ) {
     let user = await UsersModel.findOne({ email });
 
     if (!user) {
+      // CREATE USER
       this.logger.log(`User not found, creating new user: ${email}`);
       const userObj = {
         email,
         authMethod,
         profilePicture: data?.profilePicture,
       } as any;
+
+      //   SEND WELCOME EMAIL
+      await this.appMailerService.sendEmail(
+        email,
+        WelcomeEmail(name),
+        AppEmails.FOUNDER,
+      );
       if (data) {
         userObj.google = {} as any;
         userObj.google.accessToken = data.access_token;

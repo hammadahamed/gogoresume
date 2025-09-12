@@ -39,17 +39,17 @@ export class WaitlistService {
       });
 
       // Send confirmation email
-      await this.zeptoMailService.sendEmail(
-        waitlistData.email,
-        'Welcome to GoGoResume Waitlist!',
-        `<div>
-          <h2>Thank you for joining the GoGoResume waitlist!</h2>
-          <p>Hello ${waitlistData.name},</p>
-          <p>We're thrilled to have you on our waitlist! We'll keep you updated on our progress and notify you as soon as GrootForm is ready for you to try.</p>
-          <p>Stay tuned for exciting updates coming your way.</p>
-          <p>Best regards,<br>The GoGoResume Team</p>
-        </div>`,
-      );
+      //   await this.zeptoMailService.sendEmail(
+      //     waitlistData.email,
+      //     'Welcome to GoGoResume Waitlist!',
+      //     `<div>
+      //       <h2>Thank you for joining the GoGoResume waitlist!</h2>
+      //       <p>Hello ${waitlistData.name},</p>
+      //       <p>We're thrilled to have you on our waitlist! We'll keep you updated on our progress and notify you as soon as GrootForm is ready for you to try.</p>
+      //       <p>Stay tuned for exciting updates coming your way.</p>
+      //       <p>Best regards,<br>The GoGoResume Team</p>
+      //     </div>`,
+      //   );
 
       return {
         success: true,

@@ -62,11 +62,11 @@ export class EmailOnlyService {
 
     // Send OTP email
     try {
-      await this.nodeMailer.sendEmail(
-        email,
-        `${EmailConstants.ProductName} Login OTP`,
-        `Your OTP for logging into ${EmailConstants.ProductName} is ${otp}`,
-      );
+      //   await this.nodeMailer.sendEmail(
+      //     email,
+      //     `${EmailConstants.ProductName} Login OTP`,
+      //     `Your OTP for logging into ${EmailConstants.ProductName} is ${otp}`,
+      //   );
 
       // Increment daily count only after successful email sending
       await this.redisService.increment(dailyLimitKey, ExpiryTime.ONE_DAY);

@@ -8,6 +8,7 @@ import { AppMailerModule } from 'src/app-mailer/app-mailer.module';
 import { JwtModule } from '@nestjs/jwt';
 import { GoogleService } from './google/google.service';
 import { AuthController } from './auth.controller';
+import { ZeptoMailService } from 'src/app-mailer/zepto-mail/zepto-mail.service';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { AuthController } from './auth.controller';
     AppMailerModule,
     JwtModule,
   ],
-  providers: [AuthService, EmailOnlyService, GoogleService],
+  providers: [AuthService, EmailOnlyService, GoogleService, ZeptoMailService],
   controllers: [EmailOnlyController, GoogleController, AuthController],
   exports: [AuthService],
 })

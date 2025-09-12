@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SendMailClient } from 'zeptomail';
+import { AppEmails, IAppEmail } from 'src/appConfig';
+import { EmailTemplate } from 'src/emailTemplates';
 
 @Injectable()
 export class ZeptoMailService {
@@ -13,13 +15,22 @@ export class ZeptoMailService {
     this.client = new SendMailClient({ url, token });
   }
 
+  private parseError(error: any) {
+    return (
+      (error.error?.message || '') +
+      ' - ' +
+      (error.error?.details?.[0]?.message || '')
+    );
+  }
+
   // Method to send email
-  async sendEmail(to: string, subject: string, text: string): Promise<void> {
+  async sendEmail(
+    to: string,
+    emailTemplate: EmailTemplate,
+    from: IAppEmail = AppEmails.NO_REPLY,
+  ): Promise<void> {
     const mailOptions = {
-      from: {
-        address: process.env.EMAIL_NOREPLY_MAIL,
-        name: 'noreply',
-      },
+      from: from,
       to: [
         {
           email_address: {
@@ -28,8 +39,8 @@ export class ZeptoMailService {
           },
         },
       ],
-      subject: subject,
-      htmlbody: text,
+      subject: emailTemplate.subject,
+      htmlbody: emailTemplate.body,
     };
     console.log(
       '🚀 ~ ZeptoMailService ~ sendEmail ~ mailOptions:',
@@ -40,12 +51,14 @@ export class ZeptoMailService {
     try {
       this.logger.log(`[Email] Sending mail to ${to}`);
       await this.client.sendMail(mailOptions);
-      this.logger.log(`[Email] Sent to ${to} with subject: ${subject}`);
+      this.logger.log(
+        `[Email] Sent to ${to} with subject: ${emailTemplate.subject}`,
+      );
     } catch (error) {
       this.logger.error(
-        `[Email] Failed to send email to ${to}: ${error.message}`,
+        `[Email] Failed to send email to ${to} ${this.parseError(error)}:`,
+        error,
       );
-      throw error;
     }
   }
 }

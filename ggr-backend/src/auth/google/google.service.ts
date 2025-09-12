@@ -83,6 +83,7 @@ export class GoogleService {
       }
 
       const { email, name, picture } = googleUser;
+      console.log('🚀 ~ GoogleService ~ signinWithIdToken ~ name:', name);
 
       // Find or create user in your database
       const user = await this.authService.findOrCreateUser(
@@ -92,6 +93,7 @@ export class GoogleService {
           ...data,
           profilePicture: picture,
         },
+        name,
       );
 
       // Generate application JWT or session token

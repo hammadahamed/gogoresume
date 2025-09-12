@@ -8,6 +8,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersService } from 'src/users/users.service';
 import { FeaturesGuard } from 'src/guards/features.guard';
+import { ZeptoMailService } from 'src/app-mailer/zepto-mail/zepto-mail.service';
 
 @Module({
   imports: [OpenAIModule, ClaudeModule, JwtModule],
@@ -19,6 +20,7 @@ import { FeaturesGuard } from 'src/guards/features.guard';
     AuthService,
     UsersService,
     FeaturesGuard,
+    ZeptoMailService,
   ],
 })
 export class ResumeModule {}
