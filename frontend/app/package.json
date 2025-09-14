@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "cross-env NODE_ENV=production vue-tsc --noEmit --skipLibCheck && vite build",
+    "build:analyze": "cross-env NODE_ENV=production vue-tsc --noEmit --skipLibCheck && vite build --mode analyze",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -14,7 +15,6 @@
     "@tailwindcss/vite": "^4.1.3",
     "@vitejs/plugin-react": "^4.7.0",
     "axios": "^1.8.4",
-    "moment-timezone": "^0.6.0",
     "pinia": "^3.0.1",
     "primevue": "^4.3.9",
     "react": "^18.3.1",
@@ -23,7 +23,6 @@
     "vite-svg-loader": "^5.1.0",
     "vue": "^3.5.13",
     "vue-router": "4",
-    "vue-toastification": "^1.7.14",
     "vue3-google-login": "^2.0.34",
     "vue3-toastify": "^0.2.8"
   },
@@ -34,6 +33,7 @@
     "@vue/tsconfig": "^0.7.0",
     "cross-env": "^10.0.0",
     "dotenv": "^17.2.1",
+    "rollup-plugin-visualizer": "^5.12.0",
     "sass-embedded": "^1.86.3",
     "typescript": "~5.7.2",
     "vite": "^6.2.0",

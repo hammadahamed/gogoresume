@@ -10,7 +10,7 @@
         <div
           class="mb-10 text-black border-2 border-black w-min whitespace-nowrap mx-auto px-4 py-0.5 rounded-full text-[13px] font-semibold"
         >
-          <p>Jarvis for Job-Hunters 🔥</p>
+          <p>The Jarvis for Job-Hunters 🔥</p>
         </div>
         <p
           class="hero-headline text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight"
@@ -42,7 +42,8 @@
             />
           </div>
           <button
-            class="hero-button-secondary px-4 py-2.5 border-2 border-black hover:opacity-70 text-gray-700 hover:text-primary text-sm sm:text-base font-semibold rounded-full transition-all duration-200 cursor-pointer"
+            @click="scrollToPricing"
+            class="hero-button-primary px-4 py-2.5 border-2 border-black hover:opacity-70 text-gray-700 hover:text-primary text-sm sm:text-base font-semibold rounded-full transition-all duration-200 cursor-pointer"
           >
             View Pricing
           </button>
@@ -57,10 +58,15 @@
 
 <script setup lang="ts">
 import SpecialBtn from "@/common/components/SpecialBtn.vue";
+import { scrollToSection } from "@/helper/ui.helper";
 defineEmits<{
   scrollToFeatures: [];
   scrollToPricing: [];
 }>();
+
+const scrollToPricing = () => {
+  scrollToSection("pricing");
+};
 </script>
 
 <style scoped lang="scss">

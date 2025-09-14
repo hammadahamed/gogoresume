@@ -106,8 +106,8 @@ const Template1 = ({ userData }) => {
   } = personalInfo;
 
   // Extract LinkedIn from professional links for backward compatibility
-  const linkedin = personalInfo.linkedin || "linkedin.com/in/johndoe";
-  const portfolio = personalInfo.portfolio || "johndoe.dev";
+  const linkedin = personalInfo.linkedin;
+  const portfolio = personalInfo.portfolio;
 
   const fullName = `${firstName} ${lastName}`.trim() || "John Doe";
   const workExperiences = userData?.workExperiences || [];
@@ -177,7 +177,7 @@ const Template1 = ({ userData }) => {
           <View style={styles.section}>
             <Text style={{ ...styles.sectionTitle }}>Projects</Text>
             {projects.map((project, index) => (
-              <React.Fragment>
+              <React.Fragment key={index}>
                 <Text style={{ ...styles.jobTitle, marginTop: 10 }}>
                   {project.name}
                 </Text>

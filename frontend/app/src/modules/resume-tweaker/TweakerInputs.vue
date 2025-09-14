@@ -30,6 +30,9 @@
         <h3 class="text-sm font-semibold text-gray-900 mb-1">
           Ready to optimize?
         </h3>
+        <button class="text-xs text-gray-500" @click="openMasterProfile()">
+          open master profile
+        </button>
         <p class="text-xs text-gray-500">
           Paste the job description to get started
         </p>
@@ -366,6 +369,10 @@ const CUSTOM_INSTRUCTIONS_LIMIT = 500;
 // Debounced job description for UI switching
 const debouncedJobDescription = ref("");
 let debounceTimer: NodeJS.Timeout | null = null;
+
+const openMasterProfile = () => {
+  window.open("https://gogoresume.com/master-profile", "_blank");
+};
 
 // Watch for changes in job description and debounce
 watch(

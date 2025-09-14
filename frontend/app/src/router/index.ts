@@ -1,22 +1,27 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Main from "../Main.vue";
-import CeLogin from "../modules/home/CeLogin.vue";
-
-// Import all the page components
-import Home from "../modules/home/Home.vue";
-import ProfileInfo from "../modules/user-info/ProfileInfo.vue";
-import ResumeBuilder from "../modules/resume-builder/ResumeBuilder.vue";
-import SavedResumes from "../modules/saved-resumes/SavedResumes.vue";
-import ResumeTweaker from "../modules/resume-tweaker/ResumeTweaker.vue";
-import Templates from "../modules/templates/Templates.vue";
-import LandingPageVue from "../modules/home/LandingPage.vue";
-import PaymentSuccess from "../modules/payment/PaymentSuccess.vue";
-import UserSettings from "../modules/settings/UserSettings.vue";
-import NotFoundPage from "../NotFoundPage.vue";
 import useAuthComposable from "../composables/useAuth";
 import { accessTokenKey } from "@/api-factory/constants";
 import { useUserStore } from "@/stores/useUserStore";
-import Pricing from "../modules/pricing/PricingPage.vue";
+import { storeIntendedRoute } from "@/utils/routeUtils";
+
+// Lazy-loaded components using dynamic imports
+const Main = () => import("../Main.vue");
+const CeLogin = () => import("../modules/home/CeLogin.vue");
+const Home = () => import("../modules/home/Home.vue");
+const ProfileInfo = () => import("../modules/user-info/ProfileInfo.vue");
+const ResumeBuilder = () =>
+  import("../modules/resume-builder/ResumeBuilder.vue");
+const SavedResumes = () => import("../modules/saved-resumes/SavedResumes.vue");
+const ResumeTweaker = () =>
+  import("../modules/resume-tweaker/ResumeTweaker.vue");
+const Templates = () => import("../modules/templates/Templates.vue");
+const LandingPageVue = () => import("../modules/home/LandingPage.vue");
+const PaymentSuccess = () => import("../modules/payment/PaymentSuccess.vue");
+const UserSettings = () => import("../modules/settings/UserSettings.vue");
+const NotFoundPage = () => import("../NotFoundPage.vue");
+const Pricing = () => import("../modules/pricing/PricingPage.vue");
+const ExtensionSettings = () =>
+  import("../modules/extension/ExtensionSettings.vue");
 
 const protectedRoutes = [
   {
@@ -33,7 +38,7 @@ const protectedRoutes = [
   },
 
   {
-    path: "/profile-data",
+    path: "/master-profile",
     component: Main,
     children: [{ path: "", component: ProfileInfo }],
     meta: { requiresAuth: true },
@@ -66,6 +71,13 @@ const protectedRoutes = [
     path: "/settings",
     component: Main,
     children: [{ path: "", component: UserSettings }],
+    meta: { requiresAuth: true },
+  },
+
+  {
+    path: "/chrome-extension",
+    component: Main,
+    children: [{ path: "", component: ExtensionSettings }],
     meta: { requiresAuth: true },
   },
 ];
@@ -109,12 +121,24 @@ router.beforeEach(async (to, from, next) => {
   const isAuthRoute = to.matched.some((record) => record.meta.isAuthRoute);
   const hasToken = !!localStorage.getItem(accessTokenKey);
 
+  // Check if we need to preserve extension parameter
+  const isExtensionMode =
+    to.query.extension === "true" || from.query.extension === "true";
+  const preserveExtension = isExtensionMode && !to.query.extension;
+
   // If route requires auth and user is not authenticated
   if (requiresAuth) {
     if (!hasToken) {
+      // Store the intended route before redirecting
+      storeIntendedRoute({
+        path: to.path,
+        query: to.query,
+        hash: to.hash,
+      });
+
       // No token, redirect to login
-      if (to.query.extension) {
-        next({ path: "/login" });
+      if (isExtensionMode) {
+        next({ path: "/login", query: { extension: "true" } });
       } else {
         next({ path: "/" });
       }
@@ -133,7 +157,21 @@ router.beforeEach(async (to, from, next) => {
 
   // If going to auth route but already authenticated
   if (isAuthRoute && hasToken) {
-    next({ path: "/home" });
+    if (isExtensionMode) {
+      next({ path: "/home", query: { extension: "true" } });
+    } else {
+      next({ path: "/home" });
+    }
+    return;
+  }
+
+  // Preserve extension parameter if needed
+  if (preserveExtension) {
+    next({
+      path: to.path,
+      query: { ...to.query, extension: "true" },
+      hash: to.hash,
+    });
     return;
   }
 

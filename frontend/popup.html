@@ -88,6 +88,27 @@
             color: #666;
             margin-top: 4px;
         }
+
+        .setup-button {
+            background-color: #6466f1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background-color 0.2s ease;
+        }
+
+        .setup-button:hover {
+            background-color: #5856eb;
+        }
+
+        .setup-button:active {
+            background-color: #4f46e5;
+        }
     </style>
 </head>
 
@@ -114,6 +135,16 @@
             <input type="checkbox" id="ggr-suggestionsToggle">
             <span class="slider"></span>
         </label>
+    </div>
+
+    <div class="toggle-container">
+        <div class="toggle-label-container">
+            <span class="toggle-label">Update Suggestions</span>
+            <p class="feature-description">Suggestion are curated from your master profile</p>
+        </div>
+        <button class="setup-button" id="ggr-setupButton">
+            Sync Now
+        </button>
     </div>
 
     <script src="popup.js"></script>

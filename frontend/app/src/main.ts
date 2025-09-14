@@ -11,6 +11,7 @@ import "./styles/animated-border.scss";
 import "./styles/primevue-custom.scss";
 import { setupMessageHandler } from "./utils/messageHandler";
 import { GoogleAuth } from "./helper/google-auth.helper";
+import { initializeUmamiAnalytics } from "./umami.analytics";
 
 // PrimeVue
 import PrimeVue from "primevue/config";
@@ -59,8 +60,7 @@ app.use(Vue3Toastify, {
 } as ToastContainerOptions);
 
 GoogleAuth.initializeGoogleApp(app);
-
 app.mount("#app");
 
-// Set up message handler for suggestions
-setupMessageHandler();
+initializeUmamiAnalytics();
+// setupMessageHandler();

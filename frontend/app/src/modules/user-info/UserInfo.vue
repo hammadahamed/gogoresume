@@ -112,22 +112,8 @@ import {
   emptyEducation,
   emptyProject,
 } from "@/constants/app.constants.ts";
-import {
-  initializeWindowEvents,
-  cleanupWindowEvents,
-} from "../../utils/windowEvents";
 
 const { getUserProfile, currentResume } = useDataManager();
-
-// Initialize window events for suggestions
-onMounted(() => {
-  //   initializeWindowEvents();
-
-  // Cleanup on unmount
-  return () => {
-    // cleanupWindowEvents();
-  };
-});
 
 // Computed properties with default values
 const workExperiences = computed(

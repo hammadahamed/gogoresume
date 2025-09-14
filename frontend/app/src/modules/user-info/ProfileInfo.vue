@@ -13,6 +13,7 @@
         </div>
 
         <!-- Messaging -->
+
         <div class="space-y-6">
           <p class="text-3xl text-left font-bold text-gray-900 leading-tight">
             Build Your Master Profile
@@ -105,7 +106,6 @@ const benefits = [
     text: "AI-powered job optimization",
   },
 ];
-
 const init = async () => {
   try {
     loading.value = true;

@@ -12,17 +12,26 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed, provide } from "vue";
 import { useDataManager } from "./composables/useDataManager";
 import useAuthComposable from "./composables/useAuth";
 import Onboarding from "./common/functional-components/Onboarding.vue";
 import { useAppStore } from "./stores/useAppStore";
 import Spinner from "@/common/components/Spinner.vue";
+import { useRoute } from "vue-router";
 
 const isLoading = ref(true);
 
 const appStore = useAppStore();
 const { bootstrap } = useAuthComposable();
+
+const route = useRoute();
+
+const isExtensionMode = computed(() => {
+  return route.query.extension === "true";
+});
+
+provide("isExtensionMode", isExtensionMode);
 
 onMounted(async () => {
   try {

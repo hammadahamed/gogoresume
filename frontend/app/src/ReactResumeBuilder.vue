@@ -5,19 +5,14 @@
       v-if="!hasUserData && !templateView && !builderMode"
       class="no-data-placeholder"
       :class="{ 'max-h-[45vh]': isExtensionMode }"
-      style="
-        margin-top: 50px;
-        aspect-ratio: 1 / 1.42;
-        width: 450px;
-        height: auto;
-      "
+      style="margin-top: 50px; aspect-ratio: 1 / 1.42; height: auto"
     >
       <div class="placeholder-content">
         <div class="placeholder-icon">📄</div>
         <p class="font-medium text-gray-500">No Profile Data Found</p>
         <div
-          class="p-2 rounded-full bg-primary hover:opacity-70 transition-all duration-300 text-sm text-white font-semibold cursor-pointer"
-          @click="router.push('/profile-data')"
+          class="p-2 rounded-full bg-black hover:opacity-70 transition-all duration-300 text-sm text-white font-semibold cursor-pointer"
+          @click="router.push('/master-profile')"
         >
           Complete Profile
         </div>
@@ -71,7 +66,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  hideDownloadButton: false,
 });
 
 const isExtensionMode = inject("isExtensionMode");
@@ -378,10 +372,10 @@ watch(
   align-items: center;
   justify-content: center;
   height: calc(100vh - 160px);
-  max-width: 500px;
+  max-width: 520px;
   margin: auto;
-  border: 2px dashed rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 1px;
 }
 
 .placeholder-content {

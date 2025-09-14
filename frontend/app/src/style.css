@@ -75,3 +75,17 @@ button {
   font-display: swap;
   src: url("./assets/fonts/Inter/InterVariable-Italic.woff2") format("woff2");
 }
+
+.zoom-revealer {
+  animation: zoom-reveal 0.3s;
+}
+
+@keyframes zoom-reveal {
+  0% {
+    scale: 0.6;
+  }
+
+  100% {
+    scale: 1;
+  }
+}

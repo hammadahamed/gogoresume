@@ -1,8 +1,8 @@
 <template>
-  <div v-if="accessToken">
+  <div v-if="accessToken && !isSigningIn">
     <div
       class="ml-auto w-max text-xs sm:text-sm text-black font-semibold gap-2 sm:gap-3 px-3 sm:px-6 py-2 bg-gray-100 border border-gray-400 hover:ring hover:ring-black transition-all duration-200 rounded-full cursor-pointer"
-      @click="router.push('/home')"
+      @click="handleDashboardClick"
     >
       <span class="hidden sm:inline">Go To Dashboard</span>
       <span class="sm:hidden">Dashboard</span>
@@ -10,23 +10,8 @@
   </div>
 
   <div v-else class="google-login-wrapper">
-    <!-- Loading State -->
-    <div
-      v-if="isSigningIn"
-      class="flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-6 py-2 sm:py-3 bg-gray-900 border border-gray-700 rounded-lg"
-    >
-      <div
-        class="animate-spin rounded-full h-3 sm:h-4 w-3 sm:w-4 border-2 border-gray-300 border-t-white"
-      ></div>
-      <span class="text-white text-xs sm:text-sm font-medium">
-        <span class="hidden sm:inline">Signing in...</span>
-        <span class="sm:hidden">Signing in...</span>
-      </span>
-    </div>
-
     <!-- Google Login Button -->
     <GoogleLogin
-      v-else
       :callback="googleSignin"
       :auto-login="true"
       :prompt="true"
@@ -42,14 +27,13 @@
 
         <!-- Button Text -->
         <span class="text-white font-medium text-xs sm:text-sm">
-          <span class="hidden sm:inline">Continue with Google</span>
-          <span class="sm:hidden">Sign In</span>
+          <span class="">{{
+            isSigningIn ? "Signing in..." : "Continue with Google"
+          }}</span>
         </span>
 
         <!-- Subtle hover effect overlay -->
-        <div
-          class="absolute inset-0 bg-white opacity-0 group-hover:opacity-5 transition-opacity duration-200 rounded-lg"
-        ></div>
+        <Spinner v-if="isSigningIn" size="18px" color="white" />
       </button>
     </GoogleLogin>
   </div>
@@ -63,6 +47,8 @@ import AuthApi from "@/api-factory/auth";
 import { toast } from "vue3-toastify";
 import useAuthComposable from "@/composables/useAuth";
 import { useRouter } from "vue-router";
+import Spinner from "@/common/components/Spinner.vue";
+import { getIntendedRoute } from "@/utils/routeUtils";
 
 // Props
 interface Props {
@@ -93,6 +79,20 @@ console.log("🚀 ~ idConfiguration:", idConfiguration);
 const isSigningIn = ref(false);
 
 // Methods
+const handleDashboardClick = () => {
+  // Check for intended route and redirect accordingly
+  const intendedRoute = getIntendedRoute();
+  if (intendedRoute) {
+    router.push({
+      path: intendedRoute.path,
+      query: intendedRoute.query,
+      hash: intendedRoute.hash,
+    });
+  } else {
+    router.push("/home");
+  }
+};
+
 const googleSignin = async (response: any) => {
   try {
     isSigningIn.value = true;
@@ -124,13 +124,22 @@ const googleSignin = async (response: any) => {
     }
 
     const result = await AuthApi.googleSignIn(params);
-    console.log("🚀 ~ googleSignin ~ result:", result);
     if (result.user.email) {
-      console.log("🚀 ~ googleSignin ~ result.user.email:", result.user.email);
       toast.success(`Logged in Successfully`);
       accessToken.value = result.tokens.accessToken;
       await bootstrap();
-      router.replace("/home");
+
+      // Check for intended route and redirect accordingly
+      const intendedRoute = getIntendedRoute();
+      if (intendedRoute) {
+        router.replace({
+          path: intendedRoute.path,
+          query: intendedRoute.query,
+          hash: intendedRoute.hash,
+        });
+      } else {
+        router.replace("/home");
+      }
     } else {
       toast.error("Oops. Something Went wrong", {
         closable: true,

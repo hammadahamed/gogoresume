@@ -21,14 +21,14 @@
       <div class="space-y-3">
         <button
           @click="goHome"
-          class="w-full px-6 py-3 bg-violet-500 text-white font-medium rounded-lg hover:bg-violet-600 transition-colors duration-200"
+          class="w-full px-6 py-2 bg-black text-white font-medium rounded-lg hover:bg-violet-500 transition-colors duration-200"
         >
           Go Home
         </button>
 
         <button
           @click="goBack"
-          class="w-full px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-200"
+          class="w-full px-6 py-3 text-violet-500 hover:text-gray-800 font-medium transition-colors duration-200"
         >
           Go Back
         </button>

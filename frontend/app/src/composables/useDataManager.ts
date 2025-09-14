@@ -3,7 +3,6 @@ import ResumeAPI from "../api-factory/resume";
 import { toast } from "vue3-toastify";
 import { computed, ref } from "vue";
 
-import { saveUserInfo, loadUserInfo } from "../utils/windowEvents";
 import type { UserInfo } from "../types/resume.types";
 import useAuthComposable from "./useAuth";
 import { DEFAULT_RESUME } from "../constants/app.constants";
@@ -64,7 +63,6 @@ export function useDataManager() {
       // }
 
       const response = await ResumeAPI.getUserProfile();
-      console.log("🚀 ~ getUserProfile ~ response:", response);
       if (!response.data) {
         setEmptyUserInfo();
       } else {

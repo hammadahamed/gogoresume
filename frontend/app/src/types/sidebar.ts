@@ -26,6 +26,7 @@ import ProfileIcon from "@/assets/svg/user.svg";
 import ResumeIcon from "@/assets/svg/resume.svg";
 import TweakerIcon from "@/assets/svg/tweaker.svg";
 import TemplateIcon from "@/assets/svg/templates.svg";
+import ChromeExtensionIcon from "@/assets/svg/ext.svg";
 
 // Simplified sidebar configuration focused on core workflow
 export const DEFAULT_SIDEBAR_ITEMS: SidebarItem[] = [
@@ -33,5 +34,10 @@ export const DEFAULT_SIDEBAR_ITEMS: SidebarItem[] = [
   { id: "resume-tweaker", label: "Quick Optimize", icon: TweakerIcon },
   { id: "my-resumes", label: "My Resumes", icon: ResumeIcon },
   { id: "templates", label: "Templates", icon: TemplateIcon },
-  { id: "profile-data", label: "Profile Info", icon: ProfileIcon },
+  {
+    id: "chrome-extension",
+    label: "chrome Extension",
+    icon: ChromeExtensionIcon,
+  },
+  { id: "master-profile", label: "Profile Info", icon: ProfileIcon },
 ];

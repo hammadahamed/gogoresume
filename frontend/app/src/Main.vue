@@ -11,21 +11,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, provide, watch } from "vue";
-import { useRoute } from "vue-router";
+import { computed, onMounted, provide, watch, inject } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import Sidebar from "@/common/components/Sidebar.vue";
 import type { SidebarUser } from "./types/sidebar";
 import { useAppStore } from "./stores/useAppStore";
 
-const route = useRoute();
 const appStore = useAppStore();
 
-const isExtensionMode = computed(() => {
-  return route.query.extension === "true";
-});
-
-provide("isExtensionMode", isExtensionMode);
+const route = useRoute();
+const router = useRouter();
+const isExtensionMode = inject("isExtensionMode");
 
 // Watch for route changes and update store
 watch(
@@ -36,6 +33,7 @@ watch(
 );
 
 onMounted(() => {
+  if (isExtensionMode.value) router.replace("/resume-tweaker");
   appStore.initializeFromRoute(route.path);
 });
 </script>

@@ -1,3 +1,28 @@
+const EXT_ACTION_PREFIX = "GGR_EXT_ACTION";
+const WINDOW_MESSAGE_PREFIX = "GOGORESUME_MESSAGE";
+
+const ACTIONS = {
+  UPDATE_SIDEBAR: `${EXT_ACTION_PREFIX}:UPDATE_SIDEBAR`,
+  UPDATE_SUGGESTIONS: `${EXT_ACTION_PREFIX}:UPDATE_SUGGESTIONS`,
+  OPEN_SIDEBAR: `${EXT_ACTION_PREFIX}:OPEN_SIDEBAR`,
+  ACTION_TOGGLE: `${EXT_ACTION_PREFIX}:toggle`,
+};
+
+const WindowMessages = {
+  EXT_PING: `${WINDOW_MESSAGE_PREFIX}:EXT_PING`,
+  EXT_PING_RESPONSE: `${WINDOW_MESSAGE_PREFIX}:EXT_PING_RESPONSE`,
+  SAVE_USER_INFO: `${WINDOW_MESSAGE_PREFIX}:SAVE_USER_INFO`,
+  SAVE_USER_INFO_RESPONSE: `${WINDOW_MESSAGE_PREFIX}:SAVE_USER_INFO_RESPONSE`,
+};
+
+// Storage keys
+const StorageKeys = {
+  SIDEBAR_ENABLED: "sidebarEnabled",
+  SUGGESTIONS_ENABLED: "suggestionsEnabled",
+  USER_INFO: "userInfo",
+  BUTTON_POSITION: "toggleButtonPosition",
+};
+
 // Element IDs
 const TOGGLE_BUTTON_ID = "gogoresume-toggle";
 const SUGGESTIONS_ID = "gogoresume-suggestions";
@@ -12,22 +37,37 @@ const SUGGESTION_ITEM_CLASS = "suggestion-item";
 const ACTIVE_CLASS = "active";
 
 // Messages and actions
-const ACTION_TOGGLE = "toggle";
-const ACTION_UPDATE_SUGGESTIONS = "updateSuggestionsState";
-const ACTION_UPDATE_DRAWER = "updateDrawerState";
-const MESSAGE_TYPE_FIELD_CLICK = "FIELD_CLICK";
+
 const MESSAGE_TYPE_SUGGESTIONS = "SUGGESTIONS";
-const MESSAGE_TYPE_SAVE_USER_INFO = "SAVE_USER_INFO";
-const MESSAGE_TYPE_LOAD_USER_INFO = "LOAD_USER_INFO";
-const MESSAGE_TYPE_USER_INFO_LOADED = "USER_INFO_LOADED";
 
 // Section names
-const SECTION_PERSONAL_INFO = "Personal Info";
-const SECTION_WORK_EXPERIENCES = "Work Experiences";
-const SECTION_EDUCATION = "Education";
-const SECTION_SKILLS = "Skills";
-const SECTION_PROJECTS = "Projects";
-const SECTION_LINKS = "Links";
+const UserInfoSections = {
+  PERSONAL_INFO: {
+    name: "Personal Info",
+    key: "personalInfo",
+  },
+  WORK_EXPERIENCES: {
+    name: "Work Experiences",
+    key: "workExperiences",
+  },
+  EDUCATION: {
+    name: "Education",
+    key: "education",
+  },
+  SKILLS: {
+    name: "Skills",
+    key: "skills",
+  },
+  PROJECTS: {
+    name: "Projects",
+    key: "projects",
+  },
+  LINKS: {
+    name: "Links",
+    key: "links",
+  },
+};
+
 const PRIMARY_COLOR = "#6466f1";
 
 // URLs
@@ -36,20 +76,12 @@ const IFRAME_URL = "http://localhost:5173/resume-tweaker?extension=true";
 // UI text
 const BRANDING_TEXT = "Powered by GoGoResume";
 
-// Storage keys
-const STORAGE_KEY_SIDEBAR_ENABLED = "sidebarEnabled";
-const STORAGE_KEY_SUGGESTIONS_ENABLED = "suggestionsEnabled";
-const STORAGE_KEY_USER_INFO = "userInfo";
-
-// Storage functions
+// STORAGE FUNCTIONS ------------------------------------------------------------
 function saveToStorage(key, value) {
-  chrome.storage.sync.set({ [key]: value }, () => {
-    console.log(`Saved ${key}:`, value);
-  });
+  chrome.storage.sync.set({ [key]: value }, () => {});
 }
 
 function loadFromStorage(key, defaultValue) {
-  console.log("Loading from storage, key:", key);
   return new Promise((resolve) => {
     try {
       chrome.storage.sync.get(key, (result) => {
@@ -73,14 +105,16 @@ let currentFieldRect = null;
 let isSidebarEnabled = true;
 let isSuggestionsEnabled = true;
 
+// Dragging state
+let isDragging = false;
+let dragOffset = { y: 0 };
+let buttonPosition = { top: 20, right: 10 };
+
 // Add these constants at the top with other constants
 const SUGGESTIONS_WIDTH = "300px";
 const SUGGESTIONS_MAX_HEIGHT = "200px";
 
-// Add a new variable at the top with other state variables
-let isSuggestionsIframeReady = false;
-
-// Separate cleanup functions for each feature
+// CLEANUP FUNCTIONS ------------------------------------------------------------
 function cleanupToggleButton() {
   if (toggleButton) {
     toggleButton.remove();
@@ -88,29 +122,28 @@ function cleanupToggleButton() {
   }
 }
 
-// Function to get or create iframe for suggestions
-function getOrCreateSuggestionsIframe() {
-  let iframe = document.getElementById("suggestions-iframe");
-  if (!iframe) {
-    iframe = document.createElement("iframe");
-    iframe.id = "suggestions-iframe";
-    iframe.src = IFRAME_URL;
-    iframe.style.display = "none"; // Hide the iframe
+// PROCESS & SHOW SUGGESTIONS ------------------------------------------------------------
+async function processAndShowSuggestions() {
+  const suggestions = await loadFromStorage(StorageKeys.USER_INFO, null);
 
-    // Add load listener to mark iframe as ready
-    iframe.addEventListener("load", () => {
-      console.log("Suggestions iframe ready");
-      isSuggestionsIframeReady = true;
+  const hasSuggestions =
+    suggestions && Object.values(suggestions).some((arr) => arr.length > 0);
+
+  if (currentFieldRect) {
+    showSuggestions(suggestions, currentFieldRect.x, currentFieldRect.y);
+  } else {
+    console.warn("Cannot show suggestions - no field position:", {
+      hasSuggestions,
+      hasPosition: Boolean(currentFieldRect),
+      suggestions,
+      currentFieldRect,
     });
-
-    document.body.appendChild(iframe);
   }
-  return iframe;
 }
 
-// Handle field clicks
-function handleFieldClick(e) {
-  if (!isSuggestionsEnabled || !isSuggestionsIframeReady) return;
+// HANDLE FIELD CLICKS ------------------------------------------------------------
+async function handleFieldClick(e) {
+  if (!isSuggestionsEnabled) return;
 
   const field = e.target;
   if (field.tagName === "INPUT" || field.tagName === "TEXTAREA") {
@@ -127,24 +160,6 @@ function handleFieldClick(e) {
         field.getAttribute("aria-label") || field.getAttribute("label") || "",
     };
 
-    console.log("Field clicked with info:", fieldInfo);
-
-    // Send message to suggestions iframe
-    const suggestionsIframe = getOrCreateSuggestionsIframe();
-    if (suggestionsIframe) {
-      console.log(
-        "Sending FIELD_CLICK message to suggestions iframe:",
-        fieldInfo
-      );
-      suggestionsIframe.contentWindow.postMessage(
-        {
-          type: MESSAGE_TYPE_FIELD_CLICK,
-          fieldInfo,
-        },
-        "*"
-      );
-    }
-
     // Calculate position relative to viewport
     const rect = field.getBoundingClientRect();
     currentFieldRect = {
@@ -156,38 +171,48 @@ function handleFieldClick(e) {
       viewportHeight: window.innerHeight,
       scrollY: window.scrollY,
     };
-    console.log("Field position recorded:", currentFieldRect);
+
+    await processAndShowSuggestions();
   }
 }
 
+// CLEANUP SUGGESTIONS ------------------------------------------------------------
 function cleanupSuggestions() {
   if (suggestionsPopup) {
     suggestionsPopup.remove();
     suggestionsPopup = null;
   }
-  // Also remove the suggestions iframe
-  const suggestionsIframe = document.getElementById("suggestions-iframe");
-  if (suggestionsIframe) {
-    suggestionsIframe.remove();
-  }
   currentField = null;
   currentFieldRect = null;
 }
 
-// Main cleanup now calls specific cleanups as needed
+// MAIN CLEANUP ------------------------------------------------------------
 function cleanup() {
   cleanupToggleButton();
   cleanupSuggestions();
 }
 
-// Initialize when the content script loads
+// INITIALIZE ------------------------------------------------------------
 async function initialize() {
   // Load states from storage
-  isSidebarEnabled = await loadFromStorage(STORAGE_KEY_SIDEBAR_ENABLED, true);
+  isSidebarEnabled = await loadFromStorage(StorageKeys.SIDEBAR_ENABLED, true);
   isSuggestionsEnabled = await loadFromStorage(
-    STORAGE_KEY_SUGGESTIONS_ENABLED,
+    StorageKeys.SUGGESTIONS_ENABLED,
     true
   );
+
+  // Load saved button position
+  buttonPosition = await loadFromStorage(StorageKeys.BUTTON_POSITION, {
+    top: 20,
+    right: 10,
+  });
+
+  // Migration: ensure we always use right positioning (remove any left positioning from old version)
+  if (buttonPosition.left !== undefined) {
+    delete buttonPosition.left;
+    buttonPosition.right = 10; // Always stick to right edge
+    saveToStorage(StorageKeys.BUTTON_POSITION, buttonPosition);
+  }
 
   if (isSidebarEnabled) {
     createToggleButton();
@@ -195,20 +220,19 @@ async function initialize() {
 
   // Create suggestions iframe immediately if suggestions are enabled
   if (isSuggestionsEnabled) {
-    getOrCreateSuggestionsIframe();
     document.addEventListener("click", handleFieldClick);
   }
 }
 
 initialize();
 
-// Listen for messages from the extension
+// LISTEN FOR MESSAGES FROM THE EXTENSION ------------------------------------------------------------
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === ACTION_TOGGLE) {
-    togglePanel();
-  } else if (request.action === "updateSidebarEnabled") {
+  if (request.action === ACTIONS.ACTION_TOGGLE) {
+    toggleSideBar();
+  } else if (request.action === ACTIONS.UPDATE_SIDEBAR) {
     isSidebarEnabled = request.enabled;
-    saveToStorage(STORAGE_KEY_SIDEBAR_ENABLED, isSidebarEnabled);
+    saveToStorage(StorageKeys.SIDEBAR_ENABLED, isSidebarEnabled);
     if (isSidebarEnabled) {
       if (!toggleButton) {
         createToggleButton();
@@ -216,80 +240,50 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } else {
       cleanupToggleButton();
     }
-  } else if (request.action === "updateSuggestionsEnabled") {
+  } else if (request.action === ACTIONS.UPDATE_SUGGESTIONS) {
     isSuggestionsEnabled = request.enabled;
-    saveToStorage(STORAGE_KEY_SUGGESTIONS_ENABLED, isSuggestionsEnabled);
+    saveToStorage(StorageKeys.SUGGESTIONS_ENABLED, isSuggestionsEnabled);
     if (isSuggestionsEnabled) {
-      // Create suggestions iframe immediately when enabled
-      getOrCreateSuggestionsIframe();
-      // Add click listener when suggestions are enabled
       document.addEventListener("click", handleFieldClick);
     } else {
-      // Remove click listener and cleanup when disabled
       document.removeEventListener("click", handleFieldClick);
       cleanupSuggestions();
     }
   }
 });
 
-// Listen for custom events from main window
-window.addEventListener("gogoresume-init", () => {
-  console.log("GoGoResume initialized in main window");
-});
-
-window.addEventListener("gogoresume-message", (event) => {
-  const message = event.detail;
-  console.log("Received message from main window:", message);
-  handleMessage(message, window);
-});
-
-// Listen for messages from iframe
+// LISTEN FOR MESSAGES FROM IFRAME ------------------------------------------------------------
 window.addEventListener("message", (event) => {
-  console.log("Received message from iframe:", event.data);
   handleMessage(event.data, event.source);
 });
 
-// Handle messages from both sources
+function handlePing(message) {
+  window.postMessage({ type: WindowMessages.EXT_PING_RESPONSE }, event.origin);
+}
+
+function handleSaveUserInfo(message) {
+  console.log("Saving user info to storage:", message.userInfo);
+  saveToStorage(StorageKeys.USER_INFO, message.userInfo);
+  window.postMessage(
+    { type: WindowMessages.SAVE_USER_INFO_RESPONSE },
+    event.origin
+  );
+}
+
+// HANDLE MESSAGES FROM BOTH SOURCES ------------------------------------------------------------
 function handleMessage(message, source) {
-  if (message.type === MESSAGE_TYPE_SUGGESTIONS && isSuggestionsEnabled) {
-    const suggestions = message.suggestions;
-    console.log("Processing suggestions:", suggestions);
+  if (message.type === WindowMessages.EXT_PING) {
+    handlePing(message);
+    return;
+  }
 
-    const hasSuggestions =
-      suggestions && Object.values(suggestions).some((arr) => arr.length > 0);
-
-    if (hasSuggestions && currentFieldRect) {
-      console.log("Showing suggestions at position:", currentFieldRect);
-      showSuggestions(suggestions, currentFieldRect.x, currentFieldRect.y);
-    } else {
-      console.warn("Cannot show suggestions:", {
-        hasSuggestions,
-        hasPosition: Boolean(currentFieldRect),
-        suggestions,
-        currentFieldRect,
-      });
-    }
-  } else if (message.type === MESSAGE_TYPE_SAVE_USER_INFO) {
-    console.log("Saving user info to storage:", message.userInfo);
-    saveToStorage(STORAGE_KEY_USER_INFO, message.userInfo);
-  } else if (message.type === MESSAGE_TYPE_LOAD_USER_INFO) {
-    console.log("Loading user info from storage");
-    // loadFromStorage(STORAGE_KEY_USER_INFO, null).then((userInfo) => {
-    //   console.log("Loaded user info from storage:", userInfo);
-    //   if (source && source.postMessage) {
-    //     source.postMessage(
-    //       {
-    //         type: MESSAGE_TYPE_USER_INFO_LOADED,
-    //         userInfo,
-    //       },
-    //       "*"
-    //     );
-    //   }
-    // });
+  if (message.type === WindowMessages.SAVE_USER_INFO) {
+    handleSaveUserInfo(message);
+    return;
   }
 }
 
-// Create suggestions popup
+// CREATE SUGGESTIONS POPUP ------------------------------------------------------------
 function createSuggestionsPopup() {
   suggestionsPopup = document.createElement("div");
   suggestionsPopup.id = SUGGESTIONS_ID;
@@ -300,12 +294,14 @@ function createSuggestionsPopup() {
   document.body.appendChild(suggestionsPopup);
 }
 
-// Show suggestions popup
+// SHOW SUGGESTIONS POPUP ------------------------------------------------------------
 function showSuggestions(suggestions, x, y) {
-  console.log("Showing suggestions:", { suggestions, x, y });
   if (!suggestionsPopup) {
     createSuggestionsPopup();
   }
+
+  const hasSuggestions =
+    suggestions && Object.values(suggestions).some((arr) => arr.length > 0);
 
   // Create a container for suggestions
   const suggestionsContainer = document.createElement("div");
@@ -324,94 +320,121 @@ function showSuggestions(suggestions, x, y) {
     e.preventDefault(); // Prevent focus change
   });
 
-  // Create sections pane
-  const sectionsPane = document.createElement("div");
-  sectionsPane.className = SECTIONS_PANE_CLASS;
-  sectionsPane.style.height = SUGGESTIONS_MAX_HEIGHT;
-  sectionsPane.style.overflow = "auto";
-  sectionsPane.style.paddingBottom = "100px";
+  if (!hasSuggestions) {
+    // Show setup message when no suggestions available
+    const setupMessage = document.createElement("div");
+    setupMessage.id = "setup-message";
 
-  // Create values pane
-  const valuesPane = document.createElement("div");
-  valuesPane.className = VALUES_PANE_CLASS;
-  valuesPane.style.overflow = "auto";
-  valuesPane.style.height = SUGGESTIONS_MAX_HEIGHT;
-  valuesPane.style.paddingBottom = "100px";
+    setupMessage.innerHTML = `
+        <div style="margin-top: 20px; font-size: 26px;">😓</div>
+        <div style="font-weight: 500; margin-bottom: 8px; color: #fff;">No suggestions available</div>
+        <div style="color: #999; font-size: 12px;">
+          Set up your <span id="master-profile-link">Master Profile</span> to start seeing smart suggestions
+        </div>
+      `;
 
-  // Define sections based on the structured data
-  const sections = {
-    [SECTION_PERSONAL_INFO]: suggestions.personalInfo || [],
-    [SECTION_WORK_EXPERIENCES]: suggestions.workExperiences || [],
-    [SECTION_EDUCATION]: suggestions.education || [],
-    [SECTION_SKILLS]: suggestions.skills || [],
-    [SECTION_PROJECTS]: suggestions.projects || [],
-    [SECTION_LINKS]: suggestions.links || [],
-  };
+    // Add click handler for Master Profile link
+    suggestionsContainer.appendChild(setupMessage);
 
-  console.log("Using sections:", sections);
+    const profileLink = setupMessage.querySelector("#master-profile-link");
+    if (profileLink) {
+      profileLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open("https://gogoresume.com/master-profile", "_blank");
+        console.log("Opening Master Profile page in new tab");
+      });
+    }
+  } else {
+    // Create sections pane
+    const sectionsPane = document.createElement("div");
+    sectionsPane.className = SECTIONS_PANE_CLASS;
+    sectionsPane.style.height = SUGGESTIONS_MAX_HEIGHT;
+    sectionsPane.style.overflow = "auto";
+    sectionsPane.style.paddingBottom = "100px";
 
-  // Function to update values pane with click handlers
-  function updateValuesPane(sectionValues) {
-    valuesPane.innerHTML = "";
-    sectionValues.forEach((value) => {
-      const item = document.createElement("div");
-      item.className = SUGGESTION_ITEM_CLASS;
-      item.textContent = value;
-      item.style.padding = "8px";
-      item.style.cursor = "pointer";
-      item.style.borderRadius = "4px";
-      item.style.margin = "2px 0";
-      item.style.fontSize = "14px";
+    // Create values pane
+    const valuesPane = document.createElement("div");
+    valuesPane.className = VALUES_PANE_CLASS;
+    valuesPane.style.overflow = "auto";
+    valuesPane.style.height = SUGGESTIONS_MAX_HEIGHT;
+    valuesPane.style.paddingBottom = "100px";
 
-      // Add click handler directly to each value
-      item.addEventListener("click", () => {
-        console.log("Suggestion clicked:", value);
-        if (currentField) {
-          currentField.value = value;
-          currentField.dispatchEvent(new Event("input", { bubbles: true }));
-          console.log("Updated field value to:", currentField.value);
-        }
-        hideSuggestions();
+    // Define sections based on the structured data
+    const sections = Object.values(UserInfoSections).reduce((acc, section) => {
+      acc[section.name] = suggestions[section.key] || [];
+      return acc;
+    }, {});
+
+    console.log("Using sections:", sections);
+
+    // Function to update values pane with click handlers
+    function updateValuesPane(sectionValues) {
+      valuesPane.innerHTML = "";
+      sectionValues.forEach((value) => {
+        const item = document.createElement("div");
+        item.className = SUGGESTION_ITEM_CLASS;
+        item.textContent = value;
+        item.style.padding = "8px";
+        item.style.cursor = "pointer";
+        item.style.borderRadius = "4px";
+        item.style.margin = "2px 0";
+        item.style.fontSize = "14px";
+
+        // Add click handler directly to each value
+        item.addEventListener("click", () => {
+          console.log("Suggestion clicked:", value);
+          if (currentField) {
+            currentField.value = value;
+            currentField.dispatchEvent(new Event("input", { bubbles: true }));
+            console.log("Updated field value to:", currentField.value);
+          }
+          hideSuggestions();
+        });
+
+        valuesPane.appendChild(item);
+      });
+    }
+
+    // Only show sections that have values
+    Object.entries(sections).forEach(([sectionName, sectionValues], index) => {
+      if (sectionValues.length === 0) return; // Skip empty sections
+
+      const sectionItem = document.createElement("div");
+      sectionItem.className = SECTION_ITEM_CLASS;
+      sectionItem.textContent = sectionName;
+      if (index === 0) sectionItem.classList.add(ACTIVE_CLASS);
+
+      // Show section values on hover
+      sectionItem.addEventListener("mouseenter", () => {
+        console.log("Showing values for section:", sectionName);
+        // Remove active class from all sections
+        sectionsPane
+          .querySelectorAll(`.${SECTION_ITEM_CLASS}`)
+          .forEach((item) => {
+            item.classList.remove(ACTIVE_CLASS);
+          });
+        // Add active class to current section
+        sectionItem.classList.add(ACTIVE_CLASS);
+
+        // Update values pane with new values and click handlers
+        updateValuesPane(sectionValues);
       });
 
-      valuesPane.appendChild(item);
-    });
-  }
-
-  // Only show sections that have values
-  Object.entries(sections).forEach(([sectionName, sectionValues], index) => {
-    if (sectionValues.length === 0) return; // Skip empty sections
-
-    const sectionItem = document.createElement("div");
-    sectionItem.className = SECTION_ITEM_CLASS;
-    sectionItem.textContent = sectionName;
-    if (index === 0) sectionItem.classList.add(ACTIVE_CLASS);
-
-    // Show section values on hover
-    sectionItem.addEventListener("mouseenter", () => {
-      console.log("Showing values for section:", sectionName);
-      // Remove active class from all sections
-      sectionsPane
-        .querySelectorAll(`.${SECTION_ITEM_CLASS}`)
-        .forEach((item) => {
-          item.classList.remove(ACTIVE_CLASS);
-        });
-      // Add active class to current section
-      sectionItem.classList.add(ACTIVE_CLASS);
-
-      // Update values pane with new values and click handlers
-      updateValuesPane(sectionValues);
+      sectionsPane.appendChild(sectionItem);
     });
 
-    sectionsPane.appendChild(sectionItem);
-  });
+    // Show initial values (first non-empty section)
+    const firstSection = Object.entries(sections).find(
+      ([_, values]) => values.length > 0
+    );
+    if (firstSection) {
+      updateValuesPane(firstSection[1]);
+    }
 
-  // Show initial values (first non-empty section)
-  const firstSection = Object.entries(sections).find(
-    ([_, values]) => values.length > 0
-  );
-  if (firstSection) {
-    updateValuesPane(firstSection[1]);
+    // Add both panes to container
+    suggestionsContainer.appendChild(sectionsPane);
+    suggestionsContainer.appendChild(valuesPane);
   }
 
   // Clear existing content
@@ -420,16 +443,13 @@ function showSuggestions(suggestions, x, y) {
   // Add close button first (so it's on top)
   suggestionsPopup.appendChild(closeButton);
 
-  // Add both panes to container
-  suggestionsContainer.appendChild(sectionsPane);
-  suggestionsContainer.appendChild(valuesPane);
+  // Add container to popup
   suggestionsPopup.appendChild(suggestionsContainer);
 
   // Add branding
   const branding = document.createElement("div");
   branding.className = BRANDING_CLASS;
   branding.textContent = BRANDING_TEXT;
-  branding.style.fontStyle = "italic";
   suggestionsPopup.appendChild(branding);
 
   // Position the popup
@@ -449,20 +469,22 @@ function showSuggestions(suggestions, x, y) {
   }
 }
 
+// HIDE SUGGESTIONS POPUP ------------------------------------------------------------
 function hideSuggestions() {
   if (suggestionsPopup) {
     suggestionsPopup.style.display = "none";
   }
 }
 
-// Hide suggestions when clicking outside
+// HIDE ON CLICK OUTSIDE ------------------------------------------------------------
 document.addEventListener("click", (e) => {
   if (!suggestionsPopup?.contains(e.target) && e.target !== currentField) {
+    console.log("Hiding suggestions popup");
     hideSuggestions();
   }
 });
 
-// Create toggle button function
+// CREATE TOGGLE BUTTON ------------------------------------------------------------
 function createToggleButton() {
   if (toggleButton) return; // Don't create if already exists
 
@@ -471,31 +493,119 @@ function createToggleButton() {
   // Create toggle button
   toggleButton = document.createElement("button");
   toggleButton.id = TOGGLE_BUTTON_ID;
-  toggleButton.innerHTML = "📄"; // Resume icon
-  toggleButton.title = "Open GoGoResume Sidebar";
+
+  // Create and add mascot image
+  const mascotImg = document.createElement("img");
+  mascotImg.src = chrome.runtime.getURL("mascot.webp");
+  mascotImg.alt = "GoGoResume";
+  mascotImg.style.width = "44px";
+  mascotImg.style.height = "44px";
+  mascotImg.style.borderRadius = "50%";
+  mascotImg.style.objectFit = "cover";
+  mascotImg.style.pointerEvents = "none";
+
+  toggleButton.appendChild(mascotImg);
+  toggleButton.title = "Open GoGoResume Sidebar (Drag vertically to move)";
+
+  // Position the button using saved position
+  updateButtonPosition();
+
+  // Add drag functionality (vertical only)
+  let dragStartTime = 0;
+
+  toggleButton.addEventListener("mousedown", (e) => {
+    if (e.button !== 0) return; // Only left click
+
+    dragStartTime = Date.now();
+    isDragging = true;
+
+    const rect = toggleButton.getBoundingClientRect();
+    dragOffset.y = e.clientY - rect.top;
+
+    toggleButton.style.userSelect = "none";
+
+    e.preventDefault();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+
+    e.preventDefault();
+
+    // Calculate new vertical position only
+    const newY = e.clientY - dragOffset.y;
+
+    // Constrain to viewport vertically
+    const maxY = window.innerHeight - 50;
+    const constrainedY = Math.max(0, Math.min(newY, maxY));
+
+    // Update position (keep on right edge, only change vertical)
+    buttonPosition.top = constrainedY;
+    buttonPosition.right = 10; // Always stick to right edge with margin
+
+    updateButtonPosition();
+  });
+
+  document.addEventListener("mouseup", (e) => {
+    if (!isDragging) return;
+
+    isDragging = false;
+    toggleButton.style.cursor = "pointer";
+
+    // Save position to storage
+    saveToStorage(StorageKeys.BUTTON_POSITION, buttonPosition);
+
+    // If it was a quick click (not a drag), trigger the toggle
+    const clickDuration = Date.now() - dragStartTime;
+    if (clickDuration < 200) {
+      toggleSideBar();
+    }
+  });
 
   // Add hover effects
   toggleButton.addEventListener("mouseenter", () => {
-    toggleButton.style.transform = "scale(1.1)";
-    toggleButton.style.boxShadow = "0 6px 16px rgba(0,0,0,0.4)";
+    if (!isDragging) {
+      toggleButton.style.transform = "scale(1.1)";
+    }
   });
 
   toggleButton.addEventListener("mouseleave", () => {
-    toggleButton.style.transform = "scale(1)";
-    toggleButton.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+    if (!isDragging) {
+      toggleButton.style.transform = "scale(1)";
+    }
   });
 
-  // Add click handler
-  toggleButton.addEventListener("click", togglePanel);
+  // Set initial cursor
+  toggleButton.style.cursor = "pointer";
 
   // Add to page
   document.body.appendChild(toggleButton);
   console.log("Toggle button created and added to page");
+
+  // Handle window resize to keep button in bounds vertically
+  window.addEventListener("resize", () => {
+    const maxY = window.innerHeight - 50;
+
+    if (buttonPosition.top > maxY) {
+      buttonPosition.top = maxY;
+      updateButtonPosition();
+      saveToStorage(StorageKeys.BUTTON_POSITION, buttonPosition);
+    }
+  });
 }
 
-function togglePanel() {
-  console.log("Toggle button clicked - opening sidebar");
+// UPDATE BUTTON POSITION ------------------------------------------------------------
+function updateButtonPosition() {
+  if (!toggleButton) return;
 
+  // Always use right/top positioning to stick to right edge
+  toggleButton.style.right = `${buttonPosition.right || 10}px`;
+  toggleButton.style.top = `${buttonPosition.top || 20}px`;
+  toggleButton.style.left = "auto";
+}
+
+// TOGGLE SIDE BAR ------------------------------------------------------------
+function toggleSideBar() {
   // Add visual feedback
   if (toggleButton) {
     toggleButton.style.transform = "scale(0.9)";
@@ -505,10 +615,10 @@ function togglePanel() {
   }
 
   // Send message to background script to open sidebar
-  chrome.runtime.sendMessage({ action: "openSidebar" }, (response) => {
+  chrome.runtime.sendMessage({ action: ACTIONS.OPEN_SIDEBAR }, (response) => {
     if (chrome.runtime.lastError) {
       console.error(
-        "Error sending openSidebar message:",
+        "Error sending OPEN_SIDEBAR message:",
         chrome.runtime.lastError
       );
     } else if (response && response.success) {

@@ -20,5 +20,11 @@
       "js": ["content.js"]
     }
   ],
+  "web_accessible_resources": [
+    {
+      "resources": ["mascot.webp"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "host_permissions": ["http://localhost:5173/*"]
 }

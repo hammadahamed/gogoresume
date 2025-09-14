@@ -125,7 +125,7 @@ const steps = [
       "Fill out your work experience, skills, and education just once.",
     buttonText: "Start Now",
     buttonVariant: "default",
-    route: "profile-data",
+    route: "master-profile",
     illustrationBg: "bg-blue-100",
     mainEmoji: "📝",
     supportEmoji: "��",

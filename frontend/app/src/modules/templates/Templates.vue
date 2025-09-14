@@ -20,17 +20,31 @@
           v-for="(template, index) in templates"
           :key="template.id"
           @click="selectTemplate(template)"
-          class="w-[380px] overflow-hidden"
-          style="aspect-ratio: 1 / 1.4"
+          class="w-[380px] relative group cursor-pointer"
         >
+          <div
+            class="z-10 w-full h-[95%] bg-white/50 absolute top-0 left-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          >
+            <button
+              class="bg-black text-white text-xs hover:scale-105 font-semibold px-4 py-2 rounded-full transform scale-95 group-hover:scale-100 transition-transform duration-200"
+            >
+              Use Template
+            </button>
+          </div>
           <!-- Preview Container -->
           <ReactResumeBuilder
-            :key="`${selectedTemplate}-${resumeId || 'new'}`"
+            :key="index"
             :userData="sampleUserData"
             :builderMode="true"
             :templateId="template.id"
             :hideDownloadButton="true"
+            style="aspect-ratio: 1 / 1.4"
+            class="overflow-hidden z-0"
           />
+
+          <p class="text text-center font-semibold text-gray-900 mt-[15px]">
+            {{ template.name }}
+          </p>
         </div>
       </div>
     </div>

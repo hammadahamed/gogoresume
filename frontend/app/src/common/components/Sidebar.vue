@@ -1,16 +1,7 @@
 <template>
   <div class="flex flex-col h-full w-64 border-r border-gray-200">
     <!-- Logo/Header -->
-    <div class="flex items-center p-6 cursor-pointer" @click="router.push('/')">
-      <div class="flex items-center space-x-3">
-        <div
-          class="w-8 h-8 bg-black rounded-lg flex items-center justify-center"
-        >
-          <span class="text-white font-bold text-sm">{{ appLogo }}</span>
-        </div>
-        <p class="text-lg font-bold text-gray-900">{{ appTitle }}</p>
-      </div>
-    </div>
+    <AppLogo container-class="p-6" @click="router.push('/')" />
     <!-- Navigation Items -->
     <nav class="flex-1 py-6 ml-2">
       <ul class="space-y-4 px-3">
@@ -98,6 +89,7 @@ import { useAppStore } from "../../stores/useAppStore";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/useUserStore";
 import { useDataManager } from "../../composables/useDataManager";
+import AppLogo from "./AppLogo.vue";
 
 const appStore = useAppStore();
 const router = useRouter();

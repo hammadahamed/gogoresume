@@ -1,6 +1,13 @@
+const EXT_ACTION_PREFIX = "GGR_EXT_ACTION";
+const ACTIONS = {
+  UPDATE_SIDEBAR: `${EXT_ACTION_PREFIX}:UPDATE_SIDEBAR`,
+  UPDATE_SUGGESTIONS: `${EXT_ACTION_PREFIX}:UPDATE_SUGGESTIONS`,
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   const sidebarToggle = document.getElementById("ggr-sidebarToggle");
   const suggestionsToggle = document.getElementById("ggr-suggestionsToggle");
+  const setupButton = document.getElementById("ggr-setupButton");
 
   // Load initial states
   chrome.storage.sync.get(
@@ -20,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]?.id) {
         chrome.tabs.sendMessage(tabs[0].id, {
-          action: "updateSidebarEnabled",
+          action: ACTIONS.UPDATE_SIDEBAR,
           enabled: isEnabled,
         });
       }
@@ -36,10 +43,18 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]?.id) {
         chrome.tabs.sendMessage(tabs[0].id, {
-          action: "updateSuggestionsEnabled",
+          action: ACTIONS.UPDATE_SUGGESTIONS,
           enabled: isEnabled,
         });
       }
     });
+  });
+
+  // Handle setup button click
+  setupButton.addEventListener("click", () => {
+    chrome.tabs.create({
+      url: "https://gogoresume.com/chrome-extension?autoSync=true",
+    });
+    console.log("Opening Chrome Extension setup page in new tab");
   });
 });

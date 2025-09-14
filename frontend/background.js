@@ -1,14 +1,12 @@
-// Background script for GoGoResume Chrome Extension
-console.log("GoGoResume background script loaded");
+const EXT_ACTION_PREFIX = "GGR_EXT_ACTION";
+const ACTIONS = {
+  UPDATE_SIDEBAR: `${EXT_ACTION_PREFIX}:UPDATE_SIDEBAR`,
+  OPEN_SIDEBAR: `${EXT_ACTION_PREFIX}:OPEN_SIDEBAR`,
+};
 
-// Listen for messages from content scripts
+// LISTEN FOR MESSAGES FROM CONTENT SCRIPTS ------------------------------------------------------------
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log("Background received message:", request);
-
-  if (request.action === "openSidebar") {
-    console.log("Opening sidebar for tab:", sender.tab?.id);
-
-    // Handle the sidebar opening asynchronously
+  if (request.action === ACTIONS.OPEN_SIDEBAR) {
     (async () => {
       try {
         if (sender.tab?.id) {
@@ -31,7 +29,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-// Set up the side panel when extension is installed/updated
+// SET UP THE SIDE PANEL WHEN EXTENSION IS INSTALLED/UPDATED ------------------------------------------------------------
 chrome.runtime.onInstalled.addListener(async () => {
   console.log("GoGoResume extension installed/updated");
 

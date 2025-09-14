@@ -198,7 +198,6 @@ import { toast } from "vue3-toastify";
 import CrownIcon from "@/assets/svg/crown.svg";
 import { useUserStore } from "@/stores/useUserStore";
 import { plans } from "../pricing/pricing";
-import moment from "moment-timezone";
 import TweakUsage from "./TweakUsage.vue";
 
 const router = useRouter();
@@ -254,7 +253,11 @@ const daysLeft = computed(() => {
 
 // Methods
 function formatDate(date: string) {
-  return moment(date).format("MMM D, YYYY");
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function getPlanName(planId: string) {
@@ -264,7 +267,7 @@ function getPlanName(planId: string) {
 async function handleLogout() {
   try {
     await logout();
-    router.push("/login");
+    router.push("/");
     toast.success("Logged out successfully");
   } catch (error) {
     toast.error("Failed to logout. Please try again.");

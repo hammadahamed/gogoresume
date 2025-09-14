@@ -10,6 +10,8 @@ export interface FieldInfo {
 }
 
 interface SuggestionsResult {
+  professionalSummary: string;
+  title: string;
   personalInfo: string[];
   workExperiences: string[];
   education: string[];
@@ -22,7 +24,9 @@ function getStructuredValuesFromUserInfo(
   userInfo: UserInfo | null
 ): SuggestionsResult {
   const result: SuggestionsResult = {
+    title: "",
     personalInfo: [],
+    professionalSummary: "",
     workExperiences: [],
     education: [],
     skills: [],
@@ -31,12 +35,15 @@ function getStructuredValuesFromUserInfo(
   };
 
   if (!userInfo) return result;
+  result.professionalSummary = userInfo.professionalSummary;
+  result.title = userInfo.personalInfo.title;
 
   // Personal Info
   if (userInfo.personalInfo) {
     const {
       firstName = "",
       lastName = "",
+      title = "",
       email = "",
       phone = "",
       location = "",
@@ -46,9 +53,14 @@ function getStructuredValuesFromUserInfo(
     } = userInfo.personalInfo;
 
     // Basic personal info
-    result.personalInfo = [firstName, lastName, email, phone, location].filter(
-      Boolean
-    ) as string[];
+    result.personalInfo = [
+      firstName,
+      lastName,
+      email,
+      phone,
+      location,
+      title,
+    ].filter(Boolean) as string[];
 
     // Professional links
     result.links = [
@@ -63,32 +75,26 @@ function getStructuredValuesFromUserInfo(
   // Experiences
   userInfo.workExperiences.forEach((exp) => {
     console.log("🚀 ~ userInfo.workExperiences.forEach ~ exp:", exp);
-    const {
-      company,
-      position,
-      location,
-      description,
-      startDate,
-      endDate,
-      achievements,
-    } = exp;
+    const { company, position, location, description, startDate, endDate } =
+      exp;
 
     result.workExperiences.push(
-      ...[company, position, location, description, startDate, endDate].filter(
-        Boolean
-      ),
-      ...achievements.filter(Boolean)
+      ...[
+        company,
+        position,
+        location,
+        description.join(", "),
+        startDate,
+        endDate,
+      ].filter(Boolean)
     );
   });
 
   // Education
   userInfo.education.forEach((edu) => {
-    const { school, degree, fieldOfStudy, gpa } = edu;
+    const { school, degree, gpa } = edu;
     result.education.push(
-      ...[school, degree, fieldOfStudy, gpa].filter((val): val is string =>
-        Boolean(val)
-      ),
-      ...(edu.honors || []).filter(Boolean)
+      ...[school, degree, gpa].filter((val): val is string => Boolean(val))
     );
   });
 
@@ -97,10 +103,11 @@ function getStructuredValuesFromUserInfo(
 
   // Projects
   userInfo.projects.forEach((project) => {
-    const { name, description, outcome, projectLink, sourceCode } = project;
+    const { name, description, projectLink, sourceCode } = project;
     result.projects.push(
-      ...[name, description, outcome, projectLink, sourceCode].filter(Boolean),
-      ...project.technologies.filter(Boolean)
+      ...[name, description, projectLink || "", sourceCode || ""].filter(
+        Boolean
+      )
     );
   });
 

@@ -23,25 +23,27 @@
 #gogoresume-toggle {
   position: fixed;
   top: 20px;
-  right: 0px;
+  right: 10px;
   z-index: 999999;
-  width: 50px;
-  height: 50px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background-color: #6466f1;
-  border: none;
+  background-color: black;
+  border: 1px solid white;
   color: white;
   font-size: 20px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
 }
 
-#gogoresume-toggle:hover {
-  right: 10px;
+#gogoresume-toggle:hover:not(:active) {
+  transform: scale(1.05);
+  right: 5px; /* Slight peek effect on hover */
 }
 
 #gogoresume-suggestions {
@@ -164,7 +166,7 @@
   right: 0;
   padding: 8px;
   background: #000;
-  color: #666;
+  color: #a0a0a0;
   font-size: 12px;
   text-align: center;
   border-top: 1px solid #333;
@@ -194,4 +196,31 @@
 
 .suggestions-close-button:hover {
   background: #555;
+}
+
+#setup-message {
+  padding: 20px;
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+#master-profile-link {
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+#master-profile-link:hover {
+  color: #dccdff !important;
+  opacity: 0.8;
 }

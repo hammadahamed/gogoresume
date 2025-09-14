@@ -150,11 +150,22 @@ watch(
   }
 );
 
+const initTemplate = () => {
+  if (route.query.template) {
+    console.log(
+      "🚀 ~ initTemplate ~ route.query.template:",
+      route.query.template
+    );
+    selectedTemplate.value = route.query.template as string;
+  }
+};
+
 // Initialize component
 onMounted(async () => {
   try {
     loading.value = true;
     console.log("ResumeBuilder mounted, resumeId:", resumeId.value);
+    initTemplate();
 
     if (resumeId.value) {
       await loadResumeData();

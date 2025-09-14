@@ -103,7 +103,7 @@ interface Props {
 
 const userStore = useUserStore();
 const isFreePlan = computed(
-  () => userStore.user.plan.internalPlanId === Plans.FREE
+  () => userStore.user?.plan?.internalPlanId === Plans.FREE
 );
 
 const props = defineProps<Props>();
