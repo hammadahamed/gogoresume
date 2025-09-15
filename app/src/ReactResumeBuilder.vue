@@ -410,3 +410,4 @@ watch(
   font-style: italic;
 }
 </style>
+./types/resume.types.js./composables/useDataManager.js./types/resume.types.js

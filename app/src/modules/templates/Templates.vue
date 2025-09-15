@@ -88,3 +88,4 @@ a {
   color: white;
 }
 </style>
+../../a-app-react/templates/sampleData.js../../composables/useDataManager.js

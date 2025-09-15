@@ -120,6 +120,17 @@ function cleanupToggleButton() {
   }
 }
 
+const openMasterProfile = () => {
+  window.open("https://gogoresume.com/master-profile", "_blank");
+};
+
+const openSyncData = () => {
+  window.open(
+    "https://gogoresume.com/chrome-extension?autoSync=true",
+    "_blank"
+  );
+};
+
 // PROCESS & SHOW SUGGESTIONS ------------------------------------------------------------
 async function processAndShowSuggestions() {
   const suggestions = await loadFromStorage(StorageKeys.USER_INFO, null);
@@ -348,7 +359,7 @@ function showSuggestions(suggestions, x, y) {
       profileLink.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        window.open("https://gogoresume.com/master-profile", "_blank");
+        openMasterProfile();
       });
     }
     const syncDataLink = setupMessage.querySelector("#sync-data-link");
@@ -356,10 +367,7 @@ function showSuggestions(suggestions, x, y) {
       syncDataLink.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        window.open(
-          "https://gogoresume.com/chrome-extension?autoSync=true",
-          "_blank"
-        );
+        openSyncData();
       });
     }
   } else {

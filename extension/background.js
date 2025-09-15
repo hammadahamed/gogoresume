@@ -92,10 +92,10 @@ chrome.runtime.onInstalled.addListener(async () => {
       contexts: ["selection"], // Show only when text is selected
     });
 
-    // window.open(
-    //   "https://gogoresume.com/chrome-extension?autoSync=true",
-    //   "_blank"
-    // );
+    // Open a new tab with the extension welcome page
+    await chrome.tabs.create({
+      url: "https://gogoresume.com/chrome-extension?autoSync=true",
+    });
   } catch (error) {
     console.error("Error configuring side panel:", error);
   }

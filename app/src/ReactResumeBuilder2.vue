@@ -103,3 +103,4 @@ onUnmounted(() => {
   height: 100%;
 }
 </style>
+./types/resume.types.js
