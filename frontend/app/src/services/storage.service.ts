@@ -49,10 +49,7 @@ export default class StorageService {
   constructor() {
     const urlParams = new URLSearchParams(window.location.search);
     const isExtension = urlParams.get("extension") === "true";
-    console.log(
-      "🚀 ~ StorageService ~ constructor ~ isExtension:",
-      isExtension
-    );
+
     this.storage = isExtension
       ? new ChromeStorageService()
       : new LocalStorageService();

@@ -13,7 +13,7 @@
             v-for="item in navigationItems"
             :key="item.section"
             @click="scroll(item.section)"
-            class="text-sm font-medium transition-colors duration-200 text-gray-600 hover:text-gray-900"
+            class="text-sm font-semibold transition-colors duration-200 text-gray-600 hover:text-gray-900"
           >
             {{ item.name }}
           </button>
@@ -65,7 +65,7 @@
             v-for="item in navigationItems"
             :key="item.section"
             @click="scroll(item.section)"
-            class="text-left px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            class="text-left px-3 py-2 text-sm font-semibold rounded-md transition-colors duration-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
           >
             {{ item.name }}
           </button>

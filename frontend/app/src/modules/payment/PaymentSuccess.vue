@@ -111,18 +111,11 @@ async function verifyPayment() {
     // Get payment_id from URL for verification
     const paymentId = route.query.payment_id as string;
 
-    console.log("Payment verification debug info:", {
-      paymentId,
-      fullQuery: route.query,
-      currentUrl: window.location.href,
-    });
-
     if (!paymentId) {
       throw new Error("Missing payment ID in URL");
     }
 
     // Verify the purchase using payment_id
-    console.log("Calling PaymentApi.verifyPurchase with:", { paymentId });
     const verificationResult = await PaymentApi.verifyPurchase(paymentId);
 
     if (

@@ -16,12 +16,12 @@
         <button
           @click="syncData"
           class="flex gap-2 justify-center items-center text-sm font-semibold border border-black text-black px-4 py-2 rounded-lg whitespace-nowrap hover:bg-gray-100 transition-all duration-200"
-          :class="{ 'scale-150 mr-10': loading }"
+          :class="{ 'scale-150 mr-10': syncing }"
         >
           <p>Sync now</p>
           <SYNC_ICON
             class="w-5 h-5 mt-[2px]"
-            :class="{ 'custom-spin': loading }"
+            :class="{ 'custom-spin': syncing }"
           />
         </button>
       </div>
@@ -39,36 +39,9 @@ import { useDataManager } from "@/composables/useDataManager";
 import { useRoute } from "vue-router";
 import { getSuggestions } from "@/utils/suggestions";
 
-const loading = ref(false);
 const userStore = useUserStore();
-const { getUserProfile } = useDataManager();
+const { getUserProfile, syncing, syncData } = useDataManager();
 const route = useRoute();
-
-const syncData = async () => {
-  loading.value = true;
-  setTimeout(async () => {
-    try {
-      if (!userStore.userInfo) {
-        await getUserProfile();
-      }
-      const suggestions = getSuggestions();
-      console.log("🚀 ~ syncData ~ suggestions:", suggestions);
-
-      const clonedUserInfo = JSON.parse(JSON.stringify(suggestions));
-      const synced = await GGRWindowEvents.saveUserInfo(clonedUserInfo);
-      if (synced) {
-        toast.success("Data synced successfully");
-      } else {
-        toast.error("Failed to sync data");
-      }
-    } catch (error) {
-      console.error("Failed to sync data:", error);
-      toast.error("Failed to sync data");
-    } finally {
-      loading.value = false;
-    }
-  }, 1000);
-};
 
 const autoSync = computed(() => {
   return route.query.autoSync === "true";

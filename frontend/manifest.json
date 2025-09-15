@@ -3,7 +3,7 @@
   "name": "GoGoResume",
   "version": "1.0",
   "description": "AI-powered resume suggestions",
-  "permissions": ["activeTab", "storage", "sidePanel", "tabs"],
+  "permissions": ["activeTab", "storage", "sidePanel", "tabs", "contextMenus"],
   "background": {
     "service_worker": "background.js"
   },

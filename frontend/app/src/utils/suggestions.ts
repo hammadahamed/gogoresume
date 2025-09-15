@@ -74,7 +74,6 @@ function getStructuredValuesFromUserInfo(
 
   // Experiences
   userInfo.workExperiences.forEach((exp) => {
-    console.log("🚀 ~ userInfo.workExperiences.forEach ~ exp:", exp);
     const { company, position, location, description, startDate, endDate } =
       exp;
 
@@ -114,8 +113,7 @@ function getStructuredValuesFromUserInfo(
   return result;
 }
 
-export function getSuggestions(fieldInfo: FieldInfo): SuggestionsResult {
-  console.log("Getting suggestions for field:", fieldInfo);
+export function getSuggestions(fieldInfo?: FieldInfo): SuggestionsResult {
   const userStore = useUserStore();
 
   const structuredValues = getStructuredValuesFromUserInfo(userStore.userInfo);

@@ -67,14 +67,11 @@ class GGRWindowEvents {
 
   static async checkExtensionInstalled() {
     const installed = await this.checkExtensionInstalledPromise();
-    console.log("Extension installed:", installed);
     return installed;
   }
 
   static async saveUserInfo(userInfo: any) {
-    console.log("🚀 ~ GGRWindowEvents ~ saveUserInfo ~ userInfo:", userInfo);
     const saved = await this.saveUserInfoPromise(userInfo);
-    console.log("🚀 ~ GGRWindowEvents ~ saveUserInfo ~ saved:", saved);
     return saved;
   }
 }

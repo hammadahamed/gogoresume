@@ -13,7 +13,6 @@ console.log("🚀 ~ env:", env);
 const envPath = `./.env${
   process.env.NODE_ENV !== "production" ? ".staging" : ""
 }`;
-console.log("🚀 ~ envPath:", envPath);
 dotenv.config({ path: envPath });
 
 // Prepare an object for DefinePlugin with all env variables (same as rspack)

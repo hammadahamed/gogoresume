@@ -3,7 +3,7 @@
     <img
       src="@/assets/images/mascot.webp"
       alt="GoGoResume Mascot"
-      class="w-40 h-40 rounded-full mb-5"
+      class="w-40 h-40 rounded-[50px] mb-10"
     />
     <p class="text-xl font-semibold mb-4">Welcome to GoGoResume 👋</p>
     <GoogleLogin />

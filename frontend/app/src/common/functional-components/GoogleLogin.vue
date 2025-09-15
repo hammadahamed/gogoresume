@@ -73,7 +73,6 @@ const idConfiguration = {
   use_fedcm_for_prompt: false, // Disable FedCM prompt to avoid browser settings issues
   cancel_on_tap_outside: true, // Allow users to cancel by clicking outside
 };
-console.log("🚀 ~ idConfiguration:", idConfiguration);
 
 // State
 const isSigningIn = ref(false);
@@ -101,11 +100,9 @@ const googleSignin = async (response: any) => {
     if (response.credential) {
       params.token = response.credential;
       const decoded = decodeCredential(response.credential);
-      console.log("Decoded Google User Info:", decoded);
     }
 
     if (response.code) params.code = response.code;
-    console.log("🚀 ~ googleSignin ~ params :", params);
 
     // If neither credential nor code is available, FedCM might have failed
     if (!response.credential && !response.code) {

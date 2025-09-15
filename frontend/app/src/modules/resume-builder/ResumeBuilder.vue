@@ -73,7 +73,6 @@ const selectedTemplate = ref("classic");
 
 // Handle template changes
 const handleTemplateChange = (template: string) => {
-  console.log("Template changed to:", template);
   selectedTemplate.value = template;
 
   // Update route query to reflect the change
@@ -129,33 +128,8 @@ const loadResumeData = async () => {
   }
 };
 
-// Watch for template changes to debug
-watch(
-  () => selectedTemplate.value,
-  (newTemplate, oldTemplate) => {
-    console.log(
-      "ResumeBuilder: Template changed from",
-      oldTemplate,
-      "to",
-      newTemplate
-    );
-  }
-);
-
-// Watch modal state for debugging
-watch(
-  () => showMasterProfileModal.value,
-  (newValue) => {
-    console.log("showMasterProfileModal changed to:", newValue);
-  }
-);
-
 const initTemplate = () => {
   if (route.query.template) {
-    console.log(
-      "🚀 ~ initTemplate ~ route.query.template:",
-      route.query.template
-    );
     selectedTemplate.value = route.query.template as string;
   }
 };
@@ -164,7 +138,6 @@ const initTemplate = () => {
 onMounted(async () => {
   try {
     loading.value = true;
-    console.log("ResumeBuilder mounted, resumeId:", resumeId.value);
     initTemplate();
 
     if (resumeId.value) {
@@ -180,10 +153,6 @@ onMounted(async () => {
     toast.error("Failed to initialize resume data");
   } finally {
     loading.value = false;
-    console.log(
-      "ResumeBuilder initialization complete, showMasterProfileModal:",
-      showMasterProfileModal.value
-    );
   }
 });
 

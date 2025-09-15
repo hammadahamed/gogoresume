@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col h-full w-64 border-r border-gray-200">
     <!-- Logo/Header -->
-    <AppLogo container-class="p-6" @click="router.push('/')" />
+    <AppLogo container-class="p-6 py-5" @click="router.push('/')" />
     <!-- Navigation Items -->
     <nav class="flex-1 py-6 ml-2">
       <ul class="space-y-4 px-3">

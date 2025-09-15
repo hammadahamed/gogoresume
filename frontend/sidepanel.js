@@ -1,9 +1,16 @@
-// Sidepanel JavaScript for GoGoResume Chrome Extension
-const iframe = document.getElementById("app-iframe");
+const EXT_ACTION_PREFIX = "GGR_EXT_ACTION";
+const ACTIONS = {
+  CONTEXT_MENU_TEXT_RECEIVED: `${EXT_ACTION_PREFIX}:CONTEXT_MENU_TEXT_RECEIVED`,
+  REQUEST_STORED_TEXT: `${EXT_ACTION_PREFIX}:REQUEST_STORED_TEXT`,
+  STORED_TEXT_RESPONSE: `${EXT_ACTION_PREFIX}:STORED_TEXT_RESPONSE`,
+  GET_CACHED_SELECTED_TEXT: `${EXT_ACTION_PREFIX}:GET_CACHED_SELECTED_TEXT`,
+};
+
+const IFRAME_ID = "app-iframe";
+
+const iframe = document.getElementById(IFRAME_ID);
 const loading = document.getElementById("loading");
 let hasLoaded = false;
-
-console.log("Sidepanel loaded, attempting to load Vue app...");
 
 // Function to update loading status
 function updateLoadingStatus(message) {
@@ -20,7 +27,6 @@ async function checkVueApp() {
     const response = await fetch(
       "http://localhost:5173/resume-tweaker?extension=true"
     );
-    console.log("Vue app check response:", response.status);
 
     if (response.ok) {
       updateLoadingStatus("Vue app found, loading...");
@@ -71,14 +77,12 @@ function showError(message) {
 function showApp() {
   if (hasLoaded) return;
   hasLoaded = true;
-  console.log("GoGoResume app loaded successfully");
   loading.style.display = "none";
   iframe.style.display = "block";
 }
 
 // Listen for iframe load events
 iframe.addEventListener("load", () => {
-  console.log("Iframe load event fired");
   showApp();
 });
 
@@ -90,25 +94,77 @@ iframe.addEventListener("error", (e) => {
   );
 });
 
-// Check if iframe content is loaded after a delay
-setTimeout(() => {
-  try {
-    if (iframe.contentDocument || iframe.contentWindow.document) {
-      console.log("Iframe content accessible, assuming loaded");
-      showApp();
-    }
-  } catch (e) {
-    console.log("Cannot access iframe content (may be cross-origin)");
-  }
-}, 2000);
-
 // Fallback timeout
 setTimeout(() => {
   if (!hasLoaded) {
-    console.log("Fallback timeout reached, showing iframe anyway");
     showApp();
   }
 }, 8000);
+
+const getStoredTextFromBgScript = () => {
+  window.addEventListener("message", async (event) => {
+    if (event.data.type === ACTIONS.REQUEST_STORED_TEXT) {
+      try {
+        // Request cached text from background script
+        const response = await chrome.runtime.sendMessage({
+          action: ACTIONS.GET_CACHED_SELECTED_TEXT,
+        });
+
+        const iframe = document.getElementById(IFRAME_ID);
+        if (iframe) {
+          iframe.contentWindow.postMessage(
+            {
+              type: ACTIONS.STORED_TEXT_RESPONSE,
+              text: response.selectedText || null,
+            },
+            "*"
+          );
+        }
+      } catch (error) {
+        console.error("Error getting cached text from background:", error);
+
+        // Send null response on error
+        const iframe = document.getElementById(IFRAME_ID);
+        if (iframe) {
+          iframe.contentWindow.postMessage(
+            {
+              type: ACTIONS.STORED_TEXT_RESPONSE,
+              text: null,
+            },
+            "*"
+          );
+        }
+      }
+    }
+  });
+};
+
+const listenFormCopyTextFromBgScriptAndSendToIframe = () => {
+  chrome.runtime.onMessage.addListener((msg) => {
+    if (msg.type === ACTIONS.CONTEXT_MENU_TEXT_RECEIVED) {
+      const iframe = document.getElementById(IFRAME_ID);
+      if (iframe) {
+        const textValue = msg.data;
+        iframe.contentWindow.postMessage(
+          { type: ACTIONS.CONTEXT_MENU_TEXT_RECEIVED, data: textValue },
+          "*"
+        );
+      }
+    }
+  });
+};
+
+const setupContextMenuTextListener = () => {
+  listenFormCopyTextFromBgScriptAndSendToIframe();
+  getStoredTextFromBgScript();
+};
+
+try {
+  setupContextMenuTextListener();
+  console.log("✅ [SIDE PANEL] Context menu text listener initialized");
+} catch (error) {
+  console.error("Error setting up context menu text listener:", error);
+}
 
 // Initial Vue app check
 setTimeout(() => {

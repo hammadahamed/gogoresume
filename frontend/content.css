@@ -212,7 +212,7 @@
   width: 100%;
 }
 
-#master-profile-link {
+.span-highlight {
   color: white;
   font-weight: 500;
   cursor: pointer;
@@ -220,7 +220,7 @@
   transition: color 0.2s ease, opacity 0.2s ease;
 }
 
-#master-profile-link:hover {
+.span-highlight:hover {
   color: #dccdff !important;
   opacity: 0.8;
 }

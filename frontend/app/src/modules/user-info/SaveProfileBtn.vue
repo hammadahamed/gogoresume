@@ -18,6 +18,9 @@ import { ref } from "vue";
 import { useUserStore } from "../../stores/useUserStore";
 import { toast } from "vue3-toastify";
 import ResumeApi from "@/api-factory/resume";
+import { useDataManager } from "../../composables/useDataManager";
+
+const { syncData } = useDataManager();
 
 const props = defineProps<{
   userInfo: any; // Type this properly based on your UserInfo interface
@@ -27,13 +30,13 @@ const userStore = useUserStore();
 const isSaving = ref(false);
 
 async function handleSave() {
-  console.log("🚀 ~ handleSave ~ props.userInfo:", props.userInfo);
   if (isSaving.value) return;
   try {
     isSaving.value = true;
     await ResumeApi.saveUserProfile(props.userInfo);
     userStore.setUserInfo(props.userInfo);
     toast.success("Profile saved successfully!");
+    await syncData(true);
   } catch (error) {
     toast.error("Failed to save profile. Please try again.");
     console.error("Failed to save profile:", error);

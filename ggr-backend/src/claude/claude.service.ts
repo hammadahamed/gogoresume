@@ -28,12 +28,6 @@ export class ClaudeService {
         ],
       });
 
-      console.log(
-        '🚀 ~ ClaudeService ~ generateContent ~ completion:',
-        completion,
-      );
-
-      console.log('\n\n\n>>>>>>');
       console.dir(completion.content[0], { depth: 10 });
 
       // Extract text content from Claude's response

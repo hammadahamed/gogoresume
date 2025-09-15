@@ -19,14 +19,14 @@
         <div
           v-for="(template, index) in templates"
           :key="template.id"
-          @click="selectTemplate(template)"
-          class="w-[380px] relative group cursor-pointer"
+          class="w-[380px] relative group"
         >
           <div
             class="z-10 w-full h-[95%] bg-white/50 absolute top-0 left-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           >
             <button
-              class="bg-black text-white text-xs hover:scale-105 font-semibold px-4 py-2 rounded-full transform scale-95 group-hover:scale-100 transition-transform duration-200"
+              @click="selectTemplate(template)"
+              class="bg-black cursor-pointer text-white text-xs hover:scale-105 font-semibold px-4 py-2 rounded-full transform scale-95 group-hover:scale-100 transition-transform duration-200"
             >
               Use Template
             </button>
@@ -73,17 +73,12 @@ const previewData = computed(() => {
 });
 
 const selectTemplate = (template: any) => {
-  console.log("Selected template:", template);
   // Navigate to resume builder with selected template
   router.push({
     path: "/resume-builder",
     query: { template: template.id },
   });
 };
-
-onMounted(() => {
-  console.log("Available templates:", templates.value);
-});
 </script>
 
 <style scoped>

@@ -128,7 +128,6 @@ const totalUsagePercentage = computed(() =>
 onMounted(async () => {
   try {
     tweaksUsage.value = await userApi.getTweaksUsage();
-    console.log(tweaksUsage.value);
   } catch (error) {
     console.error("Error loading tweaks usage:", error);
   } finally {

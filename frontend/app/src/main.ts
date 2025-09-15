@@ -9,7 +9,6 @@ import "vue3-toastify/dist/index.css";
 import "./App.scss";
 import "./styles/animated-border.scss";
 import "./styles/primevue-custom.scss";
-import { setupMessageHandler } from "./utils/messageHandler";
 import { GoogleAuth } from "./helper/google-auth.helper";
 import { initializeUmamiAnalytics } from "./umami.analytics";
 
@@ -63,4 +62,3 @@ GoogleAuth.initializeGoogleApp(app);
 app.mount("#app");
 
 initializeUmamiAnalytics();
-// setupMessageHandler();

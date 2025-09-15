@@ -6,6 +6,8 @@ import { computed, ref } from "vue";
 import type { UserInfo } from "../types/resume.types";
 import useAuthComposable from "./useAuth";
 import { DEFAULT_RESUME } from "../constants/app.constants";
+import { getSuggestions } from "@/utils/suggestions";
+import GGRWindowEvents from "@/utils/windowEvents";
 
 interface SavedResume {
   id: string;
@@ -41,6 +43,7 @@ export function useDataManager() {
   // Shared state for saved resumes
   const savedResumes = ref<SavedResume[]>([]);
   const resumesLoading = ref(false);
+  const syncing = ref(false);
 
   const userInfo = computed(() => {
     if (userStore.userInfo && Object.keys(userStore.userInfo).length === 0) {
@@ -81,7 +84,6 @@ export function useDataManager() {
   };
 
   const saveUserProfile = async (info: UserInfo) => {
-    console.log("🚀 ~ saveUserProfile ~ info:", info);
     try {
       const response = await ResumeAPI.saveUserProfile(info);
       if (response) {
@@ -114,7 +116,6 @@ export function useDataManager() {
   };
 
   const setEmptyUserInfo = () => {
-    console.log("🚀 ~ setEmptyUserInfo ~ emptyUserInfo:", emptyUserInfo);
     userStore.setUserInfo(emptyUserInfo);
   };
 
@@ -156,6 +157,30 @@ export function useDataManager() {
     return options;
   });
 
+  const syncData = async (mute = false) => {
+    syncing.value = true;
+    setTimeout(async () => {
+      try {
+        if (!userStore.userInfo) {
+          await getUserProfile();
+        }
+        const suggestions = getSuggestions();
+        const clonedUserInfo = JSON.parse(JSON.stringify(suggestions));
+        const synced = await GGRWindowEvents.saveUserInfo(clonedUserInfo);
+        if (synced) {
+          if (!mute) toast.success("Data synced successfully");
+        } else {
+          if (!mute) toast.error("Failed to sync data");
+        }
+      } catch (error) {
+        console.error("Failed to sync data:", error);
+        if (!mute) toast.error("Failed to sync data");
+      } finally {
+        syncing.value = false;
+      }
+    }, 1000);
+  };
+
   return {
     setEmptyUserInfo,
     getUserProfile,
@@ -169,5 +194,7 @@ export function useDataManager() {
     savedResumes,
     resumesLoading,
     resumeOptions,
+    syncing,
+    syncData,
   };
 }

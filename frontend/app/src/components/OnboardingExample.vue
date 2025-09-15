@@ -54,7 +54,6 @@ const showOnboarding = ref(false);
 const submittedData = ref<OnboardingFormData | null>(null);
 
 const handleOnboardingSubmit = (data: OnboardingFormData) => {
-  console.log("Onboarding data received:", data);
   submittedData.value = data;
 
   // Here you would typically send the data to your backend

@@ -114,7 +114,7 @@ axiosInstance.interceptors.response.use(
         errorCode &&
         CRITICAL_AUTH_ERRORS.includes(errorCode as AuthErrorCode)
       ) {
-        console.log(">>> errorCode", errorCode);
+        console.error(">>> errorCode", errorCode);
         // Special handling for restricted users
         handleAuthFailure(errorCode === AuthErrorCode.USER_RESTRICTED);
       } else {

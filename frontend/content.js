@@ -6,6 +6,7 @@ const ACTIONS = {
   UPDATE_SUGGESTIONS: `${EXT_ACTION_PREFIX}:UPDATE_SUGGESTIONS`,
   OPEN_SIDEBAR: `${EXT_ACTION_PREFIX}:OPEN_SIDEBAR`,
   ACTION_TOGGLE: `${EXT_ACTION_PREFIX}:toggle`,
+  SEND_SELECTED_TEXT: `${EXT_ACTION_PREFIX}:SEND_SELECTED_TEXT`,
 };
 
 const WindowMessages = {
@@ -85,10 +86,7 @@ function loadFromStorage(key, defaultValue) {
   return new Promise((resolve) => {
     try {
       chrome.storage.sync.get(key, (result) => {
-        console.log("Storage get result:", result);
-        // Chrome storage returns an object with the key
         const value = result[key];
-        console.log("Loaded value:", value);
         resolve(value !== undefined ? value : defaultValue);
       });
     } catch (error) {
@@ -230,6 +228,14 @@ initialize();
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === ACTIONS.ACTION_TOGGLE) {
     toggleSideBar();
+  } else if (request.action === ACTIONS.OPEN_SIDEBAR) {
+    toggleSideBar();
+    if (request.fromContextMenu) {
+      console.log(
+        "Sidebar opened via context menu with text:",
+        request.selectedText
+      );
+    }
   } else if (request.action === ACTIONS.UPDATE_SIDEBAR) {
     isSidebarEnabled = request.enabled;
     saveToStorage(StorageKeys.SIDEBAR_ENABLED, isSidebarEnabled);
@@ -262,7 +268,6 @@ function handlePing(message) {
 }
 
 function handleSaveUserInfo(message) {
-  console.log("Saving user info to storage:", message.userInfo);
   saveToStorage(StorageKeys.USER_INFO, message.userInfo);
   window.postMessage(
     { type: WindowMessages.SAVE_USER_INFO_RESPONSE },
@@ -326,10 +331,12 @@ function showSuggestions(suggestions, x, y) {
     setupMessage.id = "setup-message";
 
     setupMessage.innerHTML = `
-        <div style="margin-top: 20px; font-size: 26px;">😓</div>
+        <div style="margin-top: 10px; font-size: 26px;">😓</div>
         <div style="font-weight: 500; margin-bottom: 8px; color: #fff;">No suggestions available</div>
         <div style="color: #999; font-size: 12px;">
-          Set up your <span id="master-profile-link">Master Profile</span> to start seeing smart suggestions
+          Set up your <span id="master-profile-link" class="span-highlight">Master Profile</span> to start seeing smart suggestions.
+          <br>
+          or try <span id="sync-data-link" class="span-highlight">Sync Data</span> manually.
         </div>
       `;
 
@@ -342,7 +349,17 @@ function showSuggestions(suggestions, x, y) {
         e.preventDefault();
         e.stopPropagation();
         window.open("https://gogoresume.com/master-profile", "_blank");
-        console.log("Opening Master Profile page in new tab");
+      });
+    }
+    const syncDataLink = setupMessage.querySelector("#sync-data-link");
+    if (syncDataLink) {
+      syncDataLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(
+          "https://gogoresume.com/chrome-extension?autoSync=true",
+          "_blank"
+        );
       });
     }
   } else {
@@ -366,8 +383,6 @@ function showSuggestions(suggestions, x, y) {
       return acc;
     }, {});
 
-    console.log("Using sections:", sections);
-
     // Function to update values pane with click handlers
     function updateValuesPane(sectionValues) {
       valuesPane.innerHTML = "";
@@ -383,11 +398,9 @@ function showSuggestions(suggestions, x, y) {
 
         // Add click handler directly to each value
         item.addEventListener("click", () => {
-          console.log("Suggestion clicked:", value);
           if (currentField) {
             currentField.value = value;
             currentField.dispatchEvent(new Event("input", { bubbles: true }));
-            console.log("Updated field value to:", currentField.value);
           }
           hideSuggestions();
         });
@@ -407,7 +420,6 @@ function showSuggestions(suggestions, x, y) {
 
       // Show section values on hover
       sectionItem.addEventListener("mouseenter", () => {
-        console.log("Showing values for section:", sectionName);
         // Remove active class from all sections
         sectionsPane
           .querySelectorAll(`.${SECTION_ITEM_CLASS}`)
@@ -479,7 +491,6 @@ function hideSuggestions() {
 // HIDE ON CLICK OUTSIDE ------------------------------------------------------------
 document.addEventListener("click", (e) => {
   if (!suggestionsPopup?.contains(e.target) && e.target !== currentField) {
-    console.log("Hiding suggestions popup");
     hideSuggestions();
   }
 });
@@ -487,9 +498,6 @@ document.addEventListener("click", (e) => {
 // CREATE TOGGLE BUTTON ------------------------------------------------------------
 function createToggleButton() {
   if (toggleButton) return; // Don't create if already exists
-
-  console.log("Creating GoGoResume toggle button");
-
   // Create toggle button
   toggleButton = document.createElement("button");
   toggleButton.id = TOGGLE_BUTTON_ID;
@@ -580,7 +588,6 @@ function createToggleButton() {
 
   // Add to page
   document.body.appendChild(toggleButton);
-  console.log("Toggle button created and added to page");
 
   // Handle window resize to keep button in bounds vertically
   window.addEventListener("resize", () => {
@@ -616,15 +623,14 @@ function toggleSideBar() {
 
   // Send message to background script to open sidebar
   chrome.runtime.sendMessage({ action: ACTIONS.OPEN_SIDEBAR }, (response) => {
-    if (chrome.runtime.lastError) {
-      console.error(
-        "Error sending OPEN_SIDEBAR message:",
-        chrome.runtime.lastError
-      );
-    } else if (response && response.success) {
-      console.log("Sidebar opened successfully");
-    } else {
-      console.error("Failed to open sidebar:", response?.error);
-    }
+    // if (chrome.runtime.lastError) {
+    //   console.error(
+    //     "Error sending OPEN_SIDEBAR message:",
+    //     chrome.runtime.lastError
+    //   );
+    // } else if (response && response.success) {
+    // } else {
+    //   console.error("Failed to open sidebar:", response?.error);
+    // }
   });
 }

@@ -42,11 +42,6 @@ export class ZeptoMailService {
       subject: emailTemplate.subject,
       htmlbody: emailTemplate.body,
     };
-    console.log(
-      '🚀 ~ ZeptoMailService ~ sendEmail ~ mailOptions:',
-      mailOptions,
-    );
-    console.dir(mailOptions, { depth: 10 });
 
     try {
       this.logger.log(`[Email] Sending mail to ${to}`);

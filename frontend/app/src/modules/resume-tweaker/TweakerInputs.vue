@@ -11,10 +11,10 @@
     >
       <div class="text-center mb-6 animate-fade-in">
         <div
-          class="w-12 h-12 bg-[var(--primary-color)] rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm"
+          class="w-14 h-14 bg-indigo-500/90 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm"
         >
           <svg
-            class="w-6 h-6 text-white"
+            class="w-8 h-8 text-white animate-pulse"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -338,11 +338,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onUnmounted, ref, watch } from "vue";
+import { computed, inject, onMounted, onUnmounted, ref, watch } from "vue";
 import TICK from "@/assets/svg/tick.svg";
 import resumeApi from "@/api-factory/resume";
 import { toast } from "vue3-toastify";
 import { UserInfo } from "@/types/resume.types";
+import {
+  setupContextMenuTextListener,
+  getStoredTextFromSidePanel,
+} from "@/utils/contextMenuMsgHandler.sidepanel";
 
 // Props
 const props = defineProps<{
@@ -546,9 +550,26 @@ const optimizeResume = async () => {
   }
 };
 
+const setJDFromContextMenu = (text: string) => {
+  let sanitizedText = text.trim();
+  if (text.trim().length === JOB_DESCRIPTION_LIMIT) {
+    sanitizedText = text.trim().slice(0, JOB_DESCRIPTION_LIMIT);
+  }
+  jobDescription.value = sanitizedText;
+};
+
+onMounted(async () => {
+  if (isExtensionMode.value) {
+    setupContextMenuTextListener(setJDFromContextMenu);
+  }
+  const val = await getStoredTextFromSidePanel();
+  if (val) setJDFromContextMenu(val);
+});
+
 onUnmounted(() => {
   if (debounceTimer) {
     clearTimeout(debounceTimer);
   }
 });
 </script>
+@/utils/contextMenuMsgHandler.sidebar
