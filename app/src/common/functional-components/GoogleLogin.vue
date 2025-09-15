@@ -27,8 +27,17 @@
 
         <!-- Button Text -->
         <span class="text-white font-medium text-xs sm:text-sm">
-          <span class="">{{
+          <span class="hidden sm:inline">{{
             isSigningIn ? "Signing in..." : "Continue with Google"
+          }}</span>
+          <span class="sm:hidden" :class="isExtensionMode ? '' : 'text-xs'">{{
+            isSigningIn
+              ? isExtensionMode
+                ? "Signing in..."
+                : ""
+              : isExtensionMode
+              ? "Continue with Google"
+              : "Sign in"
           }}</span>
         </span>
 
@@ -40,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import { GoogleLogin, decodeCredential } from "vue3-google-login";
 import GOOGLE_ICON from "@/assets/svg/google.svg";
 import AuthApi from "@/api-factory/auth";
@@ -56,6 +65,7 @@ interface Props {
   onError?: (error: any) => void;
 }
 
+const isExtensionMode = inject("isExtensionMode");
 const props = defineProps<Props>();
 
 const { accessToken, user, bootstrap } = useAuthComposable();

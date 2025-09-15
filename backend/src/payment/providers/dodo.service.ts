@@ -75,6 +75,10 @@ export class DodoPaymentService {
     await payment.save();
 
     const paymentLink = `${this.DODO_CHECKOUT_API}/buy/${paymentConfig[productId].dodo.id}?${params.toString()}`;
+    console.log(
+      '🚀 ~ DodoPaymentService ~ getPaymentLink ~ paymentLink:',
+      paymentLink,
+    );
     return paymentLink;
   }
 

@@ -5,22 +5,24 @@ export enum Plans {
   PRO_3_MONTHS = 'pro_3_months',
 }
 
+const isLive = process.env.NODE_ENV === 'production';
+
 const paymentConfig = {
   [Plans.PRO_7_DAYS]: {
     dodo: {
-      id: 'pdt_JINsxFgveyiKN9mua8qiF',
+      id: !isLive ? 'pdt_JINsxFgveyiKN9mua8qiF' : 'pdt_VdM6vOwfj2eAoYI6jJOAq',
       days: 7,
     },
   },
   [Plans.PRO_1_MONTH]: {
     dodo: {
-      id: 'pdt_V3utQF4b9tSjrrC6xbVHp',
+      id: !isLive ? 'pdt_V3utQF4b9tSjrrC6xbVHp' : 'pdt_Gnao8jMukLFZWY5vGXNN3',
       days: 30, // 1 month
     },
   },
   [Plans.PRO_3_MONTHS]: {
     dodo: {
-      id: 'pdt_i1nN5weo3ZNDGiQHglUpV',
+      id: !isLive ? 'pdt_i1nN5weo3ZNDGiQHglUpV' : 'pdt_SV72ZgLhnKp0yxCsWrFHD',
       days: 90, // 3 months
     },
   },

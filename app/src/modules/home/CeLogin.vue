@@ -1,9 +1,9 @@
 <template>
   <div class="h-screen w-screen flex flex-col items-center justify-center">
     <img
-      src="@/assets/images/mascot.webp"
+      src="@/assets/images/app-mascot.webp"
       alt="GoGoResume Mascot"
-      class="w-40 h-40 rounded-[50px] mb-10"
+      class="w-40 h-40 rounded-[50px] mb-1"
     />
     <p class="text-xl font-semibold mb-4">Welcome to GoGoResume 👋</p>
     <GoogleLogin />
