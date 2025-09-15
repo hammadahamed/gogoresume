@@ -54,29 +54,11 @@ const itemsSpacing = computed(() => {
 
 const imageClass = computed(() => {
   const sizeClasses = {
-    sm: "w-8 h-8",
-    md: "w-10 h-10 sm:w-12 sm:h-12",
-    lg: "w-12 h-12 sm:w-14 sm:h-14",
+    sm: "w-10 h-10",
+    md: "w-10 h-10 sm:w-11 sm:h-11",
+    lg: "w-11 h-11 sm:w-12 sm:h-12",
   };
-  return `${sizeClasses[props.size]} rounded-2xl cursor-pointer`;
-});
-
-const iconClass = computed(() => {
-  const sizeClasses = {
-    sm: "w-6 h-6",
-    md: "w-7 h-7 sm:w-8 sm:h-8",
-    lg: "w-8 h-8 sm:w-10 sm:h-10",
-  };
-  return sizeClasses[props.size];
-});
-
-const iconTextClass = computed(() => {
-  const sizeClasses = {
-    sm: "text-xs",
-    md: "text-xs sm:text-sm",
-    lg: "text-sm sm:text-base",
-  };
-  return sizeClasses[props.size];
+  return `${sizeClasses[props.size]}  cursor-pointer`;
 });
 
 const titleClass = computed(() => {

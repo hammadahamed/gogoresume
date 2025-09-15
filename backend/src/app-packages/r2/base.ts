@@ -27,10 +27,10 @@ export class R2Service {
     const clientConfig: S3ClientConfig = {
       region: 'auto',
       endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
-      credentials: {
-        accessKeyId: config.accessKeyId,
-        secretAccessKey: config.secretAccessKey,
-      },
+      //   credentials: {
+      //     accessKeyId: config.accessKeyId,
+      //     secretAccessKey: config.secretAccessKey,
+      //   },
     };
 
     this.client = new S3Client(clientConfig);
