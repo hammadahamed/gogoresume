@@ -159,9 +159,8 @@ export class UsersService {
 
     if (paymentDataFromDodo.status === PaymentStatus.SUCCEEDED) {
       await this.updateUserPlan(userId, paymentDataFromDodo, paymentData);
+      await this.setupTweakUsage(userId);
     }
-
-    await this.setupTweakUsage(userId);
 
     return paymentData;
   }

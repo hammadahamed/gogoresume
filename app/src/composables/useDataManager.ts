@@ -159,26 +159,26 @@ export function useDataManager() {
 
   const syncData = async (mute = false) => {
     syncing.value = true;
-    setTimeout(async () => {
-      try {
-        if (!userStore.userInfo) {
-          await getUserProfile();
-        }
-        const suggestions = getSuggestions();
-        const clonedUserInfo = JSON.parse(JSON.stringify(suggestions));
-        const synced = await GGRWindowEvents.saveUserInfo(clonedUserInfo);
-        if (synced) {
-          if (!mute) toast.success("Data synced successfully");
-        } else {
-          if (!mute) toast.error("Failed to sync data");
-        }
-      } catch (error) {
-        console.error("Failed to sync data:", error);
-        if (!mute) toast.error("Failed to sync data");
-      } finally {
-        syncing.value = false;
+    try {
+      if (!userStore.userInfo) {
+        await getUserProfile();
       }
-    }, 1000);
+      const suggestions = getSuggestions();
+      const clonedUserInfo = JSON.parse(JSON.stringify(suggestions));
+      const synced = await GGRWindowEvents.saveUserInfo(clonedUserInfo);
+      if (synced) {
+        if (!mute) toast.success("Data synced successfully");
+      } else {
+        if (!mute) toast.error("Failed to sync data");
+      }
+    } catch (error) {
+      console.error("Failed to sync data:", error);
+      if (!mute) toast.error("Failed to sync data");
+    } finally {
+      setTimeout(() => {
+        syncing.value = false;
+      }, 1000);
+    }
   };
 
   return {

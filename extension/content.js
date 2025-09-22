@@ -511,12 +511,15 @@ function createToggleButton() {
   toggleButton.id = TOGGLE_BUTTON_ID;
 
   // Create and add mascot image
-  const mascotImg = document.createElement("img");
-  mascotImg.src = chrome.runtime.getURL("mascot.webp");
-  mascotImg.alt = "GoGoResume";
-  mascotImg.style.width = "44px";
-  mascotImg.style.height = "44px";
-  mascotImg.style.borderRadius = "50%";
+  const mascotImg = document.createElement("p");
+  mascotImg.innerHTML = "📄";
+  mascotImg.style.fontSize = "20px";
+  //   mascotImg.src = chrome.runtime.getURL("mascot.webp");
+  //   mascotImg.alt = "GoGoResume";
+  mascotImg.style.padding = "0px";
+  mascotImg.style.margin = "0px";
+  mascotImg.style.width = "30px";
+  mascotImg.style.height = "30px";
   mascotImg.style.objectFit = "cover";
   mascotImg.style.pointerEvents = "none";
 

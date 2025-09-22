@@ -16,9 +16,13 @@
 
     <!-- Button content -->
     <div class="relative z-10 flex items-center gap-3 w-full">
-      <span :class="textClass" :style="{ color: computedTextColor }">{{
-        text
-      }}</span>
+      <span
+        v-if="text"
+        :class="textClass"
+        :style="{ color: computedTextColor }"
+        >{{ text }}</span
+      >
+      <slot v-else name="text"></slot>
       <div
         :class="iconContainerClasses"
         class="rounded-full flex items-center justify-center group-hover:translate-x-1 transition-transform duration-300"
@@ -47,7 +51,7 @@
 import { computed } from "vue";
 
 const props = defineProps<{
-  text: string;
+  text?: string;
   variant?: "dark" | "light";
   size?: "big" | "small";
   disabled?: boolean;
@@ -76,7 +80,7 @@ const sizeConfig = {
     textClass: "text-xs",
   },
   default: {
-    padding: "pl-5 pr-2 py-2",
+    padding: "pl-5 pr-3 py-2",
     iconContainer: "w-8 h-8",
     iconSvg: "w-4 h-4",
     textClass: "text-sm",

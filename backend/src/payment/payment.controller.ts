@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import { PaymentService } from './payment.service';
-import { ProcessPaymentDTO } from './payment.types';
 
 @Controller('payment')
 export class PaymentController {
@@ -35,6 +34,9 @@ export class PaymentController {
   @UseGuards(JwtAuthGuard)
   async verifyPurchase(@Req() req: any, @Body() body: { paymentId: string }) {
     const userId = req.user.id;
-    return await this.paymentService.verifyPurchase(body.paymentId, userId);
+    return await this.paymentService.verifyPurchaseAndGrantPlan(
+      body.paymentId,
+      userId,
+    );
   }
 }

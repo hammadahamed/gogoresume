@@ -48,3 +48,32 @@ export enum DodoWebhookEvents {
   DISPUTE_WON = 'dispute.won',
   DISPUTE_LOST = 'dispute.lost',
 }
+
+// Payment status messages for user-facing display
+export const PAYMENT_STATUS_MESSAGES: Record<PaymentStatus, string> = {
+  // Custom statuses
+  [PaymentStatus.STARTED]: 'Payment has been initiated and is being processed.',
+  [PaymentStatus.VERIFYING]: 'Payment is being verified. Please wait.',
+  [PaymentStatus.VERIFIED]: 'Payment has been successfully verified.',
+
+  // Dodo payment statuses
+  [PaymentStatus.SUCCEEDED]: 'Payment completed successfully.',
+  [PaymentStatus.FAILED]:
+    'Payment has failed. Please try again or use a different payment method.',
+  [PaymentStatus.CANCELLED]: 'Payment has been cancelled.',
+  [PaymentStatus.PROCESSING]:
+    'Your payment is currently being processed. This may take a few moments.',
+  [PaymentStatus.REQUIRES_CUSTOMER_ACTION]:
+    'Additional action is required from you to complete this payment. Please check your email or payment provider app.',
+  [PaymentStatus.REQUIRES_MERCHANT_ACTION]:
+    'Payment is waiting for merchant action. Our team has been notified.',
+  [PaymentStatus.REQUIRES_PAYMENT_METHOD]:
+    'A payment method is required to complete this transaction.',
+  [PaymentStatus.REQUIRES_CONFIRMATION]:
+    'Your payment requires confirmation to proceed. Please complete any additional steps.',
+  [PaymentStatus.REQUIRES_CAPTURE]:
+    'Payment has been authorized and is awaiting capture.',
+  [PaymentStatus.PARTIALLY_CAPTURED]: 'Payment has been partially captured.',
+  [PaymentStatus.PARTIALLY_CAPTURED_AND_CAPTURABLE]:
+    'Payment has been partially captured with remaining amount available for capture.',
+};

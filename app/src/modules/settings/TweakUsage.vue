@@ -54,7 +54,7 @@
       </div>
 
       <!-- Total Available Tweaks (with carry-forward) -->
-      <div>
+      <div v-if="false">
         <div class="flex justify-between items-center mb-2">
           <h3 class="text-sm font-medium text-gray-700">Total Available</h3>
           <span class="text-sm text-gray-500">

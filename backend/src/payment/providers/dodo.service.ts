@@ -7,6 +7,7 @@ import PaymentModel, { IPayment } from 'src/schemas/payment.schema';
 import {
   PaymentProvider,
   PaymentStatus,
+  PAYMENT_STATUS_MESSAGES,
 } from 'src/constants/payment.constants';
 import { OrderHelper } from '../helpers/order.helper';
 import { UsersService } from 'src/users/users.service';
@@ -57,7 +58,7 @@ export class DodoPaymentService {
       }
     }
     const { orderId } = OrderHelper.createIdAndToken(userId, productId, true);
-    const redirect_url = `${config.gogoresumeFrontendUrl}/payment-success?orderId=${orderId}`;
+    const redirect_url = `${config.gogoresumeFrontendUrl}/payment-status?orderId=${orderId}`;
     const params = new URLSearchParams();
     params.append('quantity', '1');
     params.append('redirect_url', redirect_url);
@@ -142,14 +143,7 @@ export class DodoPaymentService {
     return paymentResponse;
   }
 
-  async verifyPurchase(
-    paymentId: string,
-    userId: string,
-  ): Promise<{
-    success: boolean;
-    payment: Partial<IPayment>;
-    status: string;
-  }> {
+  async verifyPurchaseAndGrantPlan(paymentId: string, userId: string) {
     try {
       await this.checkPaymentForging(paymentId, userId);
       const paymentResponse = await this.checkOrderIdFromDodo(
@@ -162,16 +156,39 @@ export class DodoPaymentService {
         paymentResponse,
       );
 
-      const resData = { ...paymentData, status: paymentResponse.status };
-
-      return {
-        success: paymentResponse.status === PaymentStatus.SUCCEEDED,
-        payment: resData,
-        status: paymentResponse.status,
-      };
+      return this.prepareResponse(paymentData, paymentResponse);
     } catch (error) {
       this.logger.error(`Error verifying purchase: ${error.message}`);
       throw error;
     }
+  }
+
+  private prepareResponse(paymentData: any, paymentResponse: any) {
+    const resData = { ...paymentData, status: paymentResponse.status };
+    const isSuccess = paymentResponse.status === PaymentStatus.SUCCEEDED;
+    const isFailed = paymentResponse.status === PaymentStatus.FAILED;
+
+    // Get status message from constants
+    let response = {
+      success: isSuccess,
+      ...(isSuccess && { payment: resData }),
+      status: paymentResponse.status,
+    };
+
+    if (isFailed || !isSuccess) {
+      const resPayload = resData.paymentResponsePayload;
+      const statusMessage =
+        PAYMENT_STATUS_MESSAGES[paymentResponse.status as PaymentStatus] ||
+        'Your payment is in progress. Please check back in a moment.';
+
+      const data = {
+        providerPaymentId: resPayload.payment_id,
+        failedReason: resPayload.error_message || statusMessage,
+        errorCode: resPayload.error_code,
+      };
+      response = { ...response, ...data };
+    }
+
+    return response;
   }
 }

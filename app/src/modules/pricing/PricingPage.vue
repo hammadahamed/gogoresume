@@ -31,16 +31,11 @@
     <div
       v-if="isLoading"
       class="loading-container"
-      style="
-        display: flex;
-        justify-content: center;
-        height: 200px;
-        margin-bottom: 200px;
-      "
+      style="display: flex; justify-content: center; height: 200px"
     >
       <Spinner borderWidth="3px" style="margin: auto 0px" />
     </div>
-    <div v-else class="pricing-page__grid">
+    <div v-else class="pricing-page__grid flex justify-center flex-wrap gap-14">
       <PricingCard
         v-for="plan in pricedPlans"
         :key="plan.name"
@@ -51,7 +46,7 @@
       />
     </div>
 
-    <div class="pricing-page__comparison py-24 pb-0">
+    <div class="pricing-page__comparison pt-20 pb-0">
       <div class="comparison-table">
         <div class="comparison-row header-row">
           <div class="feature-column">Features</div>
@@ -129,6 +124,12 @@ const handlePlanSelection = async (plan: any) => {
 async function handlePayment(plan: any) {
   try {
     isLoading.value = true;
+    if (!userStore.user) {
+      //   toast.error("Please login to continue");
+      isLoading.value = false;
+      router.push("/login");
+      return;
+    }
     const response = await PaymentApi.getPaymentLink(
       plan.id,
       route.meta.restrictPlan

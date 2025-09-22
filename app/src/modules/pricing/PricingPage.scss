@@ -8,7 +8,7 @@
     }
 
     @media (min-width: 1024px) {
-        padding: 64px;
+        padding: 44px;
     }
 
     &__header {
@@ -64,34 +64,6 @@
             @media (min-width: 1024px) {
                 font-size: 20px;
             }
-        }
-    }
-
-    &__grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        justify-content: center;
-        align-self: start;
-        justify-items: center;
-        gap: 32px;
-        margin-bottom: 48px;
-        align-items: center;
-        position: relative;
-
-        @media (min-width: 768px) {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 32px;
-        }
-
-        @media (min-width: 1024px) {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 48px;
-            margin-bottom: 64px;
-        }
-
-        @media (min-width: 1200px) {
-            gap: 64px;
-            margin-bottom: 84px;
         }
     }
 

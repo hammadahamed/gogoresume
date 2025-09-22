@@ -1,15 +1,7 @@
 <template>
   <div class="h-screen w-screen flex flex-col items-center justify-center">
-    <img
-      src="@/assets/images/app-mascot.webp"
-      alt="GoGoResume Mascot"
-      class="w-40 h-40 rounded-[50px] mb-1"
-    />
     <p class="text-xl font-semibold mb-4">Welcome to GoGoResume 👋</p>
     <GoogleLogin />
-    <p v-if="isExtensionMode" class="text-sm text-gray-500 mt-3">
-      Powered by GoGoResume
-    </p>
   </div>
 </template>
 

@@ -2,6 +2,7 @@
   <section
     id="pricing"
     ref="pricingSection"
+    style="padding-bottom: 0 !important"
     class="py-12 sm:py-16 lg:py-20 bg-gray-50"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6">

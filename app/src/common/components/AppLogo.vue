@@ -13,7 +13,7 @@
       />
 
       <!-- Title -->
-      <span class="font-bold text-gray-900" :class="titleClass">
+      <span class="font-bold text-gray-90" :class="titleClass">
         {{ title }}
       </span>
     </div>
@@ -54,7 +54,7 @@ const itemsSpacing = computed(() => {
 
 const imageClass = computed(() => {
   const sizeClasses = {
-    sm: "w-10 h-10",
+    sm: "w-9 h-9",
     md: "w-10 h-10 sm:w-11 sm:h-11",
     lg: "w-11 h-11 sm:w-12 sm:h-12",
   };
@@ -63,7 +63,7 @@ const imageClass = computed(() => {
 
 const titleClass = computed(() => {
   const sizeClasses = {
-    sm: "text-base",
+    sm: "text-lg",
     md: "text-lg sm:text-xl",
     lg: "text-xl sm:text-2xl",
   };

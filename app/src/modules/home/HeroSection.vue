@@ -30,28 +30,43 @@
         <div
           class="hero-buttons flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 sm:px-0"
         >
+          <button
+            @click="scrollToPricing"
+            class="hero-button-primary px-4 py-[13px] border-2 border-black hover:opacity-70 text-gray-700 hover:text-primary text-sm sm:text-base font-semibold rounded-full transition-all duration-200 cursor-pointer"
+          >
+            Get Started Now
+          </button>
           <div class="hero-button-primary">
             <SpecialBtn
-              text="Get Started Now"
               size="medium"
               variant="default"
               :primaryColor="'black'"
               :secondaryColor="'white'"
               :textColor="'white'"
               className="py-3"
-            />
+            >
+              <template #text>
+                <span class="text-md font-semibold">Get Chrome Extension</span>
+              </template>
+            </SpecialBtn>
           </div>
-          <button
-            @click="scrollToPricing"
-            class="hero-button-primary px-4 py-2.5 border-2 border-black hover:opacity-70 text-gray-700 hover:text-primary text-sm sm:text-base font-semibold rounded-full transition-all duration-200 cursor-pointer"
-          >
-            View Pricing
-          </button>
         </div>
       </div>
       <div
-        class="hero-demo h-[500px] w-[80%] mx-auto mt-24 bg-gray-200 rounded-xl"
-      ></div>
+        class="hero-demo h-min-[200px] w-[80%] mx-auto mt-24 bg-gray-200 rounded-xl overflow-hidden"
+        style="aspect-ratio: 16/9"
+      >
+        <iframe
+          width="100%"
+          height="100%"
+          src="https://www.youtube.com/embed/laRliIVNZgU?si=iYJ5WqTAJfHm35cF"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
     </div>
   </section>
 </template>

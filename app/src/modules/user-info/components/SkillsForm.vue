@@ -24,13 +24,13 @@
       <div
         v-for="(skill, index) in skills"
         :key="index"
-        class="flex items-center bg-gray-100 rounded-full px-4 py-2 text-sm text-black font-semibold"
+        class="flex items-center bg-gray-100 rounded-full px-4 py-1 text-sm text-black font-semibold"
       >
         <span>{{ skill }}</span>
         <button
           type="button"
           @click="handleRemoveSkill(index)"
-          class="ml-2 text-gray-500 hover:text-gray-700"
+          class="ml-2 text-gray-500 hover:text-red-400 text-lg"
         >
           ×
         </button>

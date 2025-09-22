@@ -1,7 +1,13 @@
 <template>
-  <div class="p-3 pb-4 border border-gray-200 rounded-l">
-    <div class="flex items-center justify-between px-2 gap-20">
-      <div>
+  <div
+    class="p-3 pb-4 border border-gray-200 rounded-l"
+    :class="syncing && autoSync ? 'border-transparent' : 'border-gray-200'"
+  >
+    <div
+      class="flex items-center px-2 gap-20"
+      :class="syncing && autoSync ? 'justify-center' : 'justify-between'"
+    >
+      <div v-if="autoSync && syncing ? false : true">
         <h6 class="text-md font-semibold text-gray-900 mb-1">
           Sync Suggestions
         </h6>
@@ -14,9 +20,9 @@
 
       <div>
         <button
-          @click="syncData"
+          @click="syncData()"
           class="flex gap-2 justify-center items-center text-sm font-semibold border border-black text-black px-4 py-2 rounded-lg whitespace-nowrap hover:bg-gray-100 transition-all duration-200"
-          :class="{ 'scale-150 mr-10': syncing }"
+          :class="{ 'scale-130': syncing && autoSync }"
         >
           <p>Sync now</p>
           <SYNC_ICON
@@ -36,22 +42,23 @@ import { toast } from "vue3-toastify";
 import GGRWindowEvents from "@/utils/windowEvents";
 import { useUserStore } from "@/stores/useUserStore";
 import { useDataManager } from "@/composables/useDataManager";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { getSuggestions } from "@/utils/suggestions";
 
 const userStore = useUserStore();
 const { getUserProfile, syncing, syncData } = useDataManager();
 const route = useRoute();
+const router = useRouter();
 
 const autoSync = computed(() => {
   return route.query.autoSync === "true";
 });
 
-onMounted(() => {
+onMounted(async () => {
   if (autoSync.value) {
     setTimeout(() => {
       syncData();
-    }, 500);
+    }, 200);
   }
 });
 </script>

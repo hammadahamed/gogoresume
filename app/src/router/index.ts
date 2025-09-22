@@ -16,7 +16,7 @@ const ResumeTweaker = () =>
   import("../modules/resume-tweaker/ResumeTweaker.vue");
 const Templates = () => import("../modules/templates/Templates.vue");
 const LandingPageVue = () => import("../modules/home/LandingPage.vue");
-const PaymentSuccess = () => import("../modules/payment/PaymentSuccess.vue");
+const PaymentStatus = () => import("../modules/payment/PaymentStatus.vue");
 const UserSettings = () => import("../modules/settings/UserSettings.vue");
 const NotFoundPage = () => import("../NotFoundPage.vue");
 const Pricing = () => import("../modules/pricing/PricingPage.vue");
@@ -98,8 +98,8 @@ const routes = [
     meta: { requiresAuth: false },
   },
   {
-    path: "/payment-success",
-    component: PaymentSuccess,
+    path: "/payment-status",
+    component: PaymentStatus,
     meta: { requiresAuth: true },
   },
   {

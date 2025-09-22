@@ -19,8 +19,8 @@ export class PaymentService {
     return await this.provider.processPayment(paymentIntentId);
   }
 
-  async verifyPurchase(paymentId: string, userId: string) {
-    return await this.provider.verifyPurchase(paymentId, userId);
+  async verifyPurchaseAndGrantPlan(paymentId: string, userId: string) {
+    return await this.provider.verifyPurchaseAndGrantPlan(paymentId, userId);
   }
 
   async getUserActivePurchase(userId: string) {

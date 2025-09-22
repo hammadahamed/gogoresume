@@ -5,7 +5,7 @@
     <div class="max-w-8xl mx-auto px-4 sm:px-6 py-2">
       <div class="flex items-center justify-between">
         <!-- Logo Section -->
-        <AppLogo size="md" @click="scroll('top')" />
+        <AppLogo size="sm" @click="scroll('top')" />
 
         <!-- Navigation Links -->
         <div class="hidden md:flex items-center space-x-8">

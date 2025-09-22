@@ -25,7 +25,7 @@
       </div>
 
       <!-- Usage Section -->
-      <div class="bg-white mb-6 pb-5 border-b border-gray-300">
+      <div class="bg-white mb-6 pb-9 border-b border-gray-300">
         <div class="py-5">
           <h2 class="text-lg font-medium text-black mb-4">Tweak Usage</h2>
           <TweakUsage

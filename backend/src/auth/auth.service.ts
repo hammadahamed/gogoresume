@@ -167,10 +167,9 @@ export class AuthService {
       const user = await UsersModel.findById(decoded.id);
       return this.generateTokens(user);
     } catch (error) {
-      this.logger.error('Failed to refresh token', error.stack);
-      if (error instanceof UnauthorizedException) {
-        throw error;
-      }
+      this.logger.error('Failed to refresh token', error);
+      if (error instanceof UnauthorizedException) throw error;
+
       throw new UnauthorizedException({
         message: AuthErrorMessage[AuthErrorCode.REFRESH_FAILED],
         code: AuthErrorCode.REFRESH_FAILED,

@@ -46,7 +46,9 @@
           </button>
           <div class="faq-answer" :class="{ open: openFaqs[index] }">
             <div class="faq-answer-content">
-              <p style="color: #6b7280 !important">{{ faq.answer }}</p>
+              <p class="text-xs text-gray-700 whitespace-pre-line">
+                {{ faq.answer }}
+              </p>
             </div>
           </div>
         </div>
@@ -61,14 +63,25 @@ import { ref } from "vue";
 // FAQ data
 const faqItems = [
   {
+    question: "Why do i need this app?",
+    answer:
+      "If you are a job-hunter, and constantly tweak the ATS to get your resume past the ATS, then this app is for you. \nCreate base version of your resume and pick and tweak it on the go with AI.",
+  },
+  {
+    question: "What is an ATS?",
+    answer:
+      "ATS is an Applicant Tracking System. It is a software that helps companies manage their job applications. It is used to parse resumes and extract the relevant information. \nIf your resume is not optimized for ATS systems, it will be REJECTED.",
+  },
+
+  {
     question: "How does the AI optimization work?",
     answer:
-      "Our AI analyzes job descriptions and optimizes your resume content to include relevant keywords and phrases that ATS systems look for. It also improves the overall structure and impact of your resume to better showcase your qualifications.",
+      "Our AI analyzes job descriptions and optimizes your resume content to match the relevant keywords and phrases that ATS systems look for. It also improves the overall structure and impact of your resume to better showcase your qualifications.",
   },
   {
     question: "What file formats can I download my resume in?",
     answer:
-      "You can download your resume in multiple formats including PDF, DOCX, and plain text. PDF is recommended for most applications as it maintains formatting across different devices and systems.",
+      "We only support PDF format. PDF is recommended for most applications as it maintains formatting across different devices and systems.",
   },
   {
     question: "Can I create multiple resumes for different jobs?",
@@ -78,12 +91,17 @@ const faqItems = [
   {
     question: "How do I know if my resume is ATS-friendly?",
     answer:
-      "All our templates are designed to be ATS-friendly with proper formatting, clear sections, and standard fonts. Our AI optimization also ensures your content includes relevant keywords that ATS systems recognize.",
+      "When it comes to ATS-friendliness, the main player is the formatting and layout which makes the parsing easy for ATS systems. We carefully handpicked 2 best templates that are ATS-friendly and have a good layout.",
+  },
+  {
+    question: "Can i create custom layouts?",
+    answer:
+      "No, we don't support custom layouts. We've provided you with the 2 best templates in the industry. We are adding more templates in the future.",
   },
   {
     question: "Is there a free trial available?",
     answer:
-      "Yes! You can try our basic features for free. Create your first resume and see how our platform works. For full AI optimization and premium templates, you'll need to upgrade to our paid plan.",
+      "We don't have a free trial. But you get 10 AI-powered tweaks/month with the free plan. You can use them to optimize your resume. And the chrome extension is FOREVER FREE.",
   },
 ];
 
@@ -191,9 +209,8 @@ const toggleFaq = (index: number) => {
 
   p {
     margin: 0;
-    color: #6b7280;
     line-height: 1.7;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
   }
 }
 
