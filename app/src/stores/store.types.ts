@@ -10,6 +10,7 @@ export interface User {
   email: string;
   profilePicture: string;
   meta: object;
+  plan: any;
 }
 
 export interface AuthActions {

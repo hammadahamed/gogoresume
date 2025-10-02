@@ -15,8 +15,11 @@
             :key="index"
             :index="index"
             :experience="experience"
+            :totalCount="workExperiences.length"
             @onChange="(updated) => handleExperienceChange(index, updated)"
             @onDelete="() => handleDeleteExperience(index)"
+            @onMoveUp="() => handleMoveExperienceUp(index)"
+            @onMoveDown="() => handleMoveExperienceDown(index)"
             :disableCurrentOption="hasCurrentExperience && !experience.current"
           />
           <p
@@ -39,12 +42,15 @@
 
         <Section title="Education">
           <EducationForm
-            v-for="(education, index) in education"
+            v-for="(educationItem, index) in education"
             :key="index"
             :index="index"
-            :education="education"
+            :education="educationItem"
+            :totalCount="education.length"
             @onChange="(updated) => handleEducationChange(index, updated)"
             @onDelete="() => handleDeleteEducation(index)"
+            @onMoveUp="() => handleMoveEducationUp(index)"
+            @onMoveDown="() => handleMoveEducationDown(index)"
           />
           <p
             v-if="education?.length === 0"
@@ -74,8 +80,11 @@
             :key="index"
             :index="index"
             :project="project"
+            :totalCount="projects.length"
             @onChange="(updated) => handleProjectChange(index, updated)"
             @onDelete="() => handleDeleteProject(index)"
+            @onMoveUp="() => handleMoveProjectUp(index)"
+            @onMoveDown="() => handleMoveProjectDown(index)"
           />
           <p
             v-if="projects?.length === 0"
@@ -147,6 +156,26 @@ function handleDeleteExperience(index) {
   currentResume.value.workExperiences.splice(index, 1);
 }
 
+function handleMoveExperienceUp(index) {
+  if (index > 0) {
+    const experiences = currentResume.value.workExperiences;
+    [experiences[index - 1], experiences[index]] = [
+      experiences[index],
+      experiences[index - 1],
+    ];
+  }
+}
+
+function handleMoveExperienceDown(index) {
+  const experiences = currentResume.value.workExperiences;
+  if (index < experiences.length - 1) {
+    [experiences[index], experiences[index + 1]] = [
+      experiences[index + 1],
+      experiences[index],
+    ];
+  }
+}
+
 function handleAddEducation() {
   currentResume.value.education.push({ ...emptyEducation });
 }
@@ -157,6 +186,26 @@ function handleEducationChange(index, updatedEducation) {
 
 function handleDeleteEducation(index) {
   currentResume.value.education.splice(index, 1);
+}
+
+function handleMoveEducationUp(index) {
+  if (index > 0) {
+    const educations = currentResume.value.education;
+    [educations[index - 1], educations[index]] = [
+      educations[index],
+      educations[index - 1],
+    ];
+  }
+}
+
+function handleMoveEducationDown(index) {
+  const educations = currentResume.value.education;
+  if (index < educations.length - 1) {
+    [educations[index], educations[index + 1]] = [
+      educations[index + 1],
+      educations[index],
+    ];
+  }
 }
 
 function handleSkillsChange(updatedSkills) {
@@ -173,6 +222,26 @@ function handleProjectChange(index, updatedProject) {
 
 function handleDeleteProject(index) {
   currentResume.value.projects.splice(index, 1);
+}
+
+function handleMoveProjectUp(index) {
+  if (index > 0) {
+    const projects = currentResume.value.projects;
+    [projects[index - 1], projects[index]] = [
+      projects[index],
+      projects[index - 1],
+    ];
+  }
+}
+
+function handleMoveProjectDown(index) {
+  const projects = currentResume.value.projects;
+  if (index < projects.length - 1) {
+    [projects[index], projects[index + 1]] = [
+      projects[index + 1],
+      projects[index],
+    ];
+  }
 }
 
 const hasCurrentExperience = computed(() => {

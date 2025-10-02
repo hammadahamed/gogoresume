@@ -161,7 +161,7 @@
 
 .gogoresume-branding {
   position: absolute;
-  bottom: 0;
+  bottom: -2px;
   left: 0;
   right: 0;
   padding: 8px;

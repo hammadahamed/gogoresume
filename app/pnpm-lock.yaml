@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@lottiefiles/dotlottie-vue':
+        specifier: ^0.10.1
+        version: 0.10.1(vue@3.5.13(typescript@5.7.3))
       '@primevue/themes':
         specifier: ^4.3.9
         version: 4.3.9
@@ -50,6 +53,9 @@ importers:
       vue3-google-login:
         specifier: ^2.0.34
         version: 2.0.34(vue@3.5.13(typescript@5.7.3))
+      vue3-lottie:
+        specifier: ^3.3.1
+        version: 3.3.1(vue@3.5.13(typescript@5.7.3))
       vue3-toastify:
         specifier: ^0.2.8
         version: 0.2.8(vue@3.5.13(typescript@5.7.3))
@@ -366,6 +372,14 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.29':
     resolution: {integrity: sha512-uw6guiW/gcAGPDhLmd77/6lW8QLeiV5RUTsAX46Db6oLhGaVj4lhnPwb184s1bkc8kdVg/+h988dro8GRDpmYQ==}
+
+  '@lottiefiles/dotlottie-vue@0.10.1':
+    resolution: {integrity: sha512-PWPcaTBjDPGiEqj58DDbs36oH6LygihaIAgVbC8iB6ITVnRCyfm9zU4N4UsTz9sJIskMVTwuOu6Zdi0huOCOtg==}
+    peerDependencies:
+      vue: ^3.3.4
+
+  '@lottiefiles/dotlottie-web@0.52.2':
+    resolution: {integrity: sha512-aeXCMUB5RdusHrvZ3Py2KaMgQ0w7SdA8NFbPK+SpwqC1UW1CDFZl5vPLueZHju7vLhB1rpPvpQ5fQ0L/KEZt7w==}
 
   '@primeuix/styled@0.7.2':
     resolution: {integrity: sha512-tIJ6byZezTYZ9YUICNSidQHOIQOQL3zeUgjwiX0JnBTK3+WCvy4DyCBcrJ94RtiX0WGFZSYNvaGaFkTo4jU8FQ==}
@@ -1105,6 +1119,10 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
+  klona@2.0.6:
+    resolution: {integrity: sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==}
+    engines: {node: '>= 8'}
+
   lightningcss-darwin-arm64@1.29.2:
     resolution: {integrity: sha512-cK/eMabSViKn/PG8U/a7aCorpeKLMlK0bQeNHmdb7qUnBkNPnL+oV5DjJUo0kqWsJUapZsM4jCfYItbqBDvlcA==}
     engines: {node: '>= 12.0.0'}
@@ -1175,6 +1193,9 @@ packages:
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
+
+  lottie-web@5.12.2:
+    resolution: {integrity: sha512-uvhvYPC8kGPjXT3MyKMrL3JitEAmDMp30lVkuq/590Mw9ok6pWcFCwXJveo0t5uqYw1UREQHofD+jVpdjBv8wg==}
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
@@ -1650,6 +1671,12 @@ packages:
     peerDependencies:
       vue: ^3.0.3
 
+  vue3-lottie@3.3.1:
+    resolution: {integrity: sha512-60uQmx4eefi3FdPjAxWnblrgJJjnVTXUA6e4BAI3jGzgOSR76pyzL1rrWDiyPmMFo4mTw4wGTW6Gbkg3HR1mYw==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      vue: ^3.2
+
   vue3-toastify@0.2.8:
     resolution: {integrity: sha512-8jDOqsJaBZEbGpCbhWDETJc11D1lZefvgFPq/IPdM+U7+qyXoVPDvK6uq/FIgyV7qV0NcNzvGBMEzjsLQqGROw==}
     engines: {node: '>=20', npm: '>=9.0.0'}
@@ -1922,6 +1949,13 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  '@lottiefiles/dotlottie-vue@0.10.1(vue@3.5.13(typescript@5.7.3))':
+    dependencies:
+      '@lottiefiles/dotlottie-web': 0.52.2
+      vue: 3.5.13(typescript@5.7.3)
+
+  '@lottiefiles/dotlottie-web@0.52.2': {}
 
   '@primeuix/styled@0.7.2':
     dependencies:
@@ -2697,6 +2731,8 @@ snapshots:
 
   json5@2.2.3: {}
 
+  klona@2.0.6: {}
+
   lightningcss-darwin-arm64@1.29.2:
     optional: true
 
@@ -2750,6 +2786,8 @@ snapshots:
   loose-envify@1.4.0:
     dependencies:
       js-tokens: 4.0.0
+
+  lottie-web@5.12.2: {}
 
   lru-cache@5.1.1:
     dependencies:
@@ -3147,6 +3185,13 @@ snapshots:
 
   vue3-google-login@2.0.34(vue@3.5.13(typescript@5.7.3)):
     dependencies:
+      vue: 3.5.13(typescript@5.7.3)
+
+  vue3-lottie@3.3.1(vue@3.5.13(typescript@5.7.3)):
+    dependencies:
+      fast-deep-equal: 3.1.3
+      klona: 2.0.6
+      lottie-web: 5.12.2
       vue: 3.5.13(typescript@5.7.3)
 
   vue3-toastify@0.2.8(vue@3.5.13(typescript@5.7.3)):

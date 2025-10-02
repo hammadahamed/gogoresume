@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lottiefiles/dotlottie-vue": "^0.10.1",
     "@primevue/themes": "^4.3.9",
     "@react-pdf/renderer": "^4.3.0",
     "@tailwindcss/vite": "^4.1.3",
@@ -24,6 +25,7 @@
     "vue": "^3.5.13",
     "vue-router": "4",
     "vue3-google-login": "^2.0.34",
+    "vue3-lottie": "^3.3.1",
     "vue3-toastify": "^0.2.8"
   },
   "devDependencies": {

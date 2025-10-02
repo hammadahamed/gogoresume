@@ -18,8 +18,8 @@
           Screw the
           <span class="bg-highlight text-black px-1 sm:px-2">ATS</span>, Get the
           <span class="squiggly-underline animated text-black px-1 sm:px-2"
-            >Interview</span
-          >
+            >Interview
+          </span>
         </p>
         <p
           class="hero-subtitle text-lg sm:text-xl md:text-2xl text-gray-600 mb-6 sm:mb-8 leading-relaxed px-4 sm:px-0"
@@ -55,18 +55,7 @@
       <div
         class="hero-demo h-min-[200px] w-[80%] mx-auto mt-24 bg-gray-200 rounded-xl overflow-hidden"
         style="aspect-ratio: 16/9"
-      >
-        <iframe
-          width="100%"
-          height="100%"
-          src="https://www.youtube.com/embed/laRliIVNZgU?si=iYJ5WqTAJfHm35cF"
-          title="YouTube video player"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allowfullscreen
-        ></iframe>
-      </div>
+      ></div>
     </div>
   </section>
 </template>

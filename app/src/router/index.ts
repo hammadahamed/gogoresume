@@ -3,10 +3,11 @@ import useAuthComposable from "../composables/useAuth";
 import { accessTokenKey } from "@/api-factory/constants";
 import { useUserStore } from "@/stores/useUserStore";
 import { storeIntendedRoute } from "@/utils/routeUtils";
+import PaymentHistory from "@/modules/settings/PaymentHistory.vue";
 
 // Lazy-loaded components using dynamic imports
 const Main = () => import("../Main.vue");
-const CeLogin = () => import("../modules/home/CeLogin.vue");
+const Login = () => import("../modules/home/Login.vue");
 const Home = () => import("../modules/home/Home.vue");
 const ProfileInfo = () => import("../modules/user-info/ProfileInfo.vue");
 const ResumeBuilder = () =>
@@ -22,6 +23,8 @@ const NotFoundPage = () => import("../NotFoundPage.vue");
 const Pricing = () => import("../modules/pricing/PricingPage.vue");
 const ExtensionSettings = () =>
   import("../modules/extension/ExtensionSettings.vue");
+const PrivacyPolicy = () => import("../modules/legal/PrivacyPolicy.vue");
+const SupportPage = () => import("../modules/support/SupportPage.vue");
 
 const protectedRoutes = [
   {
@@ -73,6 +76,12 @@ const protectedRoutes = [
     children: [{ path: "", component: UserSettings }],
     meta: { requiresAuth: true },
   },
+  {
+    path: "/payment-history",
+    component: Main,
+    children: [{ path: "", component: PaymentHistory }],
+    meta: { requiresAuth: true },
+  },
 
   {
     path: "/chrome-extension",
@@ -94,13 +103,23 @@ const routes = [
   ...protectedRoutes,
   {
     path: "/login",
-    component: CeLogin,
+    component: Login,
     meta: { requiresAuth: false },
   },
   {
     path: "/payment-status",
     component: PaymentStatus,
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/privacy-policy",
+    component: PrivacyPolicy,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/support",
+    component: SupportPage,
+    meta: { requiresAuth: false },
   },
   {
     path: "/:pathMatch(.*)*",

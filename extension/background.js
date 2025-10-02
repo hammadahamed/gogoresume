@@ -7,6 +7,7 @@ const ACTIONS = {
   GET_CACHED_SELECTED_TEXT: `${EXT_ACTION_PREFIX}:GET_CACHED_SELECTED_TEXT`,
 };
 
+const HOST_URL = "https://gogoresume.com";
 // Context menu IDs
 const CONTEXT_MENU_IDS = {
   COPY_TO_GOGORESUME: "copyToGoGoResume",
@@ -94,7 +95,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 
     // Open a new tab with the extension welcome page
     await chrome.tabs.create({
-      url: "https://gogoresume.com/chrome-extension?autoSync=true",
+      url: `${HOST_URL}/chrome-extension?autoSync=true`,
     });
   } catch (error) {
     console.error("Error configuring side panel:", error);

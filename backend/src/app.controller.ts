@@ -1,7 +1,7 @@
 import { Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ZeptoMailService } from './app-mailer/zepto-mail/zepto-mail.service';
-import { WelcomeEmail } from './emailTemplates';
+import { ThankYouEmail, WelcomeEmail } from './emailTemplates';
 import { AppEmails } from './appConfig';
 
 @Controller()
@@ -22,6 +22,7 @@ export class AppController {
     await this.appMailerService.sendEmail(
       'hammadahamed.dev@gmail.com',
       WelcomeEmail('Hammad'),
+      //   ThankYouEmail('Hammad'),
       AppEmails.FOUNDER,
     );
 

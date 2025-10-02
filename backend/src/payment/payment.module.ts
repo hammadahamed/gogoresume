@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { WebhookController } from './webhook/webhook.controller';
 import { DodoWebhookService } from './webhook/dodo-webhook.service';
 import { UsersService } from 'src/users/users.service';
+import { ZeptoMailService } from 'src/app-mailer/zepto-mail/zepto-mail.service';
 
 @Module({
   imports: [AuthModule],
@@ -18,6 +19,7 @@ import { UsersService } from 'src/users/users.service';
     DodoWebhookService,
     UsersService,
     DodoPaymentService,
+    ZeptoMailService,
   ],
   exports: [PaymentService],
 })

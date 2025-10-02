@@ -43,13 +43,13 @@
           <p class="text-gray-700">
             Go to
             <span
-              class="font-bold squiggly-underline cursor-pointer"
+              class="font-bold cursor-pointer"
               @click="appStore.setActiveTab('my-resumes')"
               >My Resumes</span
             >
             to create multiple resumes. Pick a resume template from
             <span
-              class="font-bold squiggly-underline cursor-pointer"
+              class="font-bold cursor-pointer"
               @click="appStore.setActiveTab('templates')"
               >Templates</span
             >

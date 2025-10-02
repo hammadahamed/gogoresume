@@ -37,6 +37,7 @@ export default defineConfig(({ mode }) => ({
         brotliSize: true,
       }),
   ].filter(Boolean),
+  assetsInclude: ["**/*.lottie"],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

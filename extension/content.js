@@ -16,6 +16,8 @@ const WindowMessages = {
   SAVE_USER_INFO_RESPONSE: `${WINDOW_MESSAGE_PREFIX}:SAVE_USER_INFO_RESPONSE`,
 };
 
+const HOST_URL = "https://gogoresume.com";
+
 // Storage keys
 const StorageKeys = {
   SIDEBAR_ENABLED: "sidebarEnabled",
@@ -71,9 +73,6 @@ const UserInfoSections = {
 
 const PRIMARY_COLOR = "#6466f1";
 
-// URLs
-const IFRAME_URL = "http://localhost:5173/resume-tweaker?extension=true";
-
 // UI text
 const BRANDING_TEXT = "Powered by GoGoResume";
 
@@ -110,7 +109,7 @@ let buttonPosition = { top: 20, right: 10 };
 
 // Add these constants at the top with other constants
 const SUGGESTIONS_WIDTH = "300px";
-const SUGGESTIONS_MAX_HEIGHT = "200px";
+const SUGGESTIONS_MAX_HEIGHT = "250px";
 
 // CLEANUP FUNCTIONS ------------------------------------------------------------
 function cleanupToggleButton() {
@@ -121,14 +120,11 @@ function cleanupToggleButton() {
 }
 
 const openMasterProfile = () => {
-  window.open("https://gogoresume.com/master-profile", "_blank");
+  window.open(`${HOST_URL}/master-profile`, "_blank");
 };
 
 const openSyncData = () => {
-  window.open(
-    "https://gogoresume.com/chrome-extension?autoSync=true",
-    "_blank"
-  );
+  window.open(`${HOST_URL}/chrome-extension?autoSync=true`, "_blank");
 };
 
 // PROCESS & SHOW SUGGESTIONS ------------------------------------------------------------
@@ -371,19 +367,19 @@ function showSuggestions(suggestions, x, y) {
       });
     }
   } else {
-    // Create sections pane
+    // Create sections pane (reduced height to account for hint and branding)
     const sectionsPane = document.createElement("div");
     sectionsPane.className = SECTIONS_PANE_CLASS;
-    sectionsPane.style.height = SUGGESTIONS_MAX_HEIGHT;
+    sectionsPane.style.height = "180px"; // Reduced from max height to leave space for hint/branding
     sectionsPane.style.overflow = "auto";
-    sectionsPane.style.paddingBottom = "100px";
+    sectionsPane.style.paddingBottom = "10px";
 
-    // Create values pane
+    // Create values pane (reduced height to account for hint and branding)
     const valuesPane = document.createElement("div");
     valuesPane.className = VALUES_PANE_CLASS;
     valuesPane.style.overflow = "auto";
-    valuesPane.style.height = SUGGESTIONS_MAX_HEIGHT;
-    valuesPane.style.paddingBottom = "100px";
+    valuesPane.style.height = "180px"; // Reduced from max height to leave space for hint/branding
+    valuesPane.style.paddingBottom = "10px";
 
     // Define sections based on the structured data
     const sections = Object.values(UserInfoSections).reduce((acc, section) => {
@@ -405,9 +401,21 @@ function showSuggestions(suggestions, x, y) {
         item.style.fontSize = "14px";
 
         // Add click handler directly to each value
-        item.addEventListener("click", () => {
+        item.addEventListener("click", (e) => {
           if (currentField) {
-            currentField.value = value;
+            if (e.ctrlKey || e.metaKey) {
+              // Ctrl+click (or Cmd+click on Mac): append to existing value
+              const currentValue = currentField.value.trim();
+              const separator = currentValue
+                ? currentValue.endsWith(",")
+                  ? " "
+                  : ", "
+                : "";
+              currentField.value = currentValue + separator + value;
+            } else {
+              // Normal click: replace value
+              currentField.value = value;
+            }
             currentField.dispatchEvent(new Event("input", { bubbles: true }));
           }
           hideSuggestions();
@@ -466,6 +474,22 @@ function showSuggestions(suggestions, x, y) {
   // Add container to popup
   suggestionsPopup.appendChild(suggestionsContainer);
 
+  // Add usage hint (only when there are suggestions)
+  if (hasSuggestions) {
+    const hintText = document.createElement("div");
+    hintText.style.cssText = `
+      font-size: 11px;
+      color: #999;
+      text-align: center;
+      padding: 8px 10px 6px 10px;
+      border-top: 1px solid #333;
+      background: rgba(0, 0, 0, 0.05);
+      margin-top: 2px;
+    `;
+    hintText.innerHTML = `💡 <strong>Tip:</strong> Ctrl+click to append, click to replace`;
+    suggestionsPopup.appendChild(hintText);
+  }
+
   // Add branding
   const branding = document.createElement("div");
   branding.className = BRANDING_CLASS;
@@ -511,7 +535,7 @@ function createToggleButton() {
   toggleButton.id = TOGGLE_BUTTON_ID;
 
   // Create and add mascot image
-  const mascotImg = document.createElement("p");
+  const mascotImg = document.createElement("div");
   mascotImg.innerHTML = "📄";
   mascotImg.style.fontSize = "20px";
   //   mascotImg.src = chrome.runtime.getURL("mascot.webp");
@@ -522,6 +546,9 @@ function createToggleButton() {
   mascotImg.style.height = "30px";
   mascotImg.style.objectFit = "cover";
   mascotImg.style.pointerEvents = "none";
+  mascotImg.style.display = "flex";
+  mascotImg.style.alignItems = "center";
+  mascotImg.style.justifyContent = "center";
 
   toggleButton.appendChild(mascotImg);
   toggleButton.title = "Open GoGoResume Sidebar (Drag vertically to move)";

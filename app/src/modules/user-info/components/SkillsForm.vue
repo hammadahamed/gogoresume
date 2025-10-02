@@ -20,21 +20,42 @@
       </button>
     </div>
 
-    <div class="flex flex-wrap gap-2">
-      <div
-        v-for="(skill, index) in skills"
-        :key="index"
-        class="flex items-center bg-gray-100 rounded-full px-4 py-1 text-sm text-black font-semibold"
-      >
-        <span>{{ skill }}</span>
+    <div v-if="skills.length > 0" class="space-y-3">
+      <!-- Clear All Button -->
+      <div class="flex justify-end">
         <button
           type="button"
-          @click="handleRemoveSkill(index)"
-          class="ml-2 text-gray-500 hover:text-red-400 text-lg"
+          @click="handleClearAll"
+          class="text-xs text-red-600 hover:text-red-700 hover:underline font-medium transition-all duration-200"
+          title="Remove all skills"
         >
-          ×
+          Clear All ({{ skills.length }})
         </button>
       </div>
+
+      <!-- Skills List -->
+      <div class="flex flex-wrap gap-2">
+        <div
+          v-for="(skill, index) in skills"
+          :key="index"
+          class="flex items-center bg-gray-100 rounded-full px-4 py-1 text-sm text-black font-semibold"
+        >
+          <span>{{ skill }}</span>
+          <button
+            type="button"
+            @click="handleRemoveSkill(index)"
+            class="ml-2 text-gray-500 hover:text-red-400 text-lg"
+            :title="`Remove ${skill}`"
+          >
+            ×
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div v-else class="text-gray-500 text-sm italic py-4">
+      No skills added yet. Add your first skill above.
     </div>
   </div>
 </template>
@@ -76,10 +97,15 @@ export default {
       );
     };
 
+    const handleClearAll = () => {
+      emit("update:skills", []);
+    };
+
     return {
       newSkill,
       handleAddSkill,
       handleRemoveSkill,
+      handleClearAll,
     };
   },
 };

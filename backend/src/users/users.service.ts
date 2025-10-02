@@ -17,9 +17,14 @@ import { getPlanEnd } from 'src/common/helpers/plan.helper';
 import TweakUsageModel from 'src/schemas/tweaksUsage.schema';
 import { calculateTweaksUsage } from 'src/common/helpers/tweak.helper';
 import { IJwtPayloadPlan } from 'src/common/types/app.types';
+import { AppEmails } from 'src/appConfig';
+import { ZeptoMailService } from 'src/app-mailer/zepto-mail/zepto-mail.service';
+import { ThankYouEmail } from 'src/emailTemplates';
 
 @Injectable()
 export class UsersService {
+  constructor(private readonly appMailerService: ZeptoMailService) {}
+
   async updateProfile(
     userId: string,
     updateData: UpdateProfileDto,
@@ -106,7 +111,7 @@ export class UsersService {
 
     // Update payment record based on DodoPayments status
     payment.providerPaymentId = paymentDataFromDodo.payment_id;
-    payment.status = paymentDataFromDodo.status;
+    payment.status = paymentDataFromDodo.status || PaymentStatus.PROCESSING;
     payment.paymentResponsePayload = paymentDataFromDodo;
     await payment.save();
 
@@ -160,17 +165,56 @@ export class UsersService {
     if (paymentDataFromDodo.status === PaymentStatus.SUCCEEDED) {
       await this.updateUserPlan(userId, paymentDataFromDodo, paymentData);
       await this.setupTweakUsage(userId);
+      await this.sendThankYouEmail(userId);
     }
 
     return paymentData;
   }
 
+  async sendThankYouEmail(userId: string) {
+    const user = await UsersModel.findById(userId);
+    await this.appMailerService.sendEmail(
+      user.email,
+      ThankYouEmail(user.firstName),
+      AppEmails.FOUNDER,
+    );
+  }
+
   async getTweaksUsage(userId: string, userPlan: IJwtPayloadPlan) {
     const tweakUsage = await TweakUsageModel.findOne({ userId });
     const otherStats = await calculateTweaksUsage(tweakUsage, userPlan.planId);
-
     return {
       ...otherStats,
     };
+  }
+
+  async getPendingTransactions(userId: string) {
+    const lastSuccess = await PaymentModel.findOne({
+      userId,
+      status: PaymentStatus.SUCCEEDED,
+    }).sort({ createdAt: -1 });
+    const query: any = { userId, status: { $ne: PaymentStatus.STARTED } };
+    if (lastSuccess) query._id = { $gt: lastSuccess._id };
+    const payments = await PaymentModel.find(query).sort({ _id: -1 }).limit(10);
+    return this.transformPaymentHistory(payments);
+  }
+
+  private async transformPaymentHistory(payments: any[]) {
+    return payments.map((payment) => {
+      const data: any = {
+        orderId: payment.orderId,
+        providerPaymentId: payment.providerPaymentId,
+        status: payment.status,
+        createdAt: payment.createdAt,
+      };
+
+      const dodoResponse = payment.paymentResponsePayload;
+      if (dodoResponse) {
+        data.failedReason = dodoResponse.error_message;
+        data.errorCode = dodoResponse.error_code;
+      }
+
+      return data;
+    });
   }
 }

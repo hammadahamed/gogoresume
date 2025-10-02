@@ -1,7 +1,8 @@
 <template>
   <div class="h-screen w-screen flex flex-col items-center justify-center">
-    <p class="text-xl font-semibold mb-4">Welcome to GoGoResume 👋</p>
+    <p class="text-xl mt-10 font-semibold mb-4">Welcome to GoGoResume 👋</p>
     <GoogleLogin />
+    <p class="text-sm mt-4">Please login to continue</p>
   </div>
 </template>
 

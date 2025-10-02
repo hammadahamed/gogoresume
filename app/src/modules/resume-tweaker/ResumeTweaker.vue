@@ -63,26 +63,18 @@
             >
               <!-- Subtle backdrop -->
               <div
-                class="absolute inset-0 bg-black-50/90 backdrop-blur-[0.75px] rounded-lg"
-              ></div>
-
-              <!-- Scattered sparkle elements -->
-              <div class="sparkle-blob large" style="top: 25%; left: 20%"></div>
-              <div
-                class="sparkle-blob medium"
-                style="top: 20%; left: 75%"
-              ></div>
-              <div class="sparkle-blob small" style="top: 75%; left: 80%"></div>
-              <div
-                class="sparkle-blob medium"
-                style="top: 80%; left: 25%"
-              ></div>
-
-              <!-- Center sparkle -->
-              <div
-                class="sparkle-blob large center-sparkle"
-                style="top: 50%; left: 50%; transform: translate(-50%, -50%)"
-              ></div>
+                class="absolute inset-0 bg-white/40 backdrop-blur-[0.95px] rounded-lg pointer-events-none"
+              >
+                <div class="w-full h-full flex items-center justify-center">
+                  <DotLottieVue
+                    loop
+                    autoplay
+                    :src="LoadingLottie"
+                    style="height: 80px"
+                    speed="2"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -116,6 +108,9 @@ import { DEFAULT_RESUME } from "@/constants/app.constants";
 import Spinner from "@/common/components/Spinner.vue";
 import resumeApi from "@/api-factory/resume";
 import { useResumeHistory } from "@/composables/useResumeHistory";
+import SandyLoading from "@/assets/sandy_loading.lottie";
+import LoadingLottie from "@/assets/loading.lottie";
+import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
 
 const route = useRoute();
 const userStore = useUserStore();

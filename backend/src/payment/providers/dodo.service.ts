@@ -76,10 +76,6 @@ export class DodoPaymentService {
     await payment.save();
 
     const paymentLink = `${this.DODO_CHECKOUT_API}/buy/${paymentConfig[productId].dodo.id}?${params.toString()}`;
-    console.log(
-      '🚀 ~ DodoPaymentService ~ getPaymentLink ~ paymentLink:',
-      paymentLink,
-    );
     return paymentLink;
   }
 
@@ -164,7 +160,11 @@ export class DodoPaymentService {
   }
 
   private prepareResponse(paymentData: any, paymentResponse: any) {
-    const resData = { ...paymentData, status: paymentResponse.status };
+    const status = paymentResponse.status || PaymentStatus.PROCESSING;
+    const resData = {
+      ...paymentData,
+      status,
+    };
     const isSuccess = paymentResponse.status === PaymentStatus.SUCCEEDED;
     const isFailed = paymentResponse.status === PaymentStatus.FAILED;
 
@@ -172,19 +172,19 @@ export class DodoPaymentService {
     let response = {
       success: isSuccess,
       ...(isSuccess && { payment: resData }),
-      status: paymentResponse.status,
+      status,
     };
 
     if (isFailed || !isSuccess) {
-      const resPayload = resData.paymentResponsePayload;
+      const resPayload = resData.paymentResponsePayload || paymentResponse;
       const statusMessage =
         PAYMENT_STATUS_MESSAGES[paymentResponse.status as PaymentStatus] ||
         'Your payment is in progress. Please check back in a moment.';
 
       const data = {
-        providerPaymentId: resPayload.payment_id,
-        failedReason: resPayload.error_message || statusMessage,
-        errorCode: resPayload.error_code,
+        providerPaymentId: resPayload?.payment_id,
+        failedReason: resPayload?.error_message || statusMessage,
+        errorCode: resPayload?.error_code,
       };
       response = { ...response, ...data };
     }

@@ -20,4 +20,9 @@ export class UsersController {
   async getTweaksUsage(@Req() req: any) {
     return this.usersService.getTweaksUsage(req.user.id, req.user.currentPlan);
   }
+
+  @Get('transactions')
+  async getPendingTransactions(@Req() req: any) {
+    return this.usersService.getPendingTransactions(req.user.id);
+  }
 }

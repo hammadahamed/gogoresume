@@ -4,6 +4,8 @@ const ACTIONS = {
   UPDATE_SUGGESTIONS: `${EXT_ACTION_PREFIX}:UPDATE_SUGGESTIONS`,
 };
 
+const HOST_URL = "https://gogoresume.com";
+
 document.addEventListener("DOMContentLoaded", () => {
   const sidebarToggle = document.getElementById("ggr-sidebarToggle");
   const suggestionsToggle = document.getElementById("ggr-suggestionsToggle");
@@ -53,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle setup button click
   setupButton.addEventListener("click", () => {
     chrome.tabs.create({
-      url: "https://gogoresume.com/chrome-extension?autoSync=true",
+      url: `${HOST_URL}/chrome-extension?autoSync=true`,
     });
     console.log("Opening Chrome Extension setup page in new tab");
   });

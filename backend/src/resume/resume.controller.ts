@@ -18,6 +18,10 @@ import {
   CheckFeature,
   FeatureType,
 } from 'src/guards/features.guard';
+import {
+  validateUserProfileSize,
+  validateResumeDataSize,
+} from 'src/common/helpers/validation.helper';
 
 @Controller('resume')
 export class ResumeController {
@@ -42,6 +46,9 @@ export class ResumeController {
     @Req() req: any,
     @Body() userProfileData: any,
   ): Promise<{ status: string; message: string }> {
+    // Validate payload size before processing
+    validateUserProfileSize(userProfileData);
+
     return this.resumeService.saveUserProfile(req.user.id, userProfileData);
   }
 
@@ -60,6 +67,9 @@ export class ResumeController {
     @Req() req: any,
     @Body() body: { name: string; data: any; templateId?: string },
   ): Promise<{ status: string; message: string; resumeId: string }> {
+    // Validate payload size before processing
+    validateResumeDataSize(body.data);
+
     return this.resumeService.createResume(
       req.user.id,
       body.name,
@@ -75,6 +85,9 @@ export class ResumeController {
     @Param('resumeId') resumeId: string,
     @Body() body: { name: string; data: any; templateId?: string },
   ): Promise<{ status: string; message: string }> {
+    // Validate payload size before processing
+    validateResumeDataSize(body.data);
+
     return this.resumeService.updateResume(
       req.user.id,
       resumeId,

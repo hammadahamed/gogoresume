@@ -5,7 +5,7 @@
     <div class="max-w-8xl mx-auto px-4 sm:px-6 py-2">
       <div class="flex items-center justify-between">
         <!-- Logo Section -->
-        <AppLogo size="sm" @click="scroll('top')" />
+        <AppLogo size="sm" @click="GoHomeAndTop" />
 
         <!-- Navigation Links -->
         <div class="hidden md:flex items-center space-x-8">
@@ -20,7 +20,10 @@
         </div>
 
         <!-- Mobile Menu Button & Login -->
-        <div class="flex items-center space-x-2">
+        <div
+          class="flex items-center space-x-2"
+          :class="{ 'md:hidden': props.noLoginButton }"
+        >
           <!-- Mobile Menu Button -->
           <button
             @click="toggleMobileMenu"
@@ -49,17 +52,14 @@
             </svg>
           </button>
 
-          <div class="flex-shrink-0">
+          <div class="w-min mx-auto" v-if="!props.noLoginButton">
             <GoogleLogin />
           </div>
         </div>
       </div>
 
       <!-- Mobile Menu -->
-      <div
-        v-if="isMobileMenuOpen"
-        class="md:hidden mt-4 pb-4 border-t border-gray-100"
-      >
+      <div v-if="isMobileMenuOpen" class="mt-4 pb-4 border-t border-gray-100">
         <div class="flex flex-col space-y-3 pt-4">
           <button
             v-for="item in navigationItems"
@@ -77,13 +77,22 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import GoogleLogin from "@/common/functional-components/GoogleLogin.vue";
 import { scrollToSection } from "@/helper/ui.helper";
 import AppLogo from "@/common/components/AppLogo.vue";
 
+// Props
+const props = defineProps({
+  noLoginButton: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 // Router setup
 const router = useRouter();
+const route = useRoute();
 
 // Mobile menu state
 const isMobileMenuOpen = ref(false);
@@ -101,11 +110,21 @@ const navigateTo = (path: string) => {
 };
 
 const scroll = (sectionId: string) => {
-  scrollToSection(sectionId);
+  if (route.path != "/") {
+    router.push("/");
+  }
+  setTimeout(() => {
+    scrollToSection(sectionId);
+  }, 100);
   isMobileMenuOpen.value = false; // Close mobile menu after scrolling
 };
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
+
+const GoHomeAndTop = () => {
+  router.push("/");
+  scrollToSection("top");
 };
 </script>

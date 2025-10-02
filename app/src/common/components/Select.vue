@@ -61,7 +61,8 @@
     >
       <div
         v-show="isOpen"
-        class="absolute z-50 mt-1 w-full bg-white rounded-lg shadow-lg border border-gray-200 py-1 pb-3 max-h-64 overflow-auto"
+        class="absolute z-50 mt-1 w-full bg-white rounded-lg shadow-lg border border-gray-200 py-1 max-h-64 overflow-auto"
+        :class="{ 'pb-3': options.length > 8 }"
       >
         <div
           v-for="option in options"

@@ -74,6 +74,10 @@ import resumeApi from "../../api-factory/resume";
 import { useDataManager } from "../../composables/useDataManager";
 import { triggerResumeDownload } from "../../utils/resumeDownload";
 import { UserInfo } from "@/types/resume.types";
+import {
+  validatePayloadSize,
+  PAYLOAD_SIZE_LIMITS,
+} from "../../helper/common.helper";
 
 interface Props {
   modelValue?: string; // selected template
@@ -151,6 +155,16 @@ const handleTemplateChange = (template: any) => {
 const handleSave = async () => {
   if (!validateName() || !currentResume.value) return;
 
+  // Validate payload size before making API call
+  const validation = validatePayloadSize(
+    currentResume.value,
+    PAYLOAD_SIZE_LIMITS.RESUME_DATA
+  );
+  if (!validation.isValid) {
+    toast.error(validation.error);
+    return;
+  }
+
   isSaving.value = true;
 
   try {
@@ -187,7 +201,21 @@ const handleSave = async () => {
     }
   } catch (error: any) {
     console.error("Error saving resume:", error);
-    toast.error(error?.response?.data?.message || "Failed to save resume");
+
+    // Check if it's a content too long error from backend
+    if (
+      error?.response?.status === 413 ||
+      error?.response?.data?.message?.includes("too large")
+    ) {
+      // Use backend error message if available (includes character count)
+      const backendMessage = error?.response?.data?.message;
+      toast.error(
+        backendMessage ||
+          "Resume data is too large. Please reduce the amount of information and try again."
+      );
+    } else {
+      toast.error(error?.response?.data?.message || "Failed to save resume");
+    }
   } finally {
     isSaving.value = false;
   }

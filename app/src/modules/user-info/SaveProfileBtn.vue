@@ -19,6 +19,10 @@ import { useUserStore } from "../../stores/useUserStore";
 import { toast } from "vue3-toastify";
 import ResumeApi from "@/api-factory/resume";
 import { useDataManager } from "../../composables/useDataManager";
+import {
+  validatePayloadSize,
+  PAYLOAD_SIZE_LIMITS,
+} from "../../helper/common.helper";
 
 const { syncData } = useDataManager();
 
@@ -31,14 +35,38 @@ const isSaving = ref(false);
 
 async function handleSave() {
   if (isSaving.value) return;
+
+  // Validate payload size before making API call
+  const validation = validatePayloadSize(
+    props.userInfo,
+    PAYLOAD_SIZE_LIMITS.USER_PROFILE
+  );
+  if (!validation.isValid) {
+    toast.error(validation.error);
+    return;
+  }
+
   try {
     isSaving.value = true;
     await ResumeApi.saveUserProfile(props.userInfo);
     userStore.setUserInfo(props.userInfo);
     toast.success("Profile saved successfully!");
     await syncData(true);
-  } catch (error) {
-    toast.error("Failed to save profile. Please try again.");
+  } catch (error: any) {
+    // Check if it's a content too long error from backend
+    if (
+      error?.response?.status === 413 ||
+      error?.response?.data?.message?.includes("too large")
+    ) {
+      // Use backend error message if available (includes character count)
+      const backendMessage = error?.response?.data?.message;
+      toast.error(
+        backendMessage ||
+          "Profile data is too large. Please reduce the amount of information and try again."
+      );
+    } else {
+      toast.error("Failed to save profile. Please try again.");
+    }
     console.error("Failed to save profile:", error);
   } finally {
     isSaving.value = false;

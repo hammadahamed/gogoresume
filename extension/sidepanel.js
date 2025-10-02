@@ -20,30 +20,6 @@ function updateLoadingStatus(message) {
   if (loadingSubtext) loadingSubtext.textContent = "Debugging...";
 }
 
-// Check if Vue app is accessible
-async function checkVueApp() {
-  try {
-    updateLoadingStatus("Checking Vue app...");
-    const response = await fetch(
-      "http://localhost:5173/resume-tweaker?extension=true"
-    );
-
-    if (response.ok) {
-      updateLoadingStatus("Vue app found, loading...");
-      return true;
-    } else {
-      throw new Error(`Vue app responded with status: ${response.status}`);
-    }
-  } catch (error) {
-    console.error("Vue app check failed:", error);
-    updateLoadingStatus("Vue app not accessible");
-    showError(
-      `Vue app not running on localhost:5173\n\nError: ${error.message}\n\nPlease start your Vue development server.`
-    );
-    return false;
-  }
-}
-
 // Show error message
 function showError(message) {
   loading.innerHTML = `
@@ -165,8 +141,3 @@ try {
 } catch (error) {
   console.error("Error setting up context menu text listener:", error);
 }
-
-// Initial Vue app check
-setTimeout(() => {
-  checkVueApp();
-}, 1000);

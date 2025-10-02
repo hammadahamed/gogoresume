@@ -16,7 +16,6 @@
 
     &.is-popular {
         border: 4px solid #343333;
-        box-shadow: 0 8px 24px rgba(251, 191, 36, 0.15);
         transform: scale(1.05);
         z-index: 1;
     }
@@ -81,8 +80,8 @@
 
     &__button {
         width: 100%;
-        padding: 16px;
-        border-radius: 12px;
+        padding: 10px;
+        border-radius: 8px;
         font-size: 16px;
         transition: all 0.2s ease;
         background-color: #111827;
@@ -99,7 +98,7 @@
 .popular-badge {
     position: absolute;
     top: -12px;
-    right: 24px;
+    right: 4px;
     background-color: #0d0d0d;
     color: #ffffff;
     padding: 8px 16px;
@@ -107,4 +106,21 @@
     font-size: 14px;
     font-weight: 600;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.diagonal-strike {
+    position: relative;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: #ef4444;
+        background: #c68585;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
 }

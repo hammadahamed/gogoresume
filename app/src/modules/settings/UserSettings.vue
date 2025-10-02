@@ -132,6 +132,15 @@
             </div>
           </div>
         </div>
+
+        <div class="payment-history -mt-2">
+          <p
+            @click="viewPaymentHistory"
+            class="text-sm font-medium text-violet-600 mb-4 hover:text-violet-800 transition-all duration-150 cursor-pointer hover:underline"
+          >
+            View Payment History →
+          </p>
+        </div>
       </div>
 
       <!-- Support Section -->
@@ -276,6 +285,10 @@ async function handleLogout() {
 
 function handleUpgrade() {
   router.push("/pricing");
+}
+
+function viewPaymentHistory() {
+  router.push("/payment-history");
 }
 
 async function copyEmail() {

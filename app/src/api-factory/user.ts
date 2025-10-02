@@ -20,8 +20,14 @@ const getTweaksUsage = async () => {
   return response.data;
 };
 
+const getPaymentHistory = async () => {
+  const response = await axios.get("/users/profile/transactions");
+  return response.data;
+};
+
 export default {
   anonymousAuthorize,
   getBootstrapData,
   getTweaksUsage,
+  getPaymentHistory,
 };

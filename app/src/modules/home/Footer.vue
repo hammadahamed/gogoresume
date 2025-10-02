@@ -7,6 +7,34 @@
             >GoGoResume</span
           >
         </div>
+
+        <!-- Navigation Links -->
+        <div
+          class="flex flex-wrap justify-center md:justify-end gap-4 text-xs sm:text-sm"
+        >
+          <router-link
+            to="/privacy-policy"
+            class="transition-all duration-200 hover:opacity-70"
+            style="color: white"
+          >
+            Privacy Policy
+          </router-link>
+          <router-link
+            to="/support"
+            class="transition-all duration-200 hover:opacity-70"
+            style="color: white"
+          >
+            Support
+          </router-link>
+          <a
+            href="mailto:support@gogoresume.com"
+            class="transition-all duration-200 hover:opacity-70"
+            style="color: white"
+          >
+            Contact
+          </a>
+        </div>
+
         <div class="text-gray-400 text-xs sm:text-sm text-center md:text-right">
           © 2025 GoGoResume. All rights reserved.
         </div>

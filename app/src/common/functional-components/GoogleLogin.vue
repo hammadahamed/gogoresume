@@ -9,16 +9,48 @@
     </div>
   </div>
 
-  <div v-else class="google-login-wrapper">
-    <!-- Google Login Button -->
+  <div v-else class="google-login-wrapper w-min">
+    <!-- SPECIAL GOOGLE LOGIN BUTTON -->
     <GoogleLogin
+      v-if="props.special"
       :callback="googleSignin"
-      :auto-login="true"
-      :prompt="true"
+      :auto-login="popupLogin"
+      :prompt="popupLogin"
       :idConfiguration="idConfiguration"
     >
       <button
-        class="group relative w-full flex items-center justify-center gap-2 sm:gap-3 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 active:bg-gray-950 border border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+        class="w-[400px] hover:shadow-lg hover:opacity-50 group relative flex items-center justify-center gap-2 sm:gap-3 px-4 py-2.5 active:bg-gray-950 border-3 border-gray-700 hover:border-gray-600 transition-all duration-200 shadow-sm focus:outline-none"
+      >
+        <!-- Google Icon -->
+        <div class="flex-shrink-0">
+          <GOOGLE_ICON class="w-6 h-6" />
+        </div>
+
+        <!-- Button Text -->
+        <span class="text-black font-medium">
+          <span class="hidden sm:inline whitespace-nowrap">{{
+            isSigningIn ? "Signing in..." : "Continue with Google"
+          }}</span>
+          <span class="sm:hidden text-lg">{{
+            isSigningIn ? "Signing in..." : "Continue with Google"
+          }}</span>
+        </span>
+
+        <!-- Subtle hover effect overlay -->
+        <Spinner v-if="isSigningIn" size="18px" color="black" />
+      </button>
+    </GoogleLogin>
+
+    <!-- GOOGLE LOGIN BUTTON -->
+    <GoogleLogin
+      v-else
+      :callback="googleSignin"
+      :auto-login="popupLogin"
+      :prompt="popupLogin"
+      :idConfiguration="idConfiguration"
+    >
+      <button
+        class="group relative w-full flex items-center justify-center gap-2 sm:gap-3 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 active:bg-gray-950 border border-gray-700 hover:border-gray-600 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none"
       >
         <!-- Google Icon -->
         <div class="flex-shrink-0">
@@ -27,18 +59,22 @@
 
         <!-- Button Text -->
         <span class="text-white font-medium text-xs sm:text-sm">
-          <span class="hidden sm:inline">{{
+          <span class="hidden sm:inline whitespace-nowrap">{{
             isSigningIn ? "Signing in..." : "Continue with Google"
           }}</span>
-          <span class="sm:hidden" :class="isExtensionMode ? '' : 'text-xs'">{{
-            isSigningIn
-              ? isExtensionMode
-                ? "Signing in..."
-                : ""
-              : isExtensionMode
-              ? "Continue with Google"
-              : "Sign in"
-          }}</span>
+          <span
+            class="sm:hidden whitespace-nowrap"
+            :class="isExtensionMode ? '' : 'text-xs'"
+            >{{
+              isSigningIn
+                ? isExtensionMode
+                  ? "Signing in..."
+                  : ""
+                : isExtensionMode
+                ? "Continue with Google"
+                : "Sign in"
+            }}</span
+          >
         </span>
 
         <!-- Subtle hover effect overlay -->
@@ -49,27 +85,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from "vue";
+import { ref, inject, onBeforeMount } from "vue";
 import { GoogleLogin, decodeCredential } from "vue3-google-login";
 import GOOGLE_ICON from "@/assets/svg/google.svg";
 import AuthApi from "@/api-factory/auth";
 import { toast } from "vue3-toastify";
 import useAuthComposable from "@/composables/useAuth";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import Spinner from "@/common/components/Spinner.vue";
 import { getIntendedRoute } from "@/utils/routeUtils";
-
-// Props
-interface Props {
-  onSuccess?: (response: any) => void;
-  onError?: (error: any) => void;
-}
+import { resumePaymentAfterLogin } from "@/helper/payment.helper";
 
 const isExtensionMode = inject("isExtensionMode");
-const props = defineProps<Props>();
+const props = defineProps({
+  onSuccess: {
+    type: Function,
+    required: false,
+  },
+  onError: {
+    type: Function,
+    required: false,
+  },
+  special: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+});
 
 const { accessToken, user, bootstrap } = useAuthComposable();
 const router = useRouter();
+const route = useRoute();
+
+const popupLogin = ref(false);
 
 // Emits
 const emit = defineEmits<{
@@ -138,6 +186,9 @@ const googleSignin = async (response: any) => {
 
       // Check for intended route and redirect accordingly
       const intendedRoute = getIntendedRoute();
+
+      if (await resumePaymentAfterLogin(router)) return;
+
       if (intendedRoute) {
         router.replace({
           path: intendedRoute.path,
@@ -172,6 +223,10 @@ const googleSignin = async (response: any) => {
     }, 1000);
   }
 };
+
+onBeforeMount(() => {
+  if (route.path === "/") popupLogin.value = true;
+});
 </script>
 
 <style scoped>
