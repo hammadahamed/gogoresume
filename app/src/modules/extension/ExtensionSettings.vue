@@ -19,7 +19,7 @@ import InstallationCheck from "./InstallationCheck.vue";
 
 const extensionInstalled = ref(false);
 
-const handleExtensionInstalled = () => {
-  extensionInstalled.value = true;
+const handleExtensionInstalled = (status: boolean) => {
+  extensionInstalled.value = status;
 };
 </script>

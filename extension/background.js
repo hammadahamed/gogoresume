@@ -93,10 +93,15 @@ chrome.runtime.onInstalled.addListener(async () => {
       contexts: ["selection"], // Show only when text is selected
     });
 
-    // Open a new tab with the extension welcome page
-    await chrome.tabs.create({
-      url: `${HOST_URL}/chrome-extension?autoSync=true`,
-    });
+    // Use window.open or chrome.windows.create as alternative to chrome.tabs.create
+    try {
+      chrome.windows.create({
+        url: `${HOST_URL}/chrome-extension?autoSync=true`,
+        type: "normal",
+      });
+    } catch (error) {
+      console.error("Error creating welcome tab:", error);
+    }
   } catch (error) {
     console.error("Error configuring side panel:", error);
   }
@@ -116,13 +121,14 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
         timestamp: Date.now(),
       });
 
-      // Send message to content script to open sidebar (this counts as user gesture)
+      // Since we can't use chrome.tabs.sendMessage without tabs permission,
+      // we'll open the sidebar directly instead
       if (tab?.id) {
-        chrome.tabs.sendMessage(tab.id, {
-          action: ACTIONS.OPEN_SIDEBAR,
-          fromContextMenu: true,
-          selectedText: selectedText,
-        });
+        try {
+          await chrome.sidePanel.open({ tabId: tab.id });
+        } catch (error) {
+          console.error("Error opening sidebar from context menu:", error);
+        }
 
         selectedTextCache = selectedText;
         chrome.runtime

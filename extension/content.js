@@ -111,11 +111,32 @@ let buttonPosition = { top: 20, right: 10 };
 const SUGGESTIONS_WIDTH = "300px";
 const SUGGESTIONS_MAX_HEIGHT = "250px";
 
+// Global references to event handlers so we can remove them
+let mouseMoveHandler = null;
+let mouseUpHandler = null;
+let resizeHandler = null;
+
 // CLEANUP FUNCTIONS ------------------------------------------------------------
 function cleanupToggleButton() {
   if (toggleButton) {
     toggleButton.remove();
     toggleButton = null;
+  }
+
+  // Clean up global event listeners
+  if (mouseMoveHandler) {
+    document.removeEventListener("mousemove", mouseMoveHandler);
+    mouseMoveHandler = null;
+  }
+
+  if (mouseUpHandler) {
+    document.removeEventListener("mouseup", mouseUpHandler);
+    mouseUpHandler = null;
+  }
+
+  if (resizeHandler) {
+    window.removeEventListener("resize", resizeHandler);
+    resizeHandler = null;
   }
 }
 
@@ -265,6 +286,36 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
+// LISTEN FOR STORAGE CHANGES (since popup can no longer directly message content scripts)
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  if (namespace === "sync") {
+    if (changes.sidebarEnabled) {
+      const wasEnabled = isSidebarEnabled;
+      isSidebarEnabled = changes.sidebarEnabled.newValue;
+
+      if (isSidebarEnabled && !wasEnabled) {
+        if (!toggleButton) {
+          createToggleButton();
+        }
+      } else if (!isSidebarEnabled && wasEnabled) {
+        cleanupToggleButton();
+      }
+    }
+
+    if (changes.suggestionsEnabled) {
+      const wasEnabled = isSuggestionsEnabled;
+      isSuggestionsEnabled = changes.suggestionsEnabled.newValue;
+
+      if (isSuggestionsEnabled && !wasEnabled) {
+        document.addEventListener("click", handleFieldClick);
+      } else if (!isSuggestionsEnabled && wasEnabled) {
+        document.removeEventListener("click", handleFieldClick);
+        cleanupSuggestions();
+      }
+    }
+  }
+});
+
 // LISTEN FOR MESSAGES FROM IFRAME ------------------------------------------------------------
 window.addEventListener("message", (event) => {
   handleMessage(event.data, event.source);
@@ -301,7 +352,6 @@ function createSuggestionsPopup() {
   suggestionsPopup.id = SUGGESTIONS_ID;
   suggestionsPopup.style.display = "none";
   suggestionsPopup.style.width = SUGGESTIONS_WIDTH;
-  suggestionsPopup.style.height = SUGGESTIONS_MAX_HEIGHT;
 
   document.body.appendChild(suggestionsPopup);
 }
@@ -481,7 +531,7 @@ function showSuggestions(suggestions, x, y) {
       font-size: 11px;
       color: #999;
       text-align: center;
-      padding: 8px 10px 6px 10px;
+      padding: 5px;
       border-top: 1px solid #333;
       background: rgba(0, 0, 0, 0.05);
       margin-top: 2px;
@@ -533,6 +583,10 @@ function createToggleButton() {
   // Create toggle button
   toggleButton = document.createElement("button");
   toggleButton.id = TOGGLE_BUTTON_ID;
+  toggleButton.style.padding = "0px !important";
+  toggleButton.style.borderRadius = "50% !important";
+  toggleButton.style.height = "46px !important";
+  toggleButton.style.width = "46px !important";
 
   // Create and add mascot image
   const mascotImg = document.createElement("div");
@@ -573,7 +627,8 @@ function createToggleButton() {
     e.preventDefault();
   });
 
-  document.addEventListener("mousemove", (e) => {
+  // Create event handlers and store references for cleanup
+  mouseMoveHandler = (e) => {
     if (!isDragging) return;
 
     e.preventDefault();
@@ -590,9 +645,9 @@ function createToggleButton() {
     buttonPosition.right = 10; // Always stick to right edge with margin
 
     updateButtonPosition();
-  });
+  };
 
-  document.addEventListener("mouseup", (e) => {
+  mouseUpHandler = (e) => {
     if (!isDragging) return;
 
     isDragging = false;
@@ -606,7 +661,22 @@ function createToggleButton() {
     if (clickDuration < 200) {
       toggleSideBar();
     }
-  });
+  };
+
+  resizeHandler = () => {
+    const maxY = window.innerHeight - 50;
+
+    if (buttonPosition.top > maxY) {
+      buttonPosition.top = maxY;
+      updateButtonPosition();
+      saveToStorage(StorageKeys.BUTTON_POSITION, buttonPosition);
+    }
+  };
+
+  // Add event listeners
+  document.addEventListener("mousemove", mouseMoveHandler);
+  document.addEventListener("mouseup", mouseUpHandler);
+  window.addEventListener("resize", resizeHandler);
 
   // Add hover effects
   toggleButton.addEventListener("mouseenter", () => {
@@ -626,17 +696,6 @@ function createToggleButton() {
 
   // Add to page
   document.body.appendChild(toggleButton);
-
-  // Handle window resize to keep button in bounds vertically
-  window.addEventListener("resize", () => {
-    const maxY = window.innerHeight - 50;
-
-    if (buttonPosition.top > maxY) {
-      buttonPosition.top = maxY;
-      updateButtonPosition();
-      saveToStorage(StorageKeys.BUTTON_POSITION, buttonPosition);
-    }
-  });
 }
 
 // UPDATE BUTTON POSITION ------------------------------------------------------------

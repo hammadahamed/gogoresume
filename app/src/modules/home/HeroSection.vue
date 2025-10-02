@@ -31,13 +31,14 @@
           class="hero-buttons flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 sm:px-0"
         >
           <button
-            @click="scrollToPricing"
+            @click="gotoLogin"
             class="hero-button-primary px-4 py-[13px] border-2 border-black hover:opacity-70 text-gray-700 hover:text-primary text-sm sm:text-base font-semibold rounded-full transition-all duration-200 cursor-pointer"
           >
             Get Started Now
           </button>
           <div class="hero-button-primary">
             <SpecialBtn
+              @click="openExtensionPage"
               size="medium"
               variant="default"
               :primaryColor="'black'"
@@ -63,14 +64,16 @@
 <script setup lang="ts">
 import SpecialBtn from "@/common/components/SpecialBtn.vue";
 import { scrollToSection } from "@/helper/ui.helper";
+import { openExtensionPage } from "@/helper/ui.helper";
+import { useRouter } from "vue-router";
+
 defineEmits<{
   scrollToFeatures: [];
   scrollToPricing: [];
 }>();
+const router = useRouter();
 
-const scrollToPricing = () => {
-  scrollToSection("pricing");
-};
+const gotoLogin = () => router.push("/login");
 </script>
 
 <style scoped lang="scss">

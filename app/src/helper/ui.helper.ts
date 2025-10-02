@@ -8,3 +8,8 @@ export const scrollToSection = (sectionId: string) => {
     }
   }
 };
+
+export const openExtensionPage = () => {
+  const link = process.env.CHROME_EXTENSION_URL;
+  window.open(link, "_blank");
+};

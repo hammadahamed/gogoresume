@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "GoGoResume",
   "version": "1.0.2",
-  "description": "AI-powered resume tweaker for Job hunters",
+  "description": "Jarvis for Job hunters",
   "permissions": ["storage", "sidePanel", "contextMenus"],
   "background": {
     "service_worker": "background.js"

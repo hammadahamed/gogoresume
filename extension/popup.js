@@ -24,39 +24,20 @@ document.addEventListener("DOMContentLoaded", () => {
   sidebarToggle.addEventListener("change", () => {
     const isEnabled = sidebarToggle.checked;
     chrome.storage.sync.set({ sidebarEnabled: isEnabled });
-
-    // Update content script
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]?.id) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: ACTIONS.UPDATE_SIDEBAR,
-          enabled: isEnabled,
-        });
-      }
-    });
+    // Content script will detect this change via chrome.storage.onChanged listener
   });
 
   // Handle suggestions toggle
   suggestionsToggle.addEventListener("change", () => {
     const isEnabled = suggestionsToggle.checked;
     chrome.storage.sync.set({ suggestionsEnabled: isEnabled });
-
-    // Update content script
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]?.id) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: ACTIONS.UPDATE_SUGGESTIONS,
-          enabled: isEnabled,
-        });
-      }
-    });
+    // Content script will detect this change via chrome.storage.onChanged listener
   });
 
   // Handle setup button click
   setupButton.addEventListener("click", () => {
-    chrome.tabs.create({
-      url: `${HOST_URL}/chrome-extension?autoSync=true`,
-    });
+    // Use window.open as an alternative to chrome.tabs.create
+    window.open(`${HOST_URL}/chrome-extension?autoSync=true`, "_blank");
     console.log("Opening Chrome Extension setup page in new tab");
   });
 });

@@ -93,8 +93,12 @@
       </div>
 
       <!-- Chrome Extension Promotion -->
-      <div class="mb-16">
+      <!--  <div class="mb-16" v-if="showPromotion">
         <ChromeExtPromotion />
+      </div> -->
+
+      <div class="mb-16">
+        <InstallationCheck @extensionInstalled="handleExtensionInstalled" />
       </div>
     </div>
   </div>
@@ -107,7 +111,8 @@ import ChromeExtPromotion from "./ChromeExtPromotion.vue";
 import FILLOUT_INFO from "../../assets/illustrations/fillout_resume_info.svg";
 import MULTIPLE_RESUMES from "../../assets/illustrations/create_multiple_versions.svg";
 import PICK_AND_TWEAK from "../../assets/illustrations/tweak_with_ai.svg";
-import { defineProps } from "vue";
+import { defineProps, ref } from "vue";
+import InstallationCheck from "../extension/InstallationCheck.vue";
 
 const props = defineProps({
   homeView: {
@@ -116,6 +121,12 @@ const props = defineProps({
   },
 });
 const appStore = useAppStore();
+
+const showPromotion = ref(false);
+
+const handleExtensionInstalled = (status: boolean) => {
+  showPromotion.value = status;
+};
 
 const steps = [
   {

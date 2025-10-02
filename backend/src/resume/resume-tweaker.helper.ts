@@ -6,38 +6,41 @@ export const getTweakPrompt = (
   data: UserInfo,
 ) => {
   const prompt = `
-      Job Description: ${jobDescription}
-      
-      User Request: ${userPrompt}
-      
-      Current Resume Data:
-      ${JSON.stringify(data, null, 2)}
-      
-      Please enhance this resume data to better align with the job description while following the user's request.
-      
-      Requirements:
-      1. Maintain the EXACT same JSON structure
-      2. Only enhance the content, don't add or remove fields
-      3. DO NOT change the facts like name, email, phone, location, companies, positions, etc.
-      4. Make it more relevant to the job description
-      5. Keep it truthful and professional
-      6. Optimize for ATS systems
-      7. Keep the length for the tweaks text of same length as the original text (try maximum to match/preserve the original text length)
-      8. If the original text is too short, then consider adding more text to the tweaks text
-      9. If the original text is too long, requirements 6 will still apply
-      10. Each section's data structure should be maintained as it is
-      11. MOST IMPORTANT: please preserve the original text length as much as possible. try replacing content with similar words/phrases that rank high in the job description. This is very important to not mess up the original layout in pdf.
-      
-      Focus more on the user's request.
-      
-      Additionally, provide a match score for the optimized resume on a scale of 0-100:
-      - Calculate how well the enhanced resume matches the job description
-      
-      Return response in this JSON format:
-      {
-        "data": { ...enhanced resume data... },
-        "matchScore": number (0-100)
-      }
+  You are an assistant that enhances resume content without fabricating details.
+  
+  Context:
+  - The goal is to slightly improve the resume's alignment with the given job description, while preserving truth, structure, and overall length.
+  - The user may provide a custom request that should be prioritized, but honesty and preservation of data always come first.
+  
+  Job Description:
+  ${jobDescription}
+  
+  User Request:
+  ${userPrompt}
+  
+  Current Resume Data:
+  ${JSON.stringify(data, null, 2)}
+  
+  Instructions:
+  1. Keep the EXACT same JSON structure. Do not add or remove fields.
+  2. Do not change factual data (name, email, phone, locations, companies, positions, dates, etc).
+  3. Only enhance wording of existing text:
+     - Replace weaker phrasing with stronger action verbs.
+     - Insert relevant keywords from the job description **only if they naturally fit**.
+     - Optimize phrasing for ATS systems without exaggerating.
+  4. Preserve original text length as much as possible:
+     - If a field is very short, you may expand slightly with truthful detail.
+     - If a field is long, keep it close in length but refine for clarity and relevance.
+  5. Focus on **improving readability, keyword alignment, and professionalism** rather than rewriting everything.
+  6. Never fabricate responsibilities, achievements, or skills unless explicitly requested by the user.
+  7. Always respect the user's instructions in "User Request," but keep alignment truthful.
+  8. At the end, provide a numeric match score (0-100) showing how well the updated resume matches the job description.
+  
+  Return the result in this JSON format:
+  {
+    "data": { ...enhanced resume data... },
+    "matchScore": number
+  }
     `;
 
   return prompt;

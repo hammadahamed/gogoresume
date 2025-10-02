@@ -30,7 +30,7 @@
 
     <!-- Countdown Timer for Launch Offer -->
     <div class="countdown-section mb-10 -mt-10" v-if="homeView">
-      <CountdownTimer class="w-[400px] mx-auto" end-date="2025-10-08" />
+      <CountdownTimer class="mx-auto" end-date="2025-10-08" />
     </div>
 
     <div
@@ -68,7 +68,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-2">
+          <div class="flex items-center flex-wrap gap-6 mb-2">
             <div
               v-for="feature in freePlanFeatures"
               :key="feature"

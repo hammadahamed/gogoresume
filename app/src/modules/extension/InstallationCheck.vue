@@ -70,10 +70,10 @@ import PUZZLE_ICON from "@/assets/illustrations/puzzle.svg";
 import Spinner from "@/common/components/Spinner.vue";
 import CANCEL from "@/assets/svg/cancel.svg";
 import TICK from "@/assets/svg/tick.svg";
-
+import { openExtensionPage } from "@/helper/ui.helper";
 // Emits
 const emit = defineEmits<{
-  extensionInstalled: [];
+  extensionInstalled: boolean;
 }>();
 
 const extensionInstalled = ref(false);
@@ -86,8 +86,10 @@ const checkExtensionInstalled = async () => {
     const installed = await GGRWindowEvents.checkExtensionInstalled();
 
     if (installed) {
-      emit("extensionInstalled");
       extensionInstalled.value = true;
+      emit("extensionInstalled", true);
+    } else {
+      emit("extensionInstalled", false);
     }
   } catch (error) {
     console.error("Error checking extension installed:", error);
@@ -97,11 +99,7 @@ const checkExtensionInstalled = async () => {
 };
 
 const installExtension = () => {
-  // Open Chrome Web Store link for the extension
-  window.open(
-    "https://chrome.google.com/webstore/detail/gogoresume/your-extension-id",
-    "_blank"
-  );
+  openExtensionPage();
 };
 
 const recheckInstallation = () => {
