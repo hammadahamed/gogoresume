@@ -93,11 +93,11 @@
       </div>
 
       <!-- Chrome Extension Promotion -->
-      <!--  <div class="mb-16" v-if="showPromotion">
+      <div class="mb-16" v-if="homeView">
         <ChromeExtPromotion />
-      </div> -->
+      </div>
 
-      <div class="mb-16">
+      <div class="mb-16" v-if="!homeView">
         <InstallationCheck @extensionInstalled="handleExtensionInstalled" />
       </div>
     </div>

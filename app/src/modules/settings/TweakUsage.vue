@@ -48,8 +48,8 @@
           ></div>
         </div>
         <p class="text-xs text-gray-500 mt-1">
-          {{ tweaksUsage.planDailyTweaks - tweaksUsage.dailyTweaksUsed }} tweaks
-          remaining today
+          {{ tweaksLeftToday }}
+          tweaks remaining today
         </p>
       </div>
 
@@ -124,6 +124,12 @@ const totalUsagePercentage = computed(() =>
     100
   )
 );
+
+const tweaksLeftToday = computed(() => {
+  const tweaksLeft =
+    tweaksUsage.value.planDailyTweaks - tweaksUsage.value.dailyTweaksUsed;
+  return tweaksLeft > 0 ? tweaksLeft : 0;
+});
 
 onMounted(async () => {
   try {

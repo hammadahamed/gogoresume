@@ -2,17 +2,29 @@ import { planFeatures, planPeriodInDays, Plans } from 'src/planConfig';
 import TweakUsageModel, { ITweakUsage } from 'src/schemas/tweaksUsage.schema';
 import * as moment from 'moment';
 
+export const getTotalTweaksUsed = (
+  tweakUsage: ITweakUsage,
+  userPlan: string,
+) => {
+  return userPlan === Plans.FREE
+    ? tweakUsage.totalTweaks > planFeatures[Plans.FREE].count
+      ? planFeatures[Plans.FREE].count
+      : tweakUsage.totalTweaks
+    : tweakUsage.totalTweaks;
+};
+
 export const calculateTweaksUsage = async (
   tweakUsage: ITweakUsage,
   userPlan: string,
 ) => {
   const today = moment().startOf('day').toDate();
-  if (moment(tweakUsage.lastTweaked).isBefore(today)) {
+  const isNotSameDay = !moment(tweakUsage.lastTweaked).isSame(today, 'day');
+  if (isNotSameDay) {
     tweakUsage.dailyTweaks = 0;
     tweakUsage.lastTweaked = today;
     await tweakUsage.save();
   }
-  const totalTweaksUsed = tweakUsage.totalTweaks;
+  const totalTweaksUsed = getTotalTweaksUsed(tweakUsage, userPlan);
   const dailyTweaksUsed =
     userPlan === Plans.FREE ? totalTweaksUsed : tweakUsage.dailyTweaks;
   const planPeriod = planFeatures[userPlan].planPeriod;
