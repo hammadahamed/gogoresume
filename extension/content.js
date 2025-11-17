@@ -97,6 +97,7 @@ function loadFromStorage(key, defaultValue) {
 
 let toggleButton = null;
 let suggestionsPopup = null;
+let suggestionsShadowRoot = null; // Shadow root for style isolation
 let currentField = null;
 let currentFieldRect = null;
 let isSidebarEnabled = true;
@@ -207,6 +208,7 @@ function cleanupSuggestions() {
   if (suggestionsPopup) {
     suggestionsPopup.remove();
     suggestionsPopup = null;
+    suggestionsShadowRoot = null;
   }
   currentField = null;
   currentFieldRect = null;
@@ -346,24 +348,255 @@ function handleMessage(message, source) {
   }
 }
 
+// GET SUGGESTIONS CSS (extracted from content.css for Shadow DOM) ------------------------------------------------------------
+function getSuggestionsCSS() {
+  return `
+    #gogoresume-suggestions {
+      position: relative;
+      display: block;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3),
+        0 4px 6px -2px rgba(0, 0, 0, 0.2);
+      max-height: 300px;
+      z-index: 999999;
+      min-width: 400px;
+      backdrop-filter: blur(10px);
+      padding-bottom: 40px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      box-sizing: border-box;
+      color: #fff;
+      margin: 0;
+      padding-top: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    #gogoresume-suggestions * {
+      box-sizing: border-box;
+      margin: 0;
+      font-family: inherit;
+      line-height: inherit;
+    }
+
+    .suggestions-container {
+      border-radius: 12px;
+      display: flex;
+      max-height: calc(300px - 40px);
+      overflow: hidden;
+    }
+
+    .sections-pane {
+      width: 150px;
+      border-right: 1px solid #333;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #444 #222;
+    }
+
+    .values-pane {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #444 #222;
+    }
+
+    .section-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #fff;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      line-height: 1.5;
+    }
+
+    .section-item:hover,
+    .section-item.active {
+      background-color: #2d2d2d;
+      padding-left: 20px;
+    }
+
+    .section-item:hover::before,
+    .section-item.active::before {
+      height: 100%;
+    }
+
+    .values-pane .suggestion-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #fff;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      line-height: 1.5;
+    }
+
+    .values-pane .suggestion-item:hover {
+      background-color: #2d2d2d;
+      padding-left: 20px;
+    }
+
+    .values-pane .suggestion-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 3px;
+      height: 0;
+      background-color: #6466f1;
+      transition: height 0.2s ease;
+    }
+
+    .values-pane .suggestion-item:hover::before {
+      height: 100%;
+    }
+
+    .values-pane .suggestion-item:not(:last-child) {
+      border-bottom: 1px solid #333;
+    }
+
+    .sections-pane::-webkit-scrollbar,
+    .values-pane::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sections-pane::-webkit-scrollbar-track,
+    .values-pane::-webkit-scrollbar-track {
+      background: #222;
+      border-radius: 6px;
+    }
+
+    .sections-pane::-webkit-scrollbar-thumb,
+    .values-pane::-webkit-scrollbar-thumb {
+      background-color: #444;
+      border-radius: 6px;
+    }
+
+    .gogoresume-branding {
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      padding: 8px;
+      background: #000;
+      color: #a0a0a0;
+      font-size: 12px;
+      text-align: center;
+      border-top: 1px solid #333;
+      border-radius: 0 0 12px 12px;
+      z-index: 2;
+      line-height: 1.5;
+    }
+
+    .suggestions-close-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      background: #333;
+      border: none;
+      border-radius: 50%;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      line-height: 1;
+      z-index: 10;
+      transition: background-color 0.2s ease;
+      padding: 0;
+      margin: 0;
+    }
+
+    .suggestions-close-button:hover {
+      background: #555;
+    }
+
+    #setup-message {
+      padding: 20px;
+      text-align: center;
+      color: #fff;
+      font-size: 14px;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+    }
+
+    .span-highlight {
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .span-highlight:hover {
+      color: #dccdff !important;
+      opacity: 0.8;
+    }
+  `;
+}
+
 // CREATE SUGGESTIONS POPUP ------------------------------------------------------------
 function createSuggestionsPopup() {
+  // Create host element
   suggestionsPopup = document.createElement("div");
   suggestionsPopup.id = SUGGESTIONS_ID;
-  suggestionsPopup.style.display = "none";
-  suggestionsPopup.style.width = SUGGESTIONS_WIDTH;
+  suggestionsPopup.style.cssText = `
+    position: fixed;
+    z-index: 999999;
+    display: none;
+    width: ${SUGGESTIONS_WIDTH};
+  `;
+
+  // Create Shadow DOM for style isolation
+  suggestionsShadowRoot = suggestionsPopup.attachShadow({ mode: "open" });
+
+  // Inject CSS into shadow root
+  const style = document.createElement("style");
+  style.textContent = getSuggestionsCSS();
+  suggestionsShadowRoot.appendChild(style);
+
+  // Create the actual popup container inside shadow root
+  const popupContainer = document.createElement("div");
+  popupContainer.id = SUGGESTIONS_ID;
+  suggestionsShadowRoot.appendChild(popupContainer);
 
   document.body.appendChild(suggestionsPopup);
 }
 
 // SHOW SUGGESTIONS POPUP ------------------------------------------------------------
 function showSuggestions(suggestions, x, y) {
-  if (!suggestionsPopup) {
+  if (!suggestionsPopup || !suggestionsShadowRoot) {
     createSuggestionsPopup();
   }
 
   const hasSuggestions =
     suggestions && Object.values(suggestions).some((arr) => arr.length > 0);
+
+  // Get the popup container from shadow root
+  const popupContainer = suggestionsShadowRoot.querySelector(
+    `#${SUGGESTIONS_ID}`
+  );
+  if (!popupContainer) {
+    console.error("Popup container not found in shadow root");
+    return;
+  }
 
   // Create a container for suggestions
   const suggestionsContainer = document.createElement("div");
@@ -515,14 +748,14 @@ function showSuggestions(suggestions, x, y) {
     suggestionsContainer.appendChild(valuesPane);
   }
 
-  // Clear existing content
-  suggestionsPopup.innerHTML = "";
+  // Clear existing content in shadow root
+  popupContainer.innerHTML = "";
 
   // Add close button first (so it's on top)
-  suggestionsPopup.appendChild(closeButton);
+  popupContainer.appendChild(closeButton);
 
   // Add container to popup
-  suggestionsPopup.appendChild(suggestionsContainer);
+  popupContainer.appendChild(suggestionsContainer);
 
   // Add usage hint (only when there are suggestions)
   if (hasSuggestions) {
@@ -537,16 +770,16 @@ function showSuggestions(suggestions, x, y) {
       margin-top: 2px;
     `;
     hintText.innerHTML = `💡 <strong>Tip:</strong> Ctrl+click to append, click to replace`;
-    suggestionsPopup.appendChild(hintText);
+    popupContainer.appendChild(hintText);
   }
 
   // Add branding
   const branding = document.createElement("div");
   branding.className = BRANDING_CLASS;
   branding.textContent = BRANDING_TEXT;
-  suggestionsPopup.appendChild(branding);
+  popupContainer.appendChild(branding);
 
-  // Position the popup
+  // Position the popup (on host element, not shadow root)
   suggestionsPopup.style.position = "fixed";
   suggestionsPopup.style.left = `${x}px`;
   suggestionsPopup.style.top = `${y}px`;
@@ -572,7 +805,22 @@ function hideSuggestions() {
 
 // HIDE ON CLICK OUTSIDE ------------------------------------------------------------
 document.addEventListener("click", (e) => {
-  if (!suggestionsPopup?.contains(e.target) && e.target !== currentField) {
+  if (!suggestionsPopup) return;
+
+  // Check if click is outside the popup
+  // For shadow DOM, we need to check the composed path
+  const path = e.composedPath();
+  const isClickInsidePopup =
+    path.includes(suggestionsPopup) ||
+    (suggestionsShadowRoot &&
+      path.some(
+        (node) =>
+          node === suggestionsShadowRoot ||
+          (node.nodeType === Node.ELEMENT_NODE &&
+            suggestionsShadowRoot.contains(node))
+      ));
+
+  if (!isClickInsidePopup && e.target !== currentField) {
     hideSuggestions();
   }
 });
@@ -587,7 +835,7 @@ function createToggleButton() {
   toggleButton.style.borderRadius = "50% !important";
   toggleButton.style.height = "46px !important";
   toggleButton.style.width = "46px !important";
-
+  toggleButton.style.backgroundColor = "black";
   // Create and add mascot image
   const mascotImg = document.createElement("div");
   mascotImg.innerHTML = "📄";

@@ -27,7 +27,7 @@ export const pricedPlans = [
     period: "7 days",
     description: "Best for short-term job searches",
     price: 7,
-    discountedPrice: 4.99,
+    discountedPrice: 5,
     features: [
       "10 resumes",
       "20 AI-powered tweaks/day",
@@ -41,8 +41,9 @@ export const pricedPlans = [
     name: "1 Month Pro",
     period: "1 month",
     description: "Ideal for active job seekers",
-    price: 24,
-    discountedPrice: 19,
+    price: 29,
+    discountedPercentage: 50,
+    discountedPrice: 15,
     // color: "#fffbe2",
     isPopular: true,
     features: [
@@ -59,7 +60,7 @@ export const pricedPlans = [
     period: "3 months",
     description: "Great value for extended job searches",
     price: 59,
-    discountedPrice: 49,
+    discountedPrice: 39,
     features: [
       "50 resumes",
       "100 AI-powered tweaks/day",

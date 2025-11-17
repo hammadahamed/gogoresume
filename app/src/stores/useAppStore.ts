@@ -8,6 +8,7 @@ export const useAppStore = defineStore("app", () => {
   const activeTab = ref("home");
   const sidebarCollapsed = ref(false);
   const showOnboarding = ref(false);
+  const isExtensionMode = ref(false);
 
   // Router instance
   const router = useRouter();
@@ -52,6 +53,7 @@ export const useAppStore = defineStore("app", () => {
     activeTab,
     sidebarCollapsed,
     showOnboarding,
+    isExtensionMode,
     // Getters
     currentRoute,
 

@@ -83,7 +83,8 @@ export default function useAuthComposable(raw = false) {
         return;
       const response = await AuthApi.bootstrap();
       userStore.user = response;
-      appStore.showOnboarding = !isOnboardingDone();
+      appStore.showOnboarding =
+        !isOnboardingDone() && !appStore.isExtensionMode;
       return response;
     } catch (error: any) {
       console.error("Bootstrap error:", error);

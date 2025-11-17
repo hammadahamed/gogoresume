@@ -15,8 +15,12 @@
       >
         <div
           class="text-sm bg-violet-500 text-white font-semibold px-2 py-1 rounded-full flex items-center justify-center gap-1"
+          :class="{ 'py-2 px-4': plan.isPopular }"
         >
-          <p class="font-semibold scale-120 mx-1">
+          <p
+            class="font-semibold scale-120 mx-1"
+            :class="{ 'scale-160 mx-3 font-bold': plan.isPopular }"
+          >
             {{ getDiscountPercentage() }}%
           </p>
           <p class="font-semibold">off</p>
@@ -117,6 +121,10 @@ const handleGetStarted = () => {
 };
 
 const getDiscountPercentage = () => {
+  if (props.plan.discountedPercentage) {
+    return props.plan.discountedPercentage;
+  }
+
   return (
     ((props.plan.price - props.plan.discountedPrice) / props.plan.price) *
     100

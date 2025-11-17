@@ -32,6 +32,7 @@ const isExtensionMode = computed(() => {
 });
 
 provide("isExtensionMode", isExtensionMode);
+appStore.isExtensionMode = isExtensionMode;
 
 onMounted(async () => {
   try {

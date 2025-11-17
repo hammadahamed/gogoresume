@@ -66,14 +66,23 @@ import SpecialBtn from "@/common/components/SpecialBtn.vue";
 import { scrollToSection } from "@/helper/ui.helper";
 import { openExtensionPage } from "@/helper/ui.helper";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/useUserStore";
 
 defineEmits<{
   scrollToFeatures: [];
   scrollToPricing: [];
 }>();
+
+const userStore = useUserStore();
 const router = useRouter();
 
-const gotoLogin = () => router.push("/login");
+const gotoLogin = () => {
+  if (userStore.user) {
+    router.push("/home");
+  } else {
+    router.push("/login");
+  }
+};
 </script>
 
 <style scoped lang="scss">
