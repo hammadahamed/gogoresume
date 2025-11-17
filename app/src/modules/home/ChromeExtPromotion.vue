@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-900 borde border-indigo-300 p-8 text-white rounded-lg">
+  <div class="bg-gray-900 borde border-indigo-300 p-8 text-white rounded-2xl">
     <!-- Header -->
     <div class="flex items-start justify-between">
       <div class="translate-y-0 md:translate-y-10">
@@ -42,22 +42,28 @@
       </div>
 
       <div
-        class="max-w-[500px] w-full bg-gray-800 shadow-2xl rounded-lg p-4 aspect-[1/0.65] mr-0 md:-mr-[80px] mt-10 md:-mt-20"
-      ></div>
+        class="max-w-[500px] w-full bg-gray-800 shadow-2xl rounded-3xl aspect-[1/0.65] mr-0 md:-mr-[80px] mt-10 md:-mt-20 overflow-hidden"
+      >
+        <iframe
+          width="100%"
+          height="100%"
+          src="https://www.youtube.com/embed/d8-s1iex8PY?si=6uDTXM-g4TycuBn1"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
     </div>
 
     <!-- CTA Button -->
     <div class="space-y-3">
       <button
-        class="w-full bg-white text-gray-900 font-semibold py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors"
+        class="w-full my-2 bg-white text-gray-900 font-semibold py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors"
         @click="openExtensionPage"
       >
         Install Extension
-      </button>
-      <button
-        class="w-full text-gray-300 text-sm hover:text-white transition-colors"
-      >
-        Watch demo video
       </button>
     </div>
 
@@ -74,4 +80,8 @@
 
 <script setup lang="ts">
 import { openExtensionPage } from "@/helper/ui.helper";
+
+const openExtensionDemoVideo = () => {
+  window.open("https://www.youtube.com/watch?v=d8-s1iex8PY", "_blank");
+};
 </script>

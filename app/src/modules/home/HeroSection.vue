@@ -54,9 +54,20 @@
         </div>
       </div>
       <div
-        class="hero-demo h-min-[200px] w-[80%] mx-auto mt-24 bg-gray-200 rounded-xl overflow-hidden"
-        style="aspect-ratio: 16/9"
-      ></div>
+        class="hero-demo h-min-[400px] w-[85%] mx-auto mt-24 bg-gray-200 rounded-4xl overflow-hidden"
+        style="aspect-ratio: 16/10.1"
+      >
+        <iframe
+          width="100%"
+          height="100%"
+          src="https://www.youtube.com/embed/2E2CtVq0P6c?si=gTZkxl6x9fBlAHD7"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
     </div>
   </section>
 </template>
