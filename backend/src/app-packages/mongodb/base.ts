@@ -10,6 +10,7 @@ export function initMongoConnection(
   const defaultOptions: ConnectOptions = {
     maxPoolSize: connOptions?.maxConnectionPool || 10, // Default to 10 connections
     socketTimeoutMS: connOptions?.socketTimeoutMS || 30000, // Default 30 seconds
+    dbName: 'gogoresume', // Specify database name
   };
 
   if (!mongoUri) {
