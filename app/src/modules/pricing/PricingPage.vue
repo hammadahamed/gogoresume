@@ -30,7 +30,7 @@
 
     <!-- Countdown Timer for Launch Offer -->
     <div class="countdown-section mb-10 -mt-10" v-if="homeView">
-      <CountdownTimer class="mx-auto" end-date="2025-11-25" />
+      <CountdownTimer class="mx-auto" end-date="2025-12-01" />
     </div>
 
     <div
@@ -97,7 +97,10 @@
         <div class="comparison-row header-row">
           <div class="feature-column">Features</div>
           <div class="plan-column" v-for="plan in plans" :key="plan.name">
-            {{ plan.name }}
+            <p>{{ plan.name }}</p>
+            <p class="font-medium text-gray-500 text-base">
+              (${{ plan.discountedPrice ?? plan.price }})
+            </p>
           </div>
         </div>
 
@@ -107,8 +110,9 @@
           :key="index"
         >
           <div class="feature-column">
-            <div class="feature-name">{{ feature.name }}</div>
-            <div class="feature-info" v-if="feature.info">ⓘ</div>
+            <div class="feature-name whitespace-pre-line text-center">
+              {{ feature.name }}
+            </div>
           </div>
           <div class="plan-column" v-for="plan in plans" :key="plan.name">
             <div v-if="typeof getPlanValue(feature, plan) === 'boolean'">

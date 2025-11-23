@@ -138,7 +138,7 @@
             @click="viewPaymentHistory"
             class="text-sm font-medium text-violet-600 mb-4 hover:text-violet-800 transition-all duration-150 cursor-pointer hover:underline"
           >
-            View Payment History →
+            View Payments History →
           </p>
         </div>
       </div>

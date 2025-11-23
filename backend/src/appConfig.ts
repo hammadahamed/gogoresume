@@ -14,7 +14,7 @@ export type IAppEmail = {
 export const AppEmails = {
   FOUNDER: {
     address: 'founder@gogoresume.com',
-    name: 'Hammad',
+    name: 'Hammad @ GoGoResume',
   },
   NO_REPLY: {
     address: 'noreply@gogoresume.com',

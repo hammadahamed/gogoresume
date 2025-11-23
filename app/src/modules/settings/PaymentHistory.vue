@@ -6,8 +6,8 @@
         <div>
           <p class="text-2xl font-bold text-gray-900">Payment History</p>
           <p class="text-gray-600 mt-2 w-[500px]">
-            Recent payment transactions that require attention or have
-            encountered issues. contact support if you need help.
+            For now, we only list the recent unsuccessful payments, So you can
+            reach out support if needed with their payment IDs just in case.
           </p>
         </div>
         <button

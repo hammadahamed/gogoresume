@@ -47,6 +47,21 @@
       </ul>
     </nav>
 
+    <!-- Feedback Button -->
+    <div class="px-4 py-3">
+      <a
+        href="https://gogoresume.userjot.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 border-[1.5px] border-gray-300 hover:border-[var(--primary-color)] hover:text-gray-900 rounded-lg transition-colors duration-150 group"
+      >
+        <FeedbackIcon
+          class="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity"
+        />
+        <span class="font-medium">Got feedback ?</span>
+      </a>
+    </div>
+
     <!-- User Profile Section -->
     <div
       class="p-4 border-t border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors duration-150"
@@ -90,6 +105,7 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/useUserStore";
 import { useDataManager } from "../../composables/useDataManager";
 import AppLogo from "./AppLogo.vue";
+import FeedbackIcon from "@/assets/svg/feedback.svg";
 
 const appStore = useAppStore();
 const router = useRouter();

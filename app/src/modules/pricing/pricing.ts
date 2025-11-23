@@ -75,7 +75,7 @@ export const plans = [freePlan, ...pricedPlans];
 
 export const comparisonFeatures = [
   {
-    name: "Basic Features",
+    name: "Basic Features\n(Smart Suggestions, Download)",
     info: true,
     values: {
       [Plans.FREE]: true,
