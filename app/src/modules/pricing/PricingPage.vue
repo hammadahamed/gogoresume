@@ -29,7 +29,7 @@
     </div>
 
     <!-- Countdown Timer for Launch Offer -->
-    <div class="countdown-section mb-10 -mt-10" v-if="homeView">
+    <div class="countdown-section mb-20 -mt-10" v-if="homeView">
       <CountdownTimer class="mx-auto" end-date="2025-12-01" />
     </div>
 

@@ -23,7 +23,6 @@
           >
             {{ getDiscountPercentage() }}%
           </p>
-          <p class="font-semibold">off</p>
         </div>
       </div>
 

@@ -53,12 +53,14 @@
         href="https://gogoresume.userjot.com/"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 border-[1.5px] border-gray-300 hover:border-[var(--primary-color)] hover:text-gray-900 rounded-lg transition-colors duration-150 group"
+        class="hover:scale-101 transition-all duration-150 flex flex-col space-x-2 px-3 py-2 text-sm text-gray-800 hover:text-[var(--primary-color)] border border-gray-300 hover:border-[var(--primary-color)] bg-gray-50 rounded group"
       >
-        <FeedbackIcon
-          class="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity"
-        />
-        <span class="font-medium">Got feedback ?</span>
+        <div class="flex items-center space-x-2">
+          <FeedbackIcon
+            class="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity"
+          />
+          <span class="font-medium">Got Feedback ?</span>
+        </div>
       </a>
     </div>
 

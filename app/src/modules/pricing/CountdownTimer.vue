@@ -1,30 +1,38 @@
 <!-- CountdownTimer.vue -->
 <template>
-  <div class="countdown-timer border-gray-200">
+  <div class="countdown-timer" style="padding-bottom: 30px !important">
     <div class="countdown-container">
       <div class="countdown-header">
-        <h3 class="countdown-title">Launch Offer Ends in 🥳</h3>
+        <span class="countdown-title" style="padding-bottom: 0px !important"
+          >Offer ends in</span
+        >
       </div>
 
       <div class="countdown-display">
         <div class="time-unit">
           <div class="time-value">{{ timeLeft.days }}</div>
-          <div class="time-label">Days</div>
+          <div class="time-label">days</div>
         </div>
+
         <div class="time-separator">:</div>
+
         <div class="time-unit">
           <div class="time-value">{{ timeLeft.hours }}</div>
-          <div class="time-label">Hours</div>
+          <div class="time-label">hrs</div>
         </div>
+
         <div class="time-separator">:</div>
+
         <div class="time-unit">
           <div class="time-value">{{ timeLeft.minutes }}</div>
-          <div class="time-label">Minutes</div>
+          <div class="time-label">min</div>
         </div>
+
         <div class="time-separator">:</div>
+
         <div class="time-unit">
           <div class="time-value">{{ timeLeft.seconds }}</div>
-          <div class="time-label">Seconds</div>
+          <div class="time-label">sec</div>
         </div>
       </div>
     </div>
@@ -119,68 +127,15 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .countdown-timer {
   border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 32px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
   text-align: center;
-  position: relative;
-  overflow: hidden;
-
-  //   // Corner decorations - more prominent
-  //   &::before {
-  //     content: "";
-  //     position: absolute;
-  //     top: -20px;
-  //     left: -20px;
-  //     width: 80px;
-  //     height: 80px;
-  //     background: rgba(124, 58, 237, 0.1);
-  //     border-radius: 50%;
-  //     z-index: 0;
-  //   }
-
-  //   &::after {
-  //     content: "";
-  //     position: absolute;
-  //     bottom: -25px;
-  //     right: -25px;
-  //     width: 100px;
-  //     height: 100px;
-  //     background: rgba(59, 130, 246, 0.08);
-  //     border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-  //     z-index: 0;
-  //   }
-
-  //   // Additional decorative elements
-  //   .countdown-container::before {
-  //     content: "";
-  //     position: absolute;
-  //     top: 10px;
-  //     right: 20px;
-  //     width: 30px;
-  //     height: 30px;
-  //     background: rgba(236, 72, 153, 0.06);
-  //     border-radius: 6px;
-  //     transform: rotate(12deg);
-  //     z-index: 0;
-  //   }
-
-  //   .countdown-container::after {
-  //     content: "";
-  //     position: absolute;
-  //     bottom: 15px;
-  //     left: 25px;
-  //     width: 20px;
-  //     height: 20px;
-  //     background: rgba(168, 85, 247, 0.07);
-  //     border-radius: 50%;
-  //     z-index: 0;
-  //   }
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
 }
 
 .countdown-container {
-  color: #333;
   position: relative;
-  z-index: 1;
 }
 
 .countdown-header {
@@ -188,114 +143,98 @@ onUnmounted(() => {
 }
 
 .countdown-title {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 6px 0;
-  color: #111827;
-}
-
-.countdown-subtitle {
-  font-size: 15px;
-  margin: 0;
-  color: #6b7280;
+  font-size: 13px;
   font-weight: 500;
+  color: #6b7280;
+  letter-spacing: 0.3px;
 }
 
 .countdown-display {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 18px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .time-unit {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 12px 16px;
-  min-width: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
 .time-value {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   line-height: 1;
-  margin-bottom: 4px;
   color: #111827;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
 }
 
 .time-label {
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #6b7280;
-  font-weight: 600;
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .time-separator {
-  font-size: 20px;
-  font-weight: 700;
-  color: #9ca3af;
+  font-size: 24px;
+  font-weight: 600;
+  color: #d1d5db;
+  margin: 0 2px;
+  align-self: flex-start;
+  margin-top: 2px;
 
   @media (max-width: 640px) {
     display: none;
   }
 }
 
-.countdown-message {
-  p {
-    margin: 0;
-    font-size: 15px;
-    color: #374151;
-    font-weight: 500;
-
-    strong {
-      font-weight: 700;
-      color: #7c3aed;
-    }
-  }
-}
-
 @media (max-width: 768px) {
   .countdown-timer {
-    padding: 16px;
-    margin-bottom: 24px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
   }
 
   .countdown-title {
-    font-size: 16px;
+    font-size: 12px;
   }
 
   .countdown-display {
     gap: 10px;
   }
 
-  .time-unit {
-    padding: 6px 10px;
-    min-width: 50px;
+  .time-value {
+    font-size: 24px;
+  }
+
+  .time-label {
+    font-size: 10px;
+  }
+
+  .time-separator {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .countdown-timer {
+    padding: 14px 16px;
+  }
+
+  .countdown-title {
+    font-size: 11px;
   }
 
   .time-value {
-    font-size: 18px;
+    font-size: 22px;
   }
 
   .time-label {
     font-size: 9px;
   }
-}
-
-.countdown-display {
-  gap: 8px;
-}
-
-.time-unit {
-  padding: 6px 8px;
-  min-width: 45px;
-}
-
-.time-value {
-  font-size: 18px;
 }
 </style>

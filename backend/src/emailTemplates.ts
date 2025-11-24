@@ -47,15 +47,15 @@ export const WelcomeEmail = (name: string): EmailTemplate => ({
 });
 
 export const ThankYouEmail = (name: string): EmailTemplate => ({
-  subject: '🎉 Thank you for subscribing to GoGoResume!',
+  subject: 'Thanks for choosing GoGoResume',
   body: `
       <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; font-size: 16px;">
         <h3 style="color: #2c3e50;">${
           'Hey ' + (name?.split(' ')[0] || 'Hunter')
-        } — you’re officially in! 🙌</h3>
+        }</h3>
     
-        <p>First off, <strong>thank you</strong> for supporting GoGoResume.  
-        Your subscription means the world to me — and it means <strong>you just unlocked the smartest way to land your next job</strong>. 🚀</p>
+        <p>  
+        Your subscription means the world to me — and it means <strong>you just unlocked the smartest way to land your next job</strong> 🚀</p>
     
         <p>Here’s to <strong>less tweaking</strong> and <strong>more winning</strong>:</p>
     
