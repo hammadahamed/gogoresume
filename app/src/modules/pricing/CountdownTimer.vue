@@ -3,7 +3,7 @@
   <div class="countdown-timer" style="padding-bottom: 30px !important">
     <div class="countdown-container">
       <div class="countdown-header">
-        <span class="countdown-title" style="padding-bottom: 0px !important"
+        <span class="countdown-title uppercase tracking-wider"
           >Offer ends in</span
         >
       </div>
@@ -127,8 +127,9 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .countdown-timer {
   border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
+  padding: 10px 16px;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
   text-align: center;
   background: #fafafa;
   border: 1px solid #e5e7eb;
