@@ -1,19 +1,19 @@
 <template>
-    <div class="h-screen w-screen overflow-y-auto">
-        <Navigation />
-        <HeroSection @scroll-to-pricing="scrollToPricing" />
+  <div class="h-screen w-screen overflow-y-auto">
+    <Navigation />
+    <HeroSection @scroll-to-pricing="scrollToPricing" />
 
-        <ATSEducationSection />
-        <PainCycleSection />
-        <HowItWorks />
-        <AutoApplyProblemSection />
-        <!-- <RepetitiveTypingSection /> -->
+    <ATSEducationSection />
+    <PainCycleSection />
+    <HowItWorks />
+    <AutoApplyProblemSection />
+    <!-- <RepetitiveTypingSection /> -->
 
-        <!-- <ComparisonSection /> -->
-        <PricingSection ref="pricingSection" />
-        <FAQSection />
-        <Footer />
-    </div>
+    <!-- <ComparisonSection /> -->
+    <PricingSection ref="pricingSection" />
+    <FAQSection />
+    <Footer />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -33,6 +33,6 @@ import Footer from "./Footer.vue";
 
 const pricingSection = ref<HTMLElement>();
 const scrollToPricing = () => {
-    pricingSection.value?.scrollIntoView({ behavior: "smooth" });
+  pricingSection.value?.scrollIntoView({ behavior: "smooth" });
 };
 </script>
