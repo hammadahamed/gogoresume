@@ -832,25 +832,21 @@ function createToggleButton() {
   toggleButton = document.createElement("button");
   toggleButton.id = TOGGLE_BUTTON_ID;
   toggleButton.style.padding = "0px !important";
-  toggleButton.style.borderRadius = "50% !important";
+  toggleButton.style.borderRadius = "10% !important";
   toggleButton.style.height = "46px !important";
   toggleButton.style.width = "46px !important";
   toggleButton.style.backgroundColor = "black";
   // Create and add mascot image
-  const mascotImg = document.createElement("div");
-  mascotImg.innerHTML = "📄";
-  mascotImg.style.fontSize = "20px";
-  //   mascotImg.src = chrome.runtime.getURL("mascot.webp");
-  //   mascotImg.alt = "GoGoResume";
+  const mascotImg = document.createElement("img");
+  mascotImg.src = chrome.runtime.getURL("mascot.webp");
+  mascotImg.alt = "GoGoResume";
   mascotImg.style.padding = "0px";
   mascotImg.style.margin = "0px";
-  mascotImg.style.width = "30px";
-  mascotImg.style.height = "30px";
+  mascotImg.style.width = "100%";
+  mascotImg.style.height = "100%";
   mascotImg.style.objectFit = "cover";
   mascotImg.style.pointerEvents = "none";
-  mascotImg.style.display = "flex";
-  mascotImg.style.alignItems = "center";
-  mascotImg.style.justifyContent = "center";
+  mascotImg.style.borderRadius = "16px";
 
   toggleButton.appendChild(mascotImg);
   toggleButton.title = "Open GoGoResume Sidebar (Drag vertically to move)";
