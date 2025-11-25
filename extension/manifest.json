@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GoGoResume",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Jarvis for Job hunters",
   "permissions": ["storage", "sidePanel", "contextMenus"],
   "background": {
