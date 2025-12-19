@@ -30,7 +30,7 @@
 
     <!-- Countdown Timer for Launch Offer -->
     <div class="countdown-section mb-20 -mt-10" v-if="homeView">
-      <CountdownTimer class="mx-auto" end-date="2025-12-01" />
+      <CountdownTimer class="mx-auto" end-date="2025-12-30" />
     </div>
 
     <div
@@ -110,7 +110,7 @@
           :key="index"
         >
           <div class="feature-column">
-            <div class="feature-name whitespace-pre-line text-center">
+            <div class="feature-name whitespace-pre-line text-">
               {{ feature.name }}
             </div>
           </div>

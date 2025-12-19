@@ -11,6 +11,7 @@ import "./styles/animated-border.scss";
 import "./styles/primevue-custom.scss";
 import { GoogleAuth } from "./helper/google-auth.helper";
 import { initializeUmamiAnalytics } from "./umami.analytics";
+import { initializeGoogleAnalytics } from "./google.analytics";
 
 // PrimeVue
 import PrimeVue from "primevue/config";
@@ -61,4 +62,6 @@ app.use(Vue3Toastify, {
 GoogleAuth.initializeGoogleApp(app);
 app.mount("#app");
 
-initializeUmamiAnalytics();
+// Initialize analytics
+initializeGoogleAnalytics();
+// initializeUmamiAnalytics();

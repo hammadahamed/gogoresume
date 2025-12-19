@@ -3,6 +3,7 @@ import useAuthComposable from "../composables/useAuth";
 import { accessTokenKey } from "@/api-factory/constants";
 import { useUserStore } from "@/stores/useUserStore";
 import { storeIntendedRoute } from "@/utils/routeUtils";
+import { trackPageView } from "@/google.analytics";
 import PaymentHistory from "@/modules/settings/PaymentHistory.vue";
 
 // Lazy-loaded components using dynamic imports
@@ -196,6 +197,12 @@ router.beforeEach(async (to, from, next) => {
 
   // Otherwise proceed normally
   next();
+});
+
+// Track page views for SPAs - Firebase Analytics only auto-tracks initial page load,
+// not route changes in Single Page Applications
+router.afterEach((to) => {
+  trackPageView(to.fullPath, to.meta?.title as string | undefined);
 });
 
 export default router;
