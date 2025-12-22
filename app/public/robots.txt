@@ -1,0 +1,27 @@
+# robots.txt for gogoresume.com
+
+# Allow all search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Disallow private/protected routes
+Disallow: /home
+Disallow: /master-profile
+Disallow: /my-resumes
+Disallow: /resume-tweaker
+Disallow: /templates
+Disallow: /resume-builder
+Disallow: /settings
+Disallow: /payment-history
+Disallow: /chrome-extension
+Disallow: /payment-status
+
+# Allow public pages
+Allow: /
+Allow: /login
+Allow: /privacy-policy
+Allow: /support
+
+# Sitemap location (you'll need to create this)
+Sitemap: https://gogoresume.com/sitemap.xml
+
