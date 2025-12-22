@@ -12,7 +12,7 @@
         >
           <p>The Jarvis for Job-Hunters 🔥</p>
         </div>
-        <p
+        <h1
           class="hero-headline text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight"
         >
           Screw the
@@ -20,12 +20,14 @@
           <span class="squiggly-underline animated text-black px-1 sm:px-2"
             >Interview
           </span>
-        </p>
+        </h1>
         <p
           class="hero-subtitle text-lg sm:text-xl md:text-2xl text-gray-600 mb-6 sm:mb-8 leading-relaxed px-4 sm:px-0"
         >
-          AI-powered resume optimization that lands your resume on the hiring
-          manager's desk, not in the ATS black hole.
+          AI-powered resume optimization that matches your resume to job
+          descriptions and lands your resume on the hiring manager's desk, not
+          in the ATS black hole. Tailor your resume to any job instantly +
+          autofill job applications automatically.
         </p>
         <div
           class="hero-buttons flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 sm:px-0"

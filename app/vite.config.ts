@@ -56,6 +56,8 @@ export default defineConfig(({ mode }) => ({
   build: {
     // Increase chunk size warning limit (optional - helps reduce noise)
     chunkSizeWarningLimit: 1000,
+    // Optimize chunk splitting for better caching and parallel loading
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         // Manual chunks to split large dependencies
@@ -74,5 +76,9 @@ export default defineConfig(({ mode }) => ({
         },
       },
     },
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: ["vue", "vue-router", "pinia"],
   },
 }));

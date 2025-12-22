@@ -30,6 +30,18 @@ import HowItWorks from "./HowItWorks.vue";
 import PricingSection from "./PricingSection.vue";
 import FAQSection from "./FAQSection.vue";
 import Footer from "./Footer.vue";
+import { useSEO } from "@/composables/useSEO";
+
+// Apply SEO meta tags for landing page
+useSEO({
+  title:
+    "GoGoResume – AI Resume Tailor + Autofill Assistant | ATS Optimized Resume Builder",
+  description:
+    "Tailor your resume to any job instantly + autofill job applications in one click. AI-powered ATS resume optimizer that matches your resume to job descriptions automatically. Free ATS resume scanner and resume keyword optimizer.",
+  keywords:
+    "ATS resume checker, resume keyword optimizer, how to match resume to job description, autofill job applications, chrome extension autofill resume, resume writer ai, ATS resume scanner, resume tailored for job, free ATS resume scanner, resume keyword extractor, job description matching, ATS resume optimizer",
+  canonical: "https://gogoresume.com",
+});
 
 const pricingSection = ref<HTMLElement>();
 const scrollToPricing = () => {

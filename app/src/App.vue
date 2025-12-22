@@ -20,12 +20,12 @@ import { useAppStore } from "./stores/useAppStore";
 import Spinner from "@/common/components/Spinner.vue";
 import { useRoute } from "vue-router";
 
-const isLoading = ref(true);
+// Don't block landing page render - set to false immediately for "/"
+const route = useRoute();
+const isLoading = ref(route.path !== "/");
 
 const appStore = useAppStore();
 const { bootstrap } = useAuthComposable();
-
-const route = useRoute();
 
 const isExtensionMode = computed(() => {
   return route.query.extension === "true";
@@ -35,6 +35,12 @@ provide("isExtensionMode", isExtensionMode);
 appStore.isExtensionMode = isExtensionMode;
 
 onMounted(async () => {
+  // Skip bootstrap on landing page for faster load
+  if (route.path === "/") {
+    isLoading.value = false;
+    return;
+  }
+
   try {
     await bootstrap();
     // await getUserProfile();

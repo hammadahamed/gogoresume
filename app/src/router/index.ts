@@ -5,6 +5,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import { storeIntendedRoute } from "@/utils/routeUtils";
 import { trackPageView } from "@/google.analytics";
 import PaymentHistory from "@/modules/settings/PaymentHistory.vue";
+import { applySEO } from "@/composables/useSEO";
 
 // Lazy-loaded components using dynamic imports
 const Main = () => import("../Main.vue");
@@ -100,6 +101,14 @@ const routes = [
   {
     path: "/",
     component: LandingPageVue, // Landing page without sidebar
+    meta: {
+      title:
+        "GoGoResume – AI Resume Tailor + Autofill Assistant | ATS Optimized Resume Builder",
+      description:
+        "Tailor your resume to any job instantly + autofill job applications in one click. AI-powered ATS resume optimizer that matches your resume to job descriptions automatically.",
+      keywords:
+        "ATS resume checker, resume keyword optimizer, how to match resume to job description, autofill job applications, chrome extension autofill resume, resume writer ai, ATS resume scanner, resume tailored for job",
+    },
   },
   ...protectedRoutes,
   {
@@ -135,6 +144,12 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+  // Skip bootstrap on landing page for faster load
+  if (to.path === "/") {
+    next();
+    return;
+  }
+
   const userStore = useUserStore();
   const { bootstrap } = useAuthComposable(true);
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
@@ -203,6 +218,16 @@ router.beforeEach(async (to, from, next) => {
 // not route changes in Single Page Applications
 router.afterEach((to) => {
   trackPageView(to.fullPath, to.meta?.title as string | undefined);
+
+  // Apply SEO meta tags for each route
+  if (to.meta?.title || to.meta?.description) {
+    applySEO({
+      title: to.meta.title as string,
+      description: to.meta.description as string,
+      keywords: to.meta.keywords as string,
+      canonical: `https://gogoresume.com${to.path}`,
+    });
+  }
 });
 
 export default router;
