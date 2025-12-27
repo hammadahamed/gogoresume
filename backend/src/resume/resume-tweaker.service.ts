@@ -19,11 +19,11 @@ export class ResumeTweakerService {
     user: IJwtPayload,
     dto: TweakResumeDTO,
   ): Promise<TweakResumeResponse> {
-    const { data, jobDescription, userPrompt } = dto;
+    const { data, jobDescription, userPrompt, sections } = dto;
     const { id: userId } = user;
 
     // Note: Feature limit check is now handled by FeaturesGuard
-    const prompt = getTweakPrompt(jobDescription, userPrompt, data);
+    const prompt = getTweakPrompt(jobDescription, userPrompt, data, sections);
 
     try {
       const enhancedContent = await this.openAIService.generateContent(prompt);
@@ -48,11 +48,11 @@ export class ResumeTweakerService {
     user: IJwtPayload,
     dto: TweakResumeDTO,
   ): Promise<TweakResumeResponse> {
-    const { data, jobDescription, userPrompt } = dto;
+    const { data, jobDescription, userPrompt, sections } = dto;
     const { id: userId } = user;
 
     // Note: Feature limit check is now handled by FeaturesGuard
-    const prompt = getTweakPrompt(jobDescription, userPrompt, data);
+    const prompt = getTweakPrompt(jobDescription, userPrompt, data, sections);
 
     try {
       const enhancedContent = await this.claudeService.generateContent(prompt);

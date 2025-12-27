@@ -31,7 +31,7 @@ import ChromeExtensionIcon from "@/assets/svg/ext.svg";
 // Simplified sidebar configuration focused on core workflow
 export const DEFAULT_SIDEBAR_ITEMS: SidebarItem[] = [
   { id: "home", label: "Start Here", icon: HomeIcon },
-  { id: "resume-tweaker", label: "Quick Optimize", icon: TweakerIcon },
+  { id: "resume-tweaker", label: "ATS Optimizer", icon: TweakerIcon },
   { id: "my-resumes", label: "My Resumes", icon: ResumeIcon },
   { id: "templates", label: "Templates", icon: TemplateIcon },
   {

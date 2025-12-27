@@ -183,7 +183,7 @@
             <div
               v-for="section in sections"
               :key="section.id"
-              class="relative group"
+              class="relative group flex items-center gap-1"
             >
               <button
                 @click="toggleSection(section.id)"
@@ -199,6 +199,28 @@
                 ]"
               >
                 {{ section.label }}
+              </button>
+
+              <!-- Edit button (only when section has content) -->
+              <button
+                v-if="!section.disabled()"
+                @click="emits('edit-section', section.id)"
+                class="p-1 rounded-md text-gray-400 hover:text-[var(--primary-color)] hover:bg-indigo-50 transition-all duration-200"
+                :title="`Edit ${section.label}`"
+              >
+                <svg
+                  class="w-3.5 h-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  />
+                </svg>
               </button>
 
               <!-- Tooltip for disabled sections -->
@@ -347,6 +369,7 @@ import {
   setupContextMenuTextListener,
   getStoredTextFromSidePanel,
 } from "@/utils/contextMenuMsgHandler.sidepanel";
+import { diffResume, type ResumeChanges } from "./utils/diffResume";
 
 // Props
 const props = defineProps<{
@@ -359,6 +382,8 @@ const emits = defineEmits<{
   "job-description-state": [hasMeaningfulJobDescription: boolean];
   "optimizing-state": [isOptimizing: boolean];
   "match-score": [matchScore: number];
+  "changes-detected": [changes: ResumeChanges];
+  "edit-section": [sectionId: string];
 }>();
 
 const jobDescription = ref("");
@@ -514,6 +539,14 @@ const optimizeResume = async () => {
   isOptimizing.value = true;
 
   try {
+    // Store "before" state for diffing
+    const beforeData: Partial<UserInfo> = {};
+    selectedSections.value.forEach((section) => {
+      beforeData[section as keyof UserInfo] = props.currentResume[
+        section as keyof UserInfo
+      ] as any;
+    });
+
     const data = {};
 
     selectedSections.value.forEach((section) => {
@@ -539,9 +572,17 @@ const optimizeResume = async () => {
       updatedResume[section as keyof UserInfo] = response.data[section];
     });
 
-    // Emit the updated resume and match score to the parent
+    // Compute diff between before and after
+    const afterData: Partial<UserInfo> = {};
+    selectedSections.value.forEach((section) => {
+      afterData[section as keyof UserInfo] = response.data[section];
+    });
+    const changes = diffResume(beforeData, afterData);
+
+    // Emit the updated resume, match score, and changes to the parent
     emits("resume-updated", updatedResume);
     emits("match-score", response.matchScore || 0);
+    emits("changes-detected", changes);
   } catch (error) {
     console.error("Failed to optimize resume:", error);
     toast.error(error?.response?.data?.message || error.message);

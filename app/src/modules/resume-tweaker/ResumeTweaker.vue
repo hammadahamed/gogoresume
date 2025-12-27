@@ -26,13 +26,16 @@
               :class="isExtensionMode ? 'w-[130px]' : 'w-[240px]'"
             />
 
-            <!-- Undo/Redo Controls -->
+            <!-- Undo/Redo/View Changes Controls -->
             <UndoRedoControls
               v-if="!loading && currentResume"
               :can-undo="historyState.canUndo"
               :can-redo="historyState.canRedo"
+              :show-highlights="showHighlights"
+              :has-previous-state="hasPreviousState"
               @undo="handleUndo"
               @redo="handleRedo"
+              @toggle-highlights="toggleHighlights"
             />
           </div>
 
@@ -52,6 +55,8 @@
             <ReactResumeBuilder
               v-show="!loading"
               :userData="currentResume"
+              :highlightMode="showHighlights"
+              :changes="resumeChanges"
               class="-mt-15 animate-fade-in"
             />
 
@@ -87,19 +92,34 @@
         @job-description-state="handleJobDescriptionState"
         @optimizing-state="handleOptimizingState"
         @match-score="handleMatchScore"
+        @changes-detected="handleChangesDetected"
+        @edit-section="handleOpenEditModal"
       />
     </div>
+
+    <!-- Section Edit Modal -->
+    <SectionEditModal
+      :show="showEditModal"
+      :section-type="editingSectionType"
+      :professional-summary="currentResume?.professionalSummary"
+      :skills="currentResume?.skills"
+      :work-experiences="currentResume?.workExperiences"
+      :projects="currentResume?.projects"
+      @close="handleCloseEditModal"
+      @save="handleSaveEdit"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { inject, onMounted, onUnmounted, ref, watch } from "vue";
+import { inject, onMounted, onUnmounted, ref, watch, computed } from "vue";
 import ReactResumeBuilder from "../../ReactResumeBuilder.vue";
 import { useDataManager } from "../../composables/useDataManager";
 import SelectResume from "./SelectResume.vue";
 import TweakerInputs from "./TweakerInputs.vue";
 import MatchScoreDisplay from "./components/MatchScoreDisplay.vue";
 import UndoRedoControls from "./components/UndoRedoControls.vue";
+import SectionEditModal from "./components/SectionEditModal.vue";
 import { toast } from "vue3-toastify";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/stores/useUserStore";
@@ -111,6 +131,7 @@ import { useResumeHistory } from "@/composables/useResumeHistory";
 import SandyLoading from "@/assets/sandy_loading.lottie";
 import LoadingLottie from "@/assets/loading.lottie";
 import { DotLottieVue } from "@lottiefiles/dotlottie-vue";
+import { diffResume, type ResumeChanges } from "./utils/diffResume";
 
 const route = useRoute();
 const userStore = useUserStore();
@@ -127,9 +148,11 @@ const {
 const {
   history,
   state: historyState,
+  hasPreviousState,
   saveState,
   undo,
   redo,
+  getPreviousState,
   clearHistory,
 } = useResumeHistory();
 
@@ -139,6 +162,22 @@ const isExtensionMode = inject("isExtensionMode");
 const hasMeaningfulJobDescription = ref(false);
 const isOptimizing = ref(false);
 const matchScore = ref(0);
+const showHighlights = ref(false);
+
+// Section edit modal state
+const showEditModal = ref(false);
+const editingSectionType = ref<
+  "professionalSummary" | "skills" | "workExperiences" | "projects"
+>("professionalSummary");
+
+// Compute resume changes dynamically from history
+const resumeChanges = computed<ResumeChanges | null>(() => {
+  const previousState = getPreviousState();
+  if (!previousState || !currentResume.value) {
+    return null;
+  }
+  return diffResume(previousState, currentResume.value);
+});
 
 watch(selectedResumeId, (newVal) => {
   setSelectedResumeData();
@@ -157,12 +196,14 @@ const resetMatchScore = () => (matchScore.value = 0);
 const handleUndo = () => {
   undo();
   resetMatchScore();
+  // Note: We don't reset showHighlights here - diff is computed dynamically
 };
 
 // Handle redo action
 const handleRedo = () => {
   redo();
   resetMatchScore();
+  // Note: We don't reset showHighlights here - diff is computed dynamically
 };
 
 // Handle job description state from TweakerInputs component
@@ -178,6 +219,52 @@ const handleOptimizingState = (optimizing: boolean) => {
 // Handle match score from TweakerInputs component
 const handleMatchScore = (score: number) => {
   matchScore.value = score;
+};
+
+// Handle changes detected from TweakerInputs component
+const handleChangesDetected = (changes: ResumeChanges) => {
+  // Auto-enable highlights when changes are detected (user can turn off)
+  if (changes.hasAnyChanges) {
+    showHighlights.value = true;
+  }
+};
+
+// Toggle highlight mode
+const toggleHighlights = () => {
+  showHighlights.value = !showHighlights.value;
+};
+
+// Section edit modal handlers
+const handleOpenEditModal = (
+  sectionType: "professionalSummary" | "skills" | "workExperiences" | "projects"
+) => {
+  editingSectionType.value = sectionType;
+  showEditModal.value = true;
+};
+
+const handleCloseEditModal = () => {
+  showEditModal.value = false;
+};
+
+const handleSaveEdit = ({
+  sectionType,
+  value,
+}: {
+  sectionType: string;
+  value: any;
+}) => {
+  if (!currentResume.value) return;
+
+  // Create updated resume with the edited section
+  const updatedResume = { ...currentResume.value };
+  updatedResume[sectionType as keyof UserInfo] = value;
+
+  // Save to history and update store
+  saveState(updatedResume);
+  userStore.setCurrentResume(updatedResume);
+
+  // Close modal
+  showEditModal.value = false;
 };
 
 const setSelectedResumeData = async () => {

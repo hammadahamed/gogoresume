@@ -12,14 +12,21 @@ export class ClaudeService {
     });
   }
 
-  async generateContent(prompt: string): Promise<string> {
+  async generateContent(
+    prompt: string,
+    options?: { temperature?: number; system?: string },
+  ): Promise<string> {
+    const temperature = options?.temperature ?? 0.15;
+    const system =
+      options?.system ??
+      'You are an ATS keyword optimizer. Your task is to insert missing keywords into existing resume text — NOT to rewrite or improve the content. Preserve the original text structure and only make minimal keyword insertions. Always return valid JSON.';
+
     try {
       const completion = await this.anthropic.messages.create({
         model: 'claude-3-haiku-20240307',
         max_tokens: 4000,
-        temperature: 0.7,
-        system:
-          'You are a professional resume writer. Your task is to enhance resume content while maintaining truthfulness and professional tone. Always return responses in valid JSON format as specified in the user prompt.',
+        temperature,
+        system,
         messages: [
           {
             role: 'user',
@@ -27,8 +34,6 @@ export class ClaudeService {
           },
         ],
       });
-
-      console.dir(completion.content[0], { depth: 10 });
 
       // Extract text content from Claude's response
       const textContent = completion.content[0];

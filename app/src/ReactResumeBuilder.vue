@@ -43,6 +43,8 @@ interface Props {
   hideDownloadButton?: boolean;
   dataLoading?: boolean;
   builderMode?: boolean;
+  highlightMode?: boolean;
+  changes?: any;
 }
 
 const props = defineProps({
@@ -65,6 +67,14 @@ const props = defineProps({
   builderMode: {
     type: Boolean,
     default: false,
+  },
+  highlightMode: {
+    type: Boolean,
+    default: false,
+  },
+  changes: {
+    type: Object,
+    default: null,
   },
 });
 
@@ -89,14 +99,22 @@ const createReactComponent = () => {
   const ResumeBuilder = ({
     userData: initialUserData,
     templateId: initialTemplateId,
+    highlightMode: initialHighlightMode,
+    changes: initialChanges,
   }: {
     userData: any;
     templateId: string;
+    highlightMode?: boolean;
+    changes?: any;
   }) => {
     const [userData, setUserData] = useState(initialUserData);
     const [templateId, setTemplateId] = useState(
       initialTemplateId || "classic"
     );
+    const [highlightMode, setHighlightMode] = useState(
+      initialHighlightMode || false
+    );
+    const [changes, setChanges] = useState(initialChanges || null);
     const [isUpdating, setIsUpdating] = useState(true);
     const [opacity, setOpacity] = useState(1);
 
@@ -123,11 +141,25 @@ const createReactComponent = () => {
       }
     }, [initialTemplateId]);
 
+    // Update highlight mode when prop changes
+    useEffect(() => {
+      setHighlightMode(initialHighlightMode || false);
+    }, [initialHighlightMode]);
+
+    // Update changes when prop changes
+    useEffect(() => {
+      setChanges(initialChanges || null);
+    }, [initialChanges]);
+
     // Memoize the PDF template to prevent unnecessary re-renders
     const memoizedTemplate = useMemo(() => {
       const selectedTemplate = getTemplate(templateId);
-      return createElement(selectedTemplate.component, { userData });
-    }, [userData, templateId]);
+      return createElement(selectedTemplate.component, {
+        userData,
+        highlightMode,
+        changes,
+      });
+    }, [userData, templateId, highlightMode, changes]);
 
     // Use the memoized template
     const renderTemplate = () => memoizedTemplate;
@@ -283,6 +315,8 @@ onMounted(async () => {
         React.createElement(stableResumeBuilderComponent, {
           userData: props.userData,
           templateId: props.templateId,
+          highlightMode: props.highlightMode,
+          changes: props.changes,
         })
       );
     }
@@ -308,8 +342,13 @@ let renderCount = 0;
 let updateTimeout: any = null;
 
 watch(
-  [() => props.userData, () => props.templateId],
-  ([newUserData, newTemplateId]) => {
+  [
+    () => props.userData,
+    () => props.templateId,
+    () => props.highlightMode,
+    () => props.changes,
+  ],
+  ([newUserData, newTemplateId, newHighlightMode, newChanges]) => {
     renderCount++;
 
     // Clear previous timeout
@@ -336,6 +375,8 @@ watch(
           React.createElement(stableResumeBuilderComponent, {
             userData: newUserData,
             templateId: newTemplateId,
+            highlightMode: newHighlightMode,
+            changes: newChanges,
             key: Date.now(), // Force React to recognize the update
           })
         );

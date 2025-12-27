@@ -183,7 +183,6 @@ export class UsersService {
   async getTweaksUsage(userId: string, userPlan: IJwtPayloadPlan) {
     const tweakUsage = await TweakUsageModel.findOne({ userId });
     const otherStats = await calculateTweaksUsage(tweakUsage, userPlan.planId);
-    console.log('🚀 ~ UsersService ~ getTweaksUsage ~ otherStats:', otherStats);
     return {
       ...otherStats,
     };

@@ -37,8 +37,67 @@
           />
         </div>
 
-        <button @click="handleDownload" class="secondary-btn-1">
-          Download
+        <!-- View Changes Button (icon-only) -->
+        <button
+          v-if="hasChanges"
+          @click="handleToggleHighlights"
+          class="p-2 rounded-lg transition-all duration-200 relative group"
+          :class="
+            showHighlights
+              ? 'bg-green-100 text-green-700 border border-green-400'
+              : 'bg-gray-100 text-gray-600 border border-gray-300 hover:bg-green-50 hover:border-green-300'
+          "
+          :title="showHighlights ? 'Hide Changes' : 'View Changes'"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            />
+          </svg>
+          <!-- Tooltip -->
+          <span
+            class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none"
+          >
+            {{ showHighlights ? "Hide Changes" : "View Changes" }}
+          </span>
+        </button>
+
+        <!-- Download Button (icon-only in extension mode) -->
+        <button
+          @click="handleDownload"
+          class="secondary-btn-1"
+          :class="{ 'px-2': isExtensionMode }"
+          :title="isExtensionMode ? 'Download' : undefined"
+        >
+          <svg
+            v-if="isExtensionMode"
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            />
+          </svg>
+          <span v-else>Download</span>
         </button>
 
         <!-- Save/Update Button -->
@@ -65,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, onMounted } from "vue";
+import { computed, ref, watch, onMounted, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import TemplateSelector from "../../modules/templates/TemplateSelector.vue";
@@ -83,6 +142,9 @@ interface Props {
   modelValue?: string; // selected template
   resumeId?: string; // when editing
   resumeData?: UserInfo;
+  // View changes props
+  showHighlights?: boolean;
+  hasChanges?: boolean;
 }
 
 interface Emits {
@@ -90,11 +152,16 @@ interface Emits {
   (e: "template-change", template: string): void;
   (e: "resume-saved", data: { resumeId: string; name: string }): void;
   (e: "resume-updated"): void;
+  (e: "toggle-highlights"): void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: "classic",
+  showHighlights: false,
+  hasChanges: false,
 });
+
+const isExtensionMode = inject("isExtensionMode", false);
 
 const emit = defineEmits<Emits>();
 
@@ -223,6 +290,10 @@ const handleSave = async () => {
 
 const handleDownload = () => {
   triggerResumeDownload("CreateResumeTopBar");
+};
+
+const handleToggleHighlights = () => {
+  emit("toggle-highlights");
 };
 
 const handleCancel = () => {

@@ -12,24 +12,31 @@ export class OpenAIService {
     });
   }
 
-  async generateContent(prompt: string): Promise<string> {
+  async generateContent(
+    prompt: string,
+    options?: { temperature?: number; system?: string },
+  ): Promise<string> {
+    const temperature = options?.temperature ?? 0.15;
+    const system =
+      options?.system ??
+      'You are an ATS keyword optimizer. Your task is to insert missing keywords into existing resume text — NOT to rewrite or improve the content. Preserve the original text structure and only make minimal keyword insertions. Always return valid JSON.';
+
     try {
       const completion = await this.openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
-            content:
-              'You are a professional resume writer. Your task is to enhance resume content while maintaining truthfulness and professional tone. Always return responses in valid JSON format as specified in the user prompt.',
+            content: system,
           },
           {
             role: 'user',
             content: prompt,
           },
         ],
-        response_format: { type: 'json_object' }, // Force JSON response
-        temperature: 0.7,
-        max_tokens: 4000, // Increased for GPT-4
+        response_format: { type: 'json_object' },
+        temperature,
+        max_tokens: 4000,
       });
 
       return completion.choices[0]?.message?.content || '{}';

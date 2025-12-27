@@ -3,7 +3,6 @@ import initEnv from '../config/appConfig';
 initEnv();
 // Environment variables used in this file
 const MONGO_URI = process.env.MONGO_GOGORESUME_URI;
-console.log('🚀 ~ MONGO_URI:', MONGO_URI);
 
 export default (() => {
   return initMongoConnection('appMongo', MONGO_URI, {

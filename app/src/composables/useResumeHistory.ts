@@ -1,4 +1,4 @@
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { UserInfo } from "@/types/resume.types";
 import { useUserStore } from "@/stores/useUserStore";
 
@@ -13,6 +13,9 @@ export function useResumeHistory() {
     canUndo: false,
     canRedo: false,
   });
+
+  // Check if there's a previous state to compare with
+  const hasPreviousState = computed(() => currentIndex.value > 0);
 
   const updateState = () => {
     state.canUndo = currentIndex.value > 0 && history.value.length > 0;
@@ -55,6 +58,13 @@ export function useResumeHistory() {
     return JSON.parse(JSON.stringify(history.value[currentIndex.value]));
   };
 
+  const getPreviousState = (): UserInfo | null => {
+    if (currentIndex.value <= 0) {
+      return null;
+    }
+    return JSON.parse(JSON.stringify(history.value[currentIndex.value - 1]));
+  };
+
   const clearHistory = () => {
     history.value = [];
     currentIndex.value = -1;
@@ -73,10 +83,12 @@ export function useResumeHistory() {
   return {
     state,
     history,
+    hasPreviousState,
     saveState,
     undo,
     redo,
     getCurrentState,
+    getPreviousState,
     clearHistory,
     getHistoryInfo,
   };

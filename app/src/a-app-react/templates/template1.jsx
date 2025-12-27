@@ -1,6 +1,32 @@
 import React from "react";
 import { Document, Page, View, Text, StyleSheet } from "@react-pdf/renderer";
 
+// Highlight style for changed content
+const highlightStyle = {
+  backgroundColor: "#bbf7d0", // Light green highlight
+};
+
+// Helper functions for checking changes
+const isBulletChanged = (changes, experienceIndex, bulletIndex) => {
+  if (!changes) return false;
+  const expChange = changes.workExperiences?.find(
+    (exp) => exp.index === experienceIndex
+  );
+  return expChange?.changedBullets?.includes(bulletIndex) || false;
+};
+
+const isProjectChanged = (changes, projectIndex) => {
+  if (!changes) return false;
+  return changes.projects?.some(
+    (proj) => proj.index === projectIndex && proj.descriptionChanged
+  );
+};
+
+const isSkillAdded = (changes, skill) => {
+  if (!changes) return false;
+  return changes.skills?.added?.includes(skill) || false;
+};
+
 // Template 1 - Professional Resume Template
 const styles = StyleSheet.create({
   page: {
@@ -94,7 +120,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Template1 = ({ userData }) => {
+const Template1 = ({ userData, highlightMode = false, changes = null }) => {
   // Extract data using the proper UserInfo structure
   const personalInfo = userData?.personalInfo || {};
   const {
@@ -132,7 +158,12 @@ const Template1 = ({ userData }) => {
         {professionalSummary && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Professional Summary</Text>
-            <Text style={styles.professionalSummary}>
+            <Text
+              style={[
+                styles.professionalSummary,
+                highlightMode && changes?.professionalSummary && highlightStyle,
+              ]}
+            >
               {professionalSummary}
             </Text>
           </View>
@@ -143,7 +174,21 @@ const Template1 = ({ userData }) => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Skills</Text>
             <Text style={styles.skillsText}>
-              {Array.isArray(skills) ? skills.join(", ") : skills}
+              {Array.isArray(skills)
+                ? skills.map((skill, idx) => (
+                    <Text
+                      key={idx}
+                      style={
+                        highlightMode && isSkillAdded(changes, skill)
+                          ? highlightStyle
+                          : {}
+                      }
+                    >
+                      {skill}
+                      {idx < skills.length - 1 ? ", " : ""}
+                    </Text>
+                  ))
+                : skills}
             </Text>
           </View>
         )}
@@ -152,8 +197,8 @@ const Template1 = ({ userData }) => {
         {workExperiences && workExperiences.length > 0 && (
           <React.Fragment>
             <Text style={styles.sectionTitle}>Professional Experience</Text>
-            {workExperiences.map((exp, index) => (
-              <View key={index} style={{ marginBottom: 5 }}>
+            {workExperiences.map((exp, expIndex) => (
+              <View key={expIndex} style={{ marginBottom: 5 }}>
                 <View style={styles.flexRow}>
                   <Text style={styles.jobTitle}>{exp.position}</Text>
                   <Text style={styles.jobCompany}>
@@ -162,8 +207,16 @@ const Template1 = ({ userData }) => {
                   </Text>
                 </View>
                 {exp.description &&
-                  exp.description.map((desc, idx) => (
-                    <Text key={idx} style={styles.bulletPoint}>
+                  exp.description.map((desc, bulletIdx) => (
+                    <Text
+                      key={bulletIdx}
+                      style={[
+                        styles.bulletPoint,
+                        highlightMode &&
+                          isBulletChanged(changes, expIndex, bulletIdx) &&
+                          highlightStyle,
+                      ]}
+                    >
                       • {desc}
                     </Text>
                   ))}
@@ -176,12 +229,19 @@ const Template1 = ({ userData }) => {
         {projects && projects.length > 0 && (
           <View style={styles.section}>
             <Text style={{ ...styles.sectionTitle }}>Projects</Text>
-            {projects.map((project, index) => (
-              <React.Fragment key={index}>
+            {projects.map((project, projIndex) => (
+              <React.Fragment key={projIndex}>
                 <Text style={{ ...styles.jobTitle, marginTop: 10 }}>
                   {project.name}
                 </Text>
-                <Text style={{ ...styles.skillsText, marginLeft: 8.5 }}>
+                <Text
+                  style={[
+                    { ...styles.skillsText, marginLeft: 8.5 },
+                    highlightMode &&
+                      isProjectChanged(changes, projIndex) &&
+                      highlightStyle,
+                  ]}
+                >
                   {project.description}
                 </Text>
                 {project.projectLink && (
