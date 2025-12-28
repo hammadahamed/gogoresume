@@ -6,7 +6,7 @@ export const initializeUmamiAnalytics = () => {
     script.src = "https://mama.gogoresume.com/script.js";
     script.setAttribute(
       "data-website-id",
-      "f4b94323-3bbe-40f7-8a37-e41264cee9b2"
+      "84b5a76b-cf59-4593-9b54-52f711b5990e"
     );
     document.head.appendChild(script);
   }

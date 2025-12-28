@@ -119,9 +119,9 @@ if (typeof window !== "undefined") {
     import("./google.analytics").then((mod) => {
       mod.initializeGoogleAnalytics();
     });
-    // import("./umami.analytics").then((mod) => {
-    //   mod.initializeUmamiAnalytics();
-    // });
+    import("./umami.analytics").then((mod) => {
+      mod.initializeUmamiAnalytics();
+    });
   };
 
   if ("requestIdleCallback" in window) {
