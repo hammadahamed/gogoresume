@@ -16,15 +16,16 @@
 
       <!-- Templates Grid -->
       <div
-        class="mt-0 mb-10 lg:mb-0 lg:mt-30 flex flex-wrap gap-x-40 gap-y-20 justify-center"
+        class="mt-0 mb-10 lg:mb-0 lg:mt-30 flex flex-wrap gap-6 sm:gap-10 lg:gap-x-40 lg:gap-y-20 justify-center"
       >
         <div
           v-for="(template, index) in templates"
           :key="template.id"
-          class="w-[380px] relative group"
+          class="w-full max-w-[300px] sm:max-w-[340px] lg:max-w-[380px] relative group"
         >
+          <!-- Hover overlay for desktop -->
           <div
-            class="z-10 w-full h-[95%] bg-white/50 absolute top-0 left-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            class="z-10 w-full h-[95%] bg-white/50 absolute top-0 left-0 items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden sm:flex"
           >
             <button
               @click="selectTemplate(template)"
@@ -44,9 +45,19 @@
             class="overflow-hidden z-0"
           />
 
-          <p class="text text-center font-semibold text-gray-900 mt-[15px]">
+          <p
+            class="text text-center font-semibold text-gray-900 mt-3 lg:mt-[15px]"
+          >
             {{ template.name }}
           </p>
+
+          <!-- Mobile: Button below template -->
+          <button
+            @click="selectTemplate(template)"
+            class="sm:hidden w-full mt-2 bg-black cursor-pointer text-white text-sm font-semibold px-4 py-2.5 rounded-full"
+          >
+            Use Template
+          </button>
         </div>
       </div>
     </div>

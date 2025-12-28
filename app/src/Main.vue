@@ -1,5 +1,8 @@
 <template>
   <div class="main-layout">
+    <!-- Mobile Warning Modal -->
+    <MobileWarningModal v-if="!isExtensionMode" />
+
     <!-- Mobile Header (only on mobile) -->
     <MobileHeader v-if="!isExtensionMode" @toggle-menu="toggleSidebar" />
 
@@ -23,6 +26,7 @@ import { useRoute, useRouter } from "vue-router";
 
 import Sidebar from "@/common/components/Sidebar.vue";
 import MobileHeader from "@/common/components/MobileHeader.vue";
+import MobileWarningModal from "@/common/components/MobileWarningModal.vue";
 import type { SidebarUser } from "./types/sidebar";
 import { useAppStore } from "./stores/useAppStore";
 
