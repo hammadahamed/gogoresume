@@ -173,7 +173,7 @@ onMounted(async () => {
   background-color: white;
   border: 4px solid black;
   margin: 2.5rem;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
