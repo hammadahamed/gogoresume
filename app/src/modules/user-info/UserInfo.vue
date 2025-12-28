@@ -1,7 +1,7 @@
 <template>
   <div class="h-full overflow-y-auto">
-    <div class="flex justify-center pt-10 mx-10">
-      <form @submit.prevent class="pb-32" style="width: 550px">
+    <div class="user-info-container px-10 lg:px-0">
+      <form @submit.prevent class="user-info-form">
         <PersonalInfoForm
           v-if="currentResume.personalInfo"
           :personalInfo="currentResume.personalInfo"
@@ -250,5 +250,31 @@ const hasCurrentExperience = computed(() => {
 </script>
 
 <style scoped>
-/* Add your styles here if needed */
+.user-info-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 2.5rem;
+  margin-left: 2.5rem;
+  margin-right: 2.5rem;
+}
+
+.user-info-form {
+  width: 550px;
+  max-width: 100%;
+  padding-bottom: 8rem;
+}
+
+/* Mobile styles (< 1000px) */
+@media (max-width: 999px) {
+  .user-info-container {
+    padding-top: 1.5rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  .user-info-form {
+    width: 100%;
+    padding-bottom: 6rem;
+  }
+}
 </style>

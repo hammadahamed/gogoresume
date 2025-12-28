@@ -158,11 +158,24 @@ const {
 
 const loading = ref(true);
 const selectedResumeId = ref("");
-const isExtensionMode = inject("isExtensionMode");
+const injectedExtensionMode = inject("isExtensionMode") as { value: boolean };
 const hasMeaningfulJobDescription = ref(false);
 const isOptimizing = ref(false);
 const matchScore = ref(0);
 const showHighlights = ref(false);
+
+// Mobile responsiveness - treat as extension mode when width < 1000px
+const isMobileView = ref(false);
+const MOBILE_BREAKPOINT = 1000;
+
+const updateMobileView = () => {
+  isMobileView.value = window.innerWidth < MOBILE_BREAKPOINT;
+};
+
+// Computed: extension mode is true if injected OR if mobile view
+const isExtensionMode = computed(() => {
+  return injectedExtensionMode?.value || isMobileView.value;
+});
 
 // Section edit modal state
 const showEditModal = ref(false);
@@ -345,12 +358,16 @@ const handleKeyboardShortcuts = (event: KeyboardEvent) => {
 onMounted(async () => {
   await init();
   document.addEventListener("keydown", handleKeyboardShortcuts);
+  // Mobile responsiveness
+  updateMobileView();
+  window.addEventListener("resize", updateMobileView);
 });
 
 onUnmounted(() => {
   userStore.clearResumesDataCache();
   userStore.clearCurrentResume();
   document.removeEventListener("keydown", handleKeyboardShortcuts);
+  window.removeEventListener("resize", updateMobileView);
   clearHistory();
 });
 </script>

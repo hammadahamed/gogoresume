@@ -8,10 +8,19 @@ import {
   UseGuards,
   Req,
   Param,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ResumeService } from './resume.service';
-import { TweakResumeDTO, TweakResumeResponse } from './resume.types';
+import {
+  TweakResumeDTO,
+  TweakResumeResponse,
+  ParseResumeResponse,
+} from './resume.types';
 import { ResumeTweakerService } from './resume-tweaker.service';
+import { ResumeParserService } from './resume-parser.service';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
 import {
   FeaturesGuard,
@@ -23,12 +32,50 @@ import {
   validateResumeDataSize,
 } from 'src/common/helpers/validation.helper';
 
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
 @Controller('resume')
 export class ResumeController {
   constructor(
     private readonly resumeTweakerService: ResumeTweakerService,
     private readonly resumeService: ResumeService,
+    private readonly resumeParserService: ResumeParserService,
   ) {}
+
+  @Post('parse')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: MAX_FILE_SIZE },
+      fileFilter: (req, file, callback) => {
+        const allowedMimes = [
+          'application/pdf',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/msword',
+        ];
+        if (allowedMimes.includes(file.mimetype)) {
+          callback(null, true);
+        } else {
+          callback(
+            new BadRequestException(
+              'Invalid file type. Only PDF and DOCX files are allowed.',
+            ),
+            false,
+          );
+        }
+      },
+    }),
+  )
+  async parseResume(
+    @Req() req: any,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<ParseResumeResponse> {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    // Using Claude for parsing - switch to parseResume() for OpenAI
+    return this.resumeParserService.parseResumeWithClaude(req.user, file);
+  }
 
   @Post('tweak')
   @CheckFeature(FeatureType.TWEAK)

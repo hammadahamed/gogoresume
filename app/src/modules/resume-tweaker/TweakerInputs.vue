@@ -206,21 +206,9 @@
                 v-if="!section.disabled()"
                 @click="emits('edit-section', section.id)"
                 class="p-1 rounded-md text-gray-400 hover:text-[var(--primary-color)] hover:bg-indigo-50 transition-all duration-200"
-                :title="`Edit ${section.label}`"
+                :title="`Edit ${section.label} Section`"
               >
-                <svg
-                  class="w-3.5 h-3.5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
+                <EDIT_ICON alt="Edit" class="w-3.5 h-3.5" />
               </button>
 
               <!-- Tooltip for disabled sections -->
@@ -362,6 +350,7 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, onUnmounted, ref, watch } from "vue";
 import TICK from "@/assets/svg/tick.svg";
+import EDIT_ICON from "@/assets/svg/edit.svg";
 import resumeApi from "@/api-factory/resume";
 import { toast } from "vue3-toastify";
 import { UserInfo } from "@/types/resume.types";

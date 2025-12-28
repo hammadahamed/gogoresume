@@ -1,13 +1,38 @@
 <template>
-  <div class="flex flex-col h-full w-64 border-r border-gray-200">
+  <!-- Backdrop for mobile -->
+  <div v-if="isOpen" class="sidebar-backdrop" @click="$emit('close')"></div>
+
+  <div class="sidebar" :class="{ open: isOpen }">
+    <!-- Mobile Close Button -->
+    <button
+      class="mobile-close-btn"
+      @click="$emit('close')"
+      aria-label="Close menu"
+    >
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+
     <!-- Logo/Header -->
-    <AppLogo size="sm" container-class="p-6 py-5" @click="router.push('/')" />
+    <AppLogo size="sm" container-class="p-6 py-5" @click="handleLogoClick" />
+
     <!-- Navigation Items -->
     <nav class="flex-1 py-6 ml-2">
       <ul class="space-y-4 px-3">
         <li v-for="item in sidebarItems" :key="item.id">
           <button
-            @click="!item.disabled && appStore.setActiveTab(item.id)"
+            @click="handleNavClick(item)"
             :disabled="item.disabled"
             :class="[
               'w-full flex items-center justify-between px-3 py-2 text-left rounded-lg transition-colors duration-150',
@@ -68,7 +93,7 @@
     <div
       class="p-4 border-t border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors duration-150"
       v-if="currentUser"
-      @click="router.push('/settings')"
+      @click="handleProfileClick"
     >
       <div class="flex items-center space-x-3">
         <div
@@ -116,6 +141,11 @@ const props = defineProps<{
   items?: SidebarItem[];
   title?: string;
   logo?: string;
+  isOpen?: boolean;
+}>();
+
+const emit = defineEmits<{
+  (e: "close"): void;
 }>();
 
 const userStore = useUserStore();
@@ -133,8 +163,85 @@ const userInitials = computed(() => {
     currentUser.value.firstName[0] + (currentUser.value?.lastName[0] ?? "")
   );
 });
+
+// Handle navigation click - close sidebar on mobile after navigation
+const handleNavClick = (item: SidebarItem) => {
+  if (!item.disabled) {
+    appStore.setActiveTab(item.id);
+    emit("close");
+  }
+};
+
+const handleLogoClick = () => {
+  router.push("/");
+  emit("close");
+};
+
+const handleProfileClick = () => {
+  router.push("/settings");
+  emit("close");
+};
 </script>
 
 <style scoped>
-/* Custom styles for sidebar */
+/* Desktop styles */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 16rem; /* w-64 */
+  border-right: 1px solid #e5e7eb;
+  background-color: white;
+}
+
+.mobile-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem;
+  color: #6b7280;
+  border-radius: 0.5rem;
+  transition: all 0.15s;
+}
+
+.mobile-close-btn:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+}
+
+/* Mobile styles (< 1000px) */
+@media (max-width: 999px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* Desktop styles (>= 1000px) */
+@media (min-width: 1000px) {
+  .mobile-close-btn {
+    display: none;
+  }
+
+  .sidebar-backdrop {
+    display: none;
+  }
+}
 </style>

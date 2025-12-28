@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between flex-col sm:flex-row">
           <div>
             <p class="text-2xl font-bold text-gray-900">Saved Resumes</p>
             <p
@@ -14,7 +14,9 @@
               and contexts to quickly pull and tweak later.
             </p>
           </div>
-          <div class="flex items-center gap-4 md:flex-col lg:flex-row">
+          <div
+            class="flex items-center gap-4 flex-col lg:flex-row justify-end mt-10 sm:mt-0"
+          >
             <!-- Resume Count Progress -->
             <div v-if="!loading && max > 0" class="text-center">
               <div class="text-xs text-gray-500 mb-1">

@@ -61,3 +61,14 @@ export interface TweakResumeResponse {
   data: UserInfo;
   matchScore: number;
 }
+
+export type AIProvider = 'openai' | 'claude';
+
+export interface ParseResumeDTO {
+  provider: AIProvider;
+}
+
+export interface ParseResumeResponse {
+  data: UserInfo;
+  remainingParses: number;
+}

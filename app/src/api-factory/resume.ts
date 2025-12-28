@@ -55,6 +55,18 @@ const deleteResume = async (resumeId: string) => {
   return response.data;
 };
 
+const parseResume = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await axios.post("resume/parse", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
 export default {
   tweakResume,
   saveUserProfile,
@@ -64,4 +76,5 @@ export default {
   getSavedResumes,
   getResumeById,
   deleteResume,
+  parseResume,
 };
