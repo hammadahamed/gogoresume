@@ -48,7 +48,7 @@
     </div>
 
     <!-- Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-0 sm:py-8">
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-12">
         <Spinner class="w-8 h-8" />
@@ -56,7 +56,10 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="!resumes.length" class="text-center py-16 mt-16">
+      <div
+        v-else-if="!resumes.length"
+        class="text-center py-16 mt-6 lg:mt-16 pb-[200px] lg:pb-0"
+      >
         <div
           class="w-52 h-52 overflow-hidden mx-auto mb-6 bg-slate-50 rounded-full flex items-center justify-center"
         >

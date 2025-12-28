@@ -1,6 +1,6 @@
 <template>
   <div class="h-full overflow-y-auto">
-    <div class="user-info-container px-10 lg:px-0">
+    <div class="user-info-container px-3 lg:px-0">
       <form @submit.prevent class="user-info-form">
         <PersonalInfoForm
           v-if="currentResume.personalInfo"

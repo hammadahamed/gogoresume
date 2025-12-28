@@ -15,7 +15,9 @@
       </div>
 
       <!-- Templates Grid -->
-      <div class="mt-30 flex flex-wrap gap-x-40 gap-y-20 justify-center">
+      <div
+        class="mt-0 mb-10 lg:mb-0 lg:mt-30 flex flex-wrap gap-x-40 gap-y-20 justify-center"
+      >
         <div
           v-for="(template, index) in templates"
           :key="template.id"

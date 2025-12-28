@@ -4,7 +4,7 @@
     :class="syncing && autoSync ? 'border-transparent' : 'border-gray-200'"
   >
     <div
-      class="flex items-center px-2 gap-20"
+      class="flex items-center px-2 gap-10 sm:gap-20 flex-col sm:flex-row"
       :class="syncing && autoSync ? 'justify-center' : 'justify-between'"
     >
       <div v-if="autoSync && syncing ? false : true">

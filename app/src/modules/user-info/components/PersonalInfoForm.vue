@@ -72,7 +72,7 @@ function handleKeyPress(event: KeyboardEvent) {
 <template>
   <div>
     <Section title="Personal Information">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-2">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-2">
         <Input
           label="First Name"
           name="firstName"
@@ -88,7 +88,7 @@ function handleKeyPress(event: KeyboardEvent) {
         <Input
           label="Title"
           name="title"
-          class="col-span-2"
+          class="sm:col-span-2"
           v-model="props.personalInfo.title"
           placeholder="e.g., Senior Software Engineer with 5+ years of experience"
         />
@@ -96,7 +96,7 @@ function handleKeyPress(event: KeyboardEvent) {
     </Section>
 
     <Section title="Contact Information">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
         <Input
           label="Location"
           name="location"
@@ -115,7 +115,7 @@ function handleKeyPress(event: KeyboardEvent) {
           id="email"
           type="email"
           name="email"
-          class="col-span-2"
+          class="sm:col-span-2"
           v-model="props.personalInfo.email"
           placeholder="e.g., john.smith@example.com"
         />
@@ -124,7 +124,7 @@ function handleKeyPress(event: KeyboardEvent) {
 
     <Section title="Professional Links">
       <div class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input
             label="LinkedIn Profile"
             type="url"
@@ -170,7 +170,7 @@ function handleKeyPress(event: KeyboardEvent) {
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label=""
               placeholder="Link Label (e.g., GitHub, Dribbble)"

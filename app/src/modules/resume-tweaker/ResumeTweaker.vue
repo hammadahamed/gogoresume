@@ -3,19 +3,23 @@
     <!-- Section 2: Main Content -->
     <div
       class="flex-1 flex flex-col lg:flex-row-reverse mx-auto w-full max-w-[1100px]"
-      :class="{ 'justify-between': isExtensionMode, 'pr-10': !isExtensionMode }"
+      :class="{
+        'justify-between': useSimplifiedView,
+        'pr-10': !useSimplifiedView,
+      }"
     >
       <!-- Left: Resume Preview -->
       <div
         v-if="
-          !isExtensionMode || (isExtensionMode && hasMeaningfulJobDescription)
+          !useSimplifiedView ||
+          (useSimplifiedView && hasMeaningfulJobDescription)
         "
         class="w-full p-6 flex flex-col max-w-[800px] smooth-expand"
-        :class="{ 'pb-0': isExtensionMode }"
+        :class="{ 'pb-0': useSimplifiedView }"
       >
         <div
           class="flex-1 flex flex-col justify-center"
-          :class="isExtensionMode ? 'w-full' : 'w-auto'"
+          :class="useSimplifiedView ? 'w-full' : 'w-auto'"
         >
           <div class="flex items-center gap-3">
             <SelectResume
@@ -23,7 +27,7 @@
               :options="resumeOptions"
               :loading="resumesLoading"
               class="z-10"
-              :class="isExtensionMode ? 'w-[130px]' : 'w-[240px]'"
+              :class="useSimplifiedView ? 'w-[130px]' : 'w-[240px]'"
             />
 
             <!-- Undo/Redo/View Changes Controls -->
@@ -47,7 +51,7 @@
             <Spinner />
           </div>
 
-          <div class="relative" :class="!isExtensionMode && 'w-[520px]'">
+          <div class="relative" :class="!useSimplifiedView && 'w-[520px]'">
             <MatchScoreDisplay
               :matchScore="matchScore"
               :show-score="!loading"
@@ -164,7 +168,7 @@ const isOptimizing = ref(false);
 const matchScore = ref(0);
 const showHighlights = ref(false);
 
-// Mobile responsiveness - treat as extension mode when width < 1000px
+// Mobile responsiveness - simplified view when width < 1000px (but with nav bar)
 const isMobileView = ref(false);
 const MOBILE_BREAKPOINT = 1000;
 
@@ -172,9 +176,15 @@ const updateMobileView = () => {
   isMobileView.value = window.innerWidth < MOBILE_BREAKPOINT;
 };
 
-// Computed: extension mode is true if injected OR if mobile view
+// Extension mode from URL/injection (no nav bar)
 const isExtensionMode = computed(() => {
-  return injectedExtensionMode?.value || isMobileView.value;
+  return injectedExtensionMode?.value || false;
+});
+
+// Simplified view: true when extension mode OR mobile view
+// Both use the same simplified UI (JD box first, then full view)
+const useSimplifiedView = computed(() => {
+  return isExtensionMode.value || isMobileView.value;
 });
 
 // Section edit modal state

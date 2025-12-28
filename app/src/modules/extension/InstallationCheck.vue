@@ -5,7 +5,7 @@
         <PUZZLE_ICON class="w-40 h-40 mx-auto mb-4 opacity-90" />
         <div
           v-if="!extensionInstalled"
-          class="flex items-center justify-center gap-3"
+          class="flex items-center justify-center gap-3 flex-col-reverse sm:flex-row"
         >
           <div class="text-lg font-medium text-gray-900 mb-2">
             {{ loading ? "Checking ..." : "Chrome Extension Not Detected" }}
@@ -43,7 +43,10 @@
           from job boards with AI-powered resume tweaking.
         </p>
 
-        <div v-if="!loading && !extensionInstalled" class="flex gap-5 px-10">
+        <div
+          v-if="!loading && !extensionInstalled"
+          class="flex gap-5 px-10 flex-col sm:flex-row"
+        >
           <button
             class="w-full bg-black text-sm text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-800 transition-all duration-200"
             @click="installExtension"
