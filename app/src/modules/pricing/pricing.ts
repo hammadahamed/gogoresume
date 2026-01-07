@@ -31,6 +31,7 @@ export const pricedPlans = [
     // discountedPrice: 5,
     features: [
         "20 AI-powered tweaks Daily",
+        "Super GoGo - Chrome Extension",
         "Templates Access",
         "10 saved resumes",
       "PDF downloads",
@@ -50,6 +51,7 @@ export const pricedPlans = [
     isPopular: true,
     features: [
         "50 AI-powered tweaks Daily",
+        "Super GoGo - Chrome Extension",
         "Templates Access",
         "20 saved resumes",
       "PDF downloads",
