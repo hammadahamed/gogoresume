@@ -133,8 +133,7 @@ const routes = [
   },
   {
     path: "/:pathMatch(.*)*",
-    component: NotFoundPage,
-    meta: { requiresAuth: false },
+    redirect: "/",
   },
 ];
 
