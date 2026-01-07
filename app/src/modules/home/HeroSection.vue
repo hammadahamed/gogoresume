@@ -41,10 +41,9 @@
                     </div>
                 </div>
             </div>
-            <div
-                class="hero-app-preview w-[90%] mx-auto mt-24 shadow-2xl rounded-4xl overflow-hidden border-[10px] border-gray-200 bg-white relative">
-                <!-- Sparkle SVG flourish -->
-                <div class="absolute -right-8 -top-10 pointer-events-none z-20 sparkle-float">
+
+            <div class="relative mt-[140px]">
+                <div class="absolute right-[120px] top-[80px] pointer-events-none z-20 sparkle-float">
                     <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"
                         class="text-gray-400 opacity-60">
                         <!-- Top Ray -->
@@ -58,17 +57,24 @@
                             stroke-linecap="round" />
                     </svg>
                 </div>
-                <!-- Browser Header -->
-                <div class="browser-header px-4 py-3 flex items-center gap-2 bg-black/80">
+                <img src="@/assets/images/app-preview3.webp" alt="GoGoResume App Preview" loading="lazy"
+                    decoding="async" class="w-full h-auto object-cover " />
+            </div>
+            <!-- <div
+                class="w-[90%] mx-auto mt-24 shadow-2xl rounded-4xl overflow-hidden border-[10px] border-gray-200 bg-white relative"> -->
+            <!-- Sparkle SVG flourish -->
+
+            <!-- Browser Header -->
+            <!-- <div class="browser-header px-4 py-3 flex items-center gap-2 bg-black/80">
                     <div class="flex gap-1.5">
                         <span class="w-3 h-3 rounded-full bg-[#FF5F56] border border-[#E0443E]"></span>
                         <span class="w-3 h-3 rounded-full bg-[#FFBD2E] border border-[#DEA123]"></span>
                         <span class="w-3 h-3 rounded-full bg-[#27C93F] border border-[#1AAB29]"></span>
                     </div>
-                </div>
-                <img src="@/assets/images/app-preview.webp" alt="GoGoResume App Preview"
-                    class="w-full h-auto object-cover " />
-            </div>
+                </div> -->
+            <!-- <img src="@/assets/images/app-preview2.webp" alt="GoGoResume App Preview"
+                    class="w-full h-auto object-cover " /> -->
+            <!-- </div> -->
 
             <!-- Transition Section -->
             <div class="demo-transition mt-[200px] mb-16 text-center relative">
