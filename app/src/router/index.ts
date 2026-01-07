@@ -9,60 +9,34 @@ import { applySEO } from "@/composables/useSEO";
 
 // Lazy-loaded components using dynamic imports
 // Define components using dynamic imports (to keep chunks separate for SEO)
-const components: any = {
-  Main: () => import("../Main.vue"),
-  Login: () => import("../modules/home/Login.vue"),
-  Home: () => import("../modules/home/Home.vue"),
-  ProfileInfo: () => import("../modules/user-info/ProfileInfo.vue"),
-  ResumeBuilder: () => import("../modules/resume-builder/ResumeBuilder.vue"),
-  SavedResumes: () => import("../modules/saved-resumes/SavedResumes.vue"),
-  ResumeTweaker: () => import("../modules/resume-tweaker/ResumeTweaker.vue"),
-  Templates: () => import("../modules/templates/Templates.vue"),
-  LandingPageVue: () => import("../modules/home/LandingPage.vue"),
-  PaymentStatus: () => import("../modules/payment/PaymentStatus.vue"),
-  UserSettings: () => import("../modules/settings/UserSettings.vue"),
-  Pricing: () => import("../modules/pricing/PricingPage.vue"),
-  ExtensionSettings: () => import("../modules/extension/ExtensionSettings.vue"),
-  PrivacyPolicy: () => import("../modules/legal/PrivacyPolicy.vue"),
-  SupportPage: () => import("../modules/support/SupportPage.vue"),
-};
+const Main = () => import("../Main.vue");
+const Login = () => import("../modules/home/Login.vue");
+const Home = () => import("../modules/home/Home.vue");
+const ProfileInfo = () => import("../modules/user-info/ProfileInfo.vue");
+const ResumeBuilder = () => import("../modules/resume-builder/ResumeBuilder.vue");
+const SavedResumes = () => import("../modules/saved-resumes/SavedResumes.vue");
+const ResumeTweaker = () => import("../modules/resume-tweaker/ResumeTweaker.vue");
+const Templates = () => import("../modules/templates/Templates.vue");
+const LandingPageVue = () => import("../modules/home/LandingPage.vue");
+const PaymentStatus = () => import("../modules/payment/PaymentStatus.vue");
+const UserSettings = () => import("../modules/settings/UserSettings.vue");
+const Pricing = () => import("../modules/pricing/PricingPage.vue");
+const ExtensionSettings = () => import("../modules/extension/ExtensionSettings.vue");
+const PrivacyPolicy = () => import("../modules/legal/PrivacyPolicy.vue");
+const SupportPage = () => import("../modules/support/SupportPage.vue");
 
-// If the user is logged in, eagerly load all components "at once" in the background
-// to avoid lazy-loading flickering/delays.
+// If the user is logged in, eagerly trigger all imports in the background.
+// This pre-fills the browser's module cache so 'lazy' navigation becomes instant.
 const hasToken = typeof window !== 'undefined' && !!localStorage.getItem(accessTokenKey);
 
 if (hasToken) {
-  try {
-    const names = Object.keys(components);
-    const results = await Promise.all(names.map((n) => components[n]()));
-    names.forEach((name, i) => {
-      components[name] = results[i].default;
-    });
-  } catch (error) {
-    console.warn("Eager loading failed, falling back to lazy loading", error);
-  }
+  // Fire all imports in parallel (non-blocking)
+  [Main, Login, Home, ProfileInfo, ResumeBuilder, SavedResumes, ResumeTweaker, 
+   Templates, LandingPageVue, PaymentStatus, UserSettings, Pricing, 
+   ExtensionSettings, PrivacyPolicy, SupportPage].forEach(fn => fn());
 } else {
-    console.log('[PERF] Using dynamic imports')
+  console.log('[PERF] Using dynamic imports');
 }
-
-// Destructure components back into individual variables for the route definitions below
-const {
-  Main,
-  Login,
-  Home,
-  ProfileInfo,
-  ResumeBuilder,
-  SavedResumes,
-  ResumeTweaker,
-  Templates,
-  LandingPageVue,
-  PaymentStatus,
-  UserSettings,
-  Pricing,
-  ExtensionSettings,
-  PrivacyPolicy,
-  SupportPage,
-} = components;
 
 const protectedRoutes = [
   {
