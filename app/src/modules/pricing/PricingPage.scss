@@ -79,7 +79,7 @@
                 $font-size-small: 16px;
 
                 display: grid;
-                grid-template-columns: 1.5fr repeat(4, 1fr);
+                grid-template-columns: 1.5fr repeat(3, 1fr);
                 border-bottom: 1px solid #e5e7eb;
 
                 &:first-child {
