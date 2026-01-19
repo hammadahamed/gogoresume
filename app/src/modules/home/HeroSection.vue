@@ -9,9 +9,9 @@
                     class="mb-10 text-black border-2 border-black w-min whitespace-nowrap mx-auto px-4 py-0.5 rounded-full text-[13px] font-semibold">
                     <p>The Jarvis for Job-Hunters 🔥</p>
                 </div>
-                <h1 class="mb-24 text-center max-w-[500px] mx-auto font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
-                    Screw the
-                    <span class="bg-highlight text-black px-1 sm:px-2">ATS</span>, <br /> Get the
+                <h1 class="mb-24 text-center max-w-[600px] mx-auto font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
+                    The AI Resume Builder to <br />
+                    <span class="bg-highlight text-black px-1 sm:px-2">Screw the ATS</span>, Get the
                     <span class="squiggly-underline animated text-black px-1 sm:px-2">Interview
                     </span>
                 </h1>

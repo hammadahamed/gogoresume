@@ -1,8 +1,10 @@
 # robots.txt for gogoresume.com
 
-# Allow all search engines to crawl the site
 User-agent: *
 Allow: /
+Allow: /login
+Allow: /privacy-policy
+Allow: /support
 
 # Disallow private/protected routes
 Disallow: /home
@@ -16,12 +18,6 @@ Disallow: /payment-history
 Disallow: /chrome-extension
 Disallow: /payment-status
 
-# Allow public pages
-Allow: /
-Allow: /login
-Allow: /privacy-policy
-Allow: /support
-
-# Sitemap location (you'll need to create this)
+# Sitemap location
 Sitemap: https://gogoresume.com/sitemap.xml
 
