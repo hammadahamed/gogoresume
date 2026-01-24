@@ -10,7 +10,6 @@
                     <p>The Jarvis for Job-Hunters 🔥</p>
                 </div>
                 <h1 class="mb-24 text-center max-w-[600px] mx-auto font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
-                    The AI Resume Builder to <br />
                     <span class="bg-highlight text-black px-1 sm:px-2">Screw the ATS</span>, Get the
                     <span class="squiggly-underline animated text-black px-1 sm:px-2">Interview
                     </span>
