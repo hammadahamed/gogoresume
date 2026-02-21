@@ -17,6 +17,13 @@
           >
             {{ item.name }}
           </button>
+          
+          <router-link
+            to="/blog"
+            class="text-sm font-semibold transition-colors duration-200 text-gray-600 hover:text-gray-900"
+          >
+            Blog
+          </router-link>
         </div>
 
         <!-- Mobile Menu Button & Login -->
@@ -69,6 +76,14 @@
           >
             {{ item.name }}
           </button>
+          
+          <router-link
+            to="/blog"
+            class="text-left px-3 py-2 text-sm font-semibold rounded-md transition-colors duration-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+            @click="isMobileMenuOpen = false"
+          >
+            Blog
+          </router-link>
         </div>
       </div>
     </div>

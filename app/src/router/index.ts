@@ -25,6 +25,11 @@ const ExtensionSettings = () => import("../modules/extension/ExtensionSettings.v
 const PrivacyPolicy = () => import("../modules/legal/PrivacyPolicy.vue");
 const SupportPage = () => import("../modules/support/SupportPage.vue");
 
+// Blog
+const BlogList = () => import("../modules/blog/BlogList.vue");
+const AtsFormattingRules = () => import("../modules/blog/posts/AtsFormattingRules.vue");
+const FaangResumeTips = () => import("../modules/blog/posts/FaangResumeTips.vue");
+
 // If the user is logged in, eagerly trigger all imports in the background.
 // This pre-fills the browser's module cache so 'lazy' navigation becomes instant.
 const hasToken = typeof window !== 'undefined' && !!localStorage.getItem(accessTokenKey);
@@ -33,7 +38,7 @@ if (hasToken) {
   // Fire all imports in parallel (non-blocking)
   [Main, Login, Home, ProfileInfo, ResumeBuilder, SavedResumes, ResumeTweaker, 
    Templates, LandingPageVue, PaymentStatus, UserSettings, Pricing, 
-   ExtensionSettings, PrivacyPolicy, SupportPage].forEach(fn => fn());
+   ExtensionSettings, PrivacyPolicy, SupportPage, BlogList].forEach(fn => fn());
 } else {
   console.log('[PERF] Using dynamic imports');
 }
@@ -141,6 +146,38 @@ const routes = [
     component: SupportPage,
     meta: { requiresAuth: false },
   },
+  
+  // Blog Routes (Public)
+  {
+    path: "/blog",
+    component: BlogList,
+    meta: {
+      requiresAuth: false,
+      title: "Career & Resume Advice Blog | GoGoResume",
+      description: "Expert advice on resume writing, ATS optimization, and job search strategies to help you land your dream job.",
+    },
+  },
+  {
+    path: "/blog/ats-formatting-rules",
+    component: AtsFormattingRules,
+    meta: {
+      requiresAuth: false,
+      title: "7 ATS Formatting Rules That Get You Rejected | GoGoResume Blog",
+      description: "Learn the critical resume formatting mistakes that cause ATS rejection. Stick to these 7 rules to ensure your resume gets seen by recruiters.",
+      keywords: "ATS resume formatting, resume rejection reasons, ATS friendly resume, resume fonts, resume layout",
+    },
+  },
+  {
+    path: "/blog/tailor-resume-faang",
+    component: FaangResumeTips,
+    meta: {
+      requiresAuth: false,
+      title: "How to Tailor Your Resume for FAANG Jobs | GoGoResume Blog",
+      description: "Learn how to use AI to optimize your resume keywords for Google, Amazon, and Facebook job descriptions.",
+      keywords: "FAANG resume tips, tailor resume for tech jobs, software engineer resume keywords, resume optimization AI",
+    },
+  },
+
   {
     path: "/:pathMatch(.*)*",
     redirect: "/",
