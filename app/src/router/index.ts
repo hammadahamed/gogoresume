@@ -30,6 +30,9 @@ const BlogList = () => import("../modules/blog/BlogList.vue");
 const AtsFormattingRules = () => import("../modules/blog/posts/AtsFormattingRules.vue");
 const FaangResumeTips = () => import("../modules/blog/posts/FaangResumeTips.vue");
 
+// Tools
+const AtsScanner = () => import("../modules/tools/AtsScanner.vue");
+
 // If the user is logged in, eagerly trigger all imports in the background.
 // This pre-fills the browser's module cache so 'lazy' navigation becomes instant.
 const hasToken = typeof window !== 'undefined' && !!localStorage.getItem(accessTokenKey);
@@ -175,6 +178,18 @@ const routes = [
       title: "How to Tailor Your Resume for FAANG Jobs | GoGoResume Blog",
       description: "Learn how to use AI to optimize your resume keywords for Google, Amazon, and Facebook job descriptions.",
       keywords: "FAANG resume tips, tailor resume for tech jobs, software engineer resume keywords, resume optimization AI",
+    },
+  },
+
+  // Tools Routes (Public)
+  {
+    path: "/tools/ats-resume-scanner",
+    component: AtsScanner,
+    meta: {
+      requiresAuth: false,
+      title: "Free ATS Resume Scanner & Checker | GoGoResume",
+      description: "Check if your resume passes ATS systems with our free scanner. Get instant feedback on keywords, formatting, and match rate.",
+      keywords: "ATS resume checker, free ATS resume scanner, check resume score, resume keyword optimizer, beat the ATS",
     },
   },
 
